@@ -2,21 +2,16 @@
 
 As something Demis Hassabis said and profoundly inspired me: "Solve Intelligence, then use it to solve everything else"
 
-@ Demis Hassabis, Geoffrey Hinton, Alex Graves: Would you help me?
-I need:
+
+#### Why Do I publish this in github?
+
+  Because I want to, because science needs to be public and open for everybody and because I need help.
+
+#### What help do I need?
 
 - Mentoring (any help is welcome here)
 - Time (I currently have a family and life to maintain, so time is limitted)
 - Money (If I just could work on this full time, currently I fund this myself)
-
-
-- Why Do I publish this in github?
-
-Because I want to, because science needs to be public and open for everybody and because I need help.
-
-- What help do I need?
-
-In short, Knowledge (mentoring), time (I have a non-research job now).
 
 Coding, creating experiments, documenting, processing power, whatever help you can think of.
 
