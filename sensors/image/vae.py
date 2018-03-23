@@ -230,17 +230,18 @@ def train_all(models, epochs=10):
 
         
 if __name__ == "__main__":
+    #numbers are chosen so the image size allows for at least 2 convolution layers in a CNN (they'll be used for other parts)
     models = [
-          ("fovea_10x10", VAE(10,10,3,500,100),full_resolution_crop),
-          ("downsample1_15x15-30x30", VAE(15,15,3,500,100), downsampleTensor(30,15)),
+          ("fovea_12x12", VAE(12,12,3,500,100),full_resolution_crop),
+          ("downsample1_16x16-30x30", VAE(16,16,3,500,100), downsampleTensor(30,16)),
           # commented due to image size, it seems that some images fail the training, I'll need to find a good dataset
-          # ("downsample2_15x15-60x60", VAE(15,15,3,500,100), downsampleTensor(60,15)),
-          # ("downsample3_15x15-120x120", VAE(15,15,3,500,100), downsampleTensor(120,15)),
+          # ("downsample2_16x16-60x60", VAE(16,16,3,500,100), downsampleTensor(60,16)),
+          # ("downsample3_16x16-120x120", VAE(16,16,3,500,100), downsampleTensor(120,16)),
           # ("downsample4_20x20-240x240", VAE(20,20,3,500,100), downsampleTensor(240,20)),
           # ("downsample5_20x20-480x480", VAE(20,20,3,500,100), downsampleTensor(480,20)),
           ("fullimage_20", VAE(20,20,3,500,100), fullimage_preprocess(20,20)),
-          ("fullimage_50", VAE(50,50,3,500,100), fullimage_preprocess(50,50)),
-          ("fullimage_75", VAE(75,75,3,500,100), fullimage_preprocess(75,75)),
-          ("fullimage_100", VAE(100,100,3,500,100), fullimage_preprocess(100,100)),
+          ("fullimage_48", VAE(48,48,3,500,100), fullimage_preprocess(48,48)),
+          ("fullimage_72", VAE(72,72,3,500,100), fullimage_preprocess(72,72)),
+          ("fullimage_100", VAE(96,96,3,500,100), fullimage_preprocess(96,96)),
          ]
     train_all(models)
