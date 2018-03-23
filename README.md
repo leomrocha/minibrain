@@ -79,11 +79,12 @@ So now I dedicate most of my (free) time to trying to understand structures, arc
 
 - The brain is built by different structures, these structures are interconnected in different ways, hierarchies, parallel, and functions.
 - Each part has a dedicated task -> Here is where I separate in _sensors_, _predictors_, _controllers_ and _actuators_
-- The human (and by the way any mamalian brain) **has prior knowledge** this means we do not part from zero -> here is
+- The human (and by the way any mamalian brain) **has prior knowledge** this means we do not part from zero -> here is a key part of my hypothesis, prior knowledge to be either built or inserted
+- We humans are born without many of the things that we do know as adults, we acquire knowledge generating new structures and changing previous ones, the computers are not limited in a skull, we could keep on building knowledge and creating new parts for this. What about an artificial brain that _"evolves"_?
 - We can work on a hierarchy of concepts, each concept is embedded in a set of **contexts** that indicate the current situation giving place to abstraction levels
 - Each abstraction level does not need to work at the same _speed_, higher levels need to do more internal processing, while lower levels need to **act** fast. This is inspired on the principle of reflex creation by repetition (think of one of my favorite arts, the martial arts)
 - We learn to learn the target functions, think of it as an **Inverse Reinforcement Learning** problem
 - We can take advantage of Computer Science and many already developed functions (like *DSP*) instead of making the networks learn the functions, make them learn to select the functions to use
 - Convolutions are great, Circular convolutions are even better because they maintain the size of the vector space
-- Distributed Sparse Representations are great, they allow for 
+- Distributed Sparse Representations are great, they allow for several nice math techniques to be applied, I want to use them in the future
 - Why not using Multinomial Probability Distribution instead of Gausian for Autoencoders? this might lead to actually start creating contexts
