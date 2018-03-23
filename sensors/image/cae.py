@@ -115,6 +115,7 @@ class CAEDecoder(torch.nn.Module):
         out = self.deconv_layer_2(out)
         return out
     
+
 class CAE(nn.Module):
     def __init__(self, width, height, channels, hid_dim=500, code_dim=200, conv_layer_feat=16):
         super(CAE, self).__init__()
@@ -132,7 +133,8 @@ class CAE(nn.Module):
     def save_model(self, name, path):
         torch.save(self.encoder, os.path.join(path, "cae_encoder_"+name+".pth"))
         torch.save(self.decoder, os.path.join(path, "cae_decoder_"+name+".pth"))
-        
+
+
 #definitions of the operations for the full image autoencoder
 normalize = transforms.Normalize(
    mean=[0.485, 0.456, 0.406], # from example here https://github.com/pytorch/examples/blob/409a7262dcfa7906a92aeac25ee7d413baa88b67/imagenet/main.py#L94-L95
@@ -194,7 +196,7 @@ def to_img(x):
 
 def main():
 
-    num_epochs = 100
+    num_epochs = 1000
     batch_size = 128
     learning_rate = 0.0001
 
