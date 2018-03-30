@@ -8,17 +8,10 @@ from torchvision import transforms, utils
 from torchvision import datasets
 from torchvision.utils import save_image
 
-import skimage 
-import math
-# import io
-# import requests
-# from PIL import Image
-
-import numpy as np
-import pandas as pd
-# import matplotlib.pyplot as plt
-import sys
 import os
+
+
+from helpers import *
 
 ###
 # Mostly Taken from examples here:
@@ -36,103 +29,117 @@ class CAEEncoder(nn.Module):
     """
     The Encoder = Q(z|X) for the Network
     """
-    def __init__(self, w,h, channels=3, hid_dim=500, code_dim=200, kernel_size=3, first_feature_count=16):
-        super(CAEEncoder, self).__init__()
-        self.indices = []
-        padding = math.floor(kernel_size/2)
-        l1_feat = first_feature_count
-        l2_feat = l1_feat * 2
-        self.layer1 = nn.Sequential(
-            nn.Conv2d(channels, l1_feat, kernel_size=kernel_size, padding=padding),
-            nn.ReLU(),
-            nn.Conv2d(l1_feat, l1_feat, kernel_size=kernel_size, padding=padding),
-            nn.ReLU(),
-            torch.nn.MaxPool2d(2, stride=2, return_indices=True)
-        )
-        self.layer2 = nn.Sequential(
-            nn.Conv2d(l1_feat, l2_feat, kernel_size=kernel_size, padding=padding),
-            nn.ReLU(),
-            nn.Conv2d(l2_feat, l2_feat, kernel_size=kernel_size, padding=padding),
-            nn.ReLU(),
-            torch.nn.MaxPool2d(2, stride=2, return_indices=True)
-        )
-        self.conv_dim = int(((w*h)/16) * l2_feat)
-        self.fc1 = nn.Linear(self.conv_dim, hid_dim)
-        self.fc2 = nn.Linear(hid_dim, code_dim)
 
-    def get_conv_layer_indices(self):
-        return [0, 2, 5, 7, 10]  # without BatchNorm2d
-    
+    def __init__(self, width, height, channels=3, levels=2, kernel_size=3, first_feature_count=16):
+        super(CAEEncoder, self).__init__()
+        self.width = width
+        self.height = height
+        self.channels = channels
+        # compute the maximum number of levels that this resolution can handle,
+        # this will be the parameter given to create the resolution encoder
+        max_levels = prime_factors(min(width, height)).count(2)
+        self.levels = min(levels, max_levels)
+        self.kernel_size = kernel_size
+        self.first_feature_count = first_feature_count
+
+        self.indices = []
+
+        padding = kernel_size // 2
+
+        self.l_features = [channels]
+        self.layers = nn.ModuleList()
+
+        for i in range(self.levels + 1):
+            self.l_features.append(first_feature_count * (2 ** (i)))
+
+        for i in range(self.levels):
+            nfeat = self.l_features[i + 1]
+            layer = nn.Sequential(
+                nn.Conv2d(self.l_features[i], nfeat, kernel_size=kernel_size, padding=padding),
+                nn.ReLU(),
+                nn.Conv2d(nfeat, nfeat, kernel_size=kernel_size, padding=padding),
+                nn.ReLU(),
+                torch.nn.MaxPool2d(2, stride=2, return_indices=True)
+            )
+            self.layers.append(layer)
+
+        # self.conv_dim = int(((w*h)/ ((2**levels)**2)) * self.l_features[-1])
+        self.conv_dim = ((width * height) // ((2 ** levels) ** 2)) * self.l_features[-1]
+
     def forward(self, x):
         self.indices = []
-        out, idx  = self.layer1(x)
-        self.indices.append(idx)
-        out, idx = self.layer2(out)
-        self.indices.append(idx)
-        # out = out.view(out.size(0), -1)
-        # out = self.fc1(out)
-        # out = self.fc2(out)
+        out = x
+        for i in range(self.levels):
+            layer = self.layers[i]
+            out, idx = layer(out)
+            self.indices.append(idx)
         return out
-    
+
+
 class CAEDecoder(torch.nn.Module):
     """
     The Decoder = P(X|z) for the Network
     """
-    def __init__(self, encoder, width, height, channels=3, hid_dim=500, code_dim=200, kernel_size=3, first_feature_count=16):
+
+    def __init__(self, encoder, width, height, channels=3, levels=2, kernel_size=3, first_feature_count=16):
         super(CAEDecoder, self).__init__()
-        padding = math.floor(kernel_size/2)
+        padding = kernel_size // 2
+        self.width = width
+        self.height = height
+        self.channels = channels
+        max_levels = prime_factors(min(width, height)).count(2)
+        self.levels = min(levels, max_levels)
         self.encoder = encoder
-        self.w_conv_dim = int(width/4)
-        self.h_conv_dim = int(height/4)
-        self.l1_feat = first_feature_count
-        self.l2_feat = self.l1_feat * 2
-        self.conv_dim = int(((width*height)/16) * self.l2_feat)
-        self.layer1 = torch.nn.Linear(code_dim, hid_dim)
-        self.layer2 = torch.nn.Linear(hid_dim, self.conv_dim)
-        self.unpool_1 = nn.MaxUnpool2d(2, stride=2)
-        self.deconv_layer_1 = torch.nn.Sequential(
-            nn.ConvTranspose2d(self.l2_feat, self.l2_feat, kernel_size=kernel_size, padding=padding),
-            nn.ReLU(),
-            nn.ConvTranspose2d(self.l2_feat, self.l1_feat, kernel_size=kernel_size, padding=padding),
-            nn.ReLU()
-        )
-        self.unpool_2 = nn.MaxUnpool2d(2, stride=2)
-        self.deconv_layer_2 = torch.nn.Sequential(
-            nn.ConvTranspose2d(self.l1_feat, self.l1_feat, kernel_size=kernel_size, padding=padding),
-            nn.ReLU(),
-            nn.ConvTranspose2d(self.l1_feat, channels, kernel_size=kernel_size, padding=padding),
-            nn.Tanh()
-        )
+
+        self.l_features = [channels]
+        self.layers = nn.ModuleList()
+
+        for i in range(self.levels + 1):
+            self.l_features.append(first_feature_count * (2 ** i))
+
+        self.encoder = encoder
+        self.conv_dim = ((width * height) // ((2 ** levels) ** 2)) * self.l_features[-1]
+
+        for i in range(self.levels):
+            nfeat = self.l_features[i + 1]
+
+            last_op = nn.ReLU() if i + 1 >= self.levels else nn.Tanh()  # the last operation is the one in the first layer -> later is reversed
+            layer = nn.Sequential(
+                nn.ConvTranspose2d(nfeat, nfeat, kernel_size=kernel_size, padding=padding),
+                nn.ReLU(),
+                nn.ConvTranspose2d(nfeat, self.l_features[i], kernel_size=kernel_size, padding=padding),
+                last_op
+
+            )
+            self.layers.append(layer)
+        self.layers = self.layers[::-1]
 
     def forward(self, x):
         out = x
-        # out = F.relu(self.layer1(x))
-        # out = F.relu(self.layer2(out))
-        # out = out.view(out.size(0), self.l2_feat, self.w_conv_dim, self.h_conv_dim)
-        out = self.unpool_1(out, self.encoder.indices[-1])
-        out = self.deconv_layer_1(out)
-        out = self.unpool_2(out, self.encoder.indices[-2])
-        out = self.deconv_layer_2(out)
+        for i in range(self.levels):
+            rev_i = -(i + 1)
+            out = F.max_unpool2d(out, self.encoder.indices[rev_i], 2, stride=2)
+            out = self.layers[i](out)
         return out
-    
+
 
 class CAE(nn.Module):
-    def __init__(self, width, height, channels, hid_dim=500, code_dim=200, conv_layer_feat=16):
+    def __init__(self, width, height, channels, levels=2, conv_layer_feat=16):
         super(CAE, self).__init__()
         self.width = width
         self.height = height
         self.channels = channels
-        self.encoder = CAEEncoder(width, height, channels, hid_dim, code_dim, 3, conv_layer_feat)
-        self.decoder = CAEDecoder(self.encoder, width, height, channels, hid_dim, code_dim, 3, conv_layer_feat)
-    
+        self.encoder = CAEEncoder(width, height, channels, levels, 3, conv_layer_feat)
+        self.decoder = CAEDecoder(self.encoder, width, height, channels, levels, 3, conv_layer_feat)
+
     def forward(self, x):
         out = self.encoder(x)
         out = self.decoder(out)
         return out
-        
+
     def save_model(self, name, path):
-        torch.save(self.encoder, os.path.join(path, "cae_encoder_"+name+".pth"))
-        torch.save(self.decoder, os.path.join(path, "cae_decoder_"+name+".pth"))
+        torch.save(self.encoder, os.path.join(path, "cae_encoder_" + name + ".pth"))
+        torch.save(self.decoder, os.path.join(path, "cae_decoder_" + name + ".pth"))
 
 
 #definitions of the operations for the full image autoencoder
@@ -196,11 +203,12 @@ def to_img(x):
 
 def main():
 
-    num_epochs = 1000
+    num_epochs = 100
     batch_size = 128
     learning_rate = 0.0001
+    #learning_rate = 0.001
 
-    model = CAE(12,12,3,500,200,32).cuda()
+    model = CAE(12, 12, 3, 2, 128).cuda()
 
     criterion = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate, weight_decay=1e-5)
