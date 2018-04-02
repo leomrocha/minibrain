@@ -1,5 +1,6 @@
 
 
+import numpy as np
 import torch
 from torch import nn, optim
 # import torchvision
@@ -10,12 +11,12 @@ from torch import nn, optim
 # from torchvision import datasets
 # from torchvision.utils import save_image
 
-from .cae import *
-from .helpers import *
-from .helper_modules import *
+from cae import *
+from helpers import *
+from helper_modules import *
 
 
-class MultiResCAEEncoder(nn.Module):
+class MultiResCAE(nn.Module):
     """
     Multi Resolution group of Convolutional Autoencoders
     This module intends to group several autoencoders that accompany different resolutions
@@ -28,12 +29,12 @@ class MultiResCAEEncoder(nn.Module):
     def __init__(self, in_img_shape, channels=3, res_levels=3, conv_layer_feat=[32, 16, 16],
                  res_px=[[12, 12], [16, 16], [20, 20]], crop_sizes=[[12, 12], [32, 32], [64, 64]],
                  # conv_sizes = [(3,5,7), (3,5,7,11), (3,5,7,11)]  # this is too much I think
-                 conv_sizes=[(3, 5, 7), (3, 5), (3, 5)]
+                 conv_sizes=[[3, 5, 7], [3, 5], [3, 5]]
                  ):
         """
         @param in_imag_shape : [width, height]  # the input image shape, to be able to pre-compute the transform matrices
         """
-        super(CAE, self).__init__()
+        super(MultiResCAE, self).__init__()
         self.channels = channels  # number of channels in the input image
         self.res_levels = res_levels  # number of resolution levels (NOT including the full image)
         self.conv_layer_feat = conv_layer_feat  # number of convolutional filters per CAE in the first level
@@ -42,13 +43,16 @@ class MultiResCAEEncoder(nn.Module):
         ##
         # compute the maximum number of levels that this resolution can handle,
         # this will be the parameter given to create the resolution encoder
-        self.max_levels = [prime_factors[min(i)].count(2) for i in res_px]
+        self.max_levels = [prime_factors([min(i)].count(2)) for i in res_px]
         ##
         # Pre-computing cropping matrices
         self.crop_sizes = torch.IntTensor(crop_sizes)  # Ps - Patches sizes -  size of the patch to crop
-        self.half_crop_sizes = torch.IntTensor(
-            crop_sizes)  # Ps/2 - Patches half sizes -  half size of the patch to crop, to compute positions
-        self.ref_patch = torch.IntTensor(conv_sizes[:].append(in_img_shape)[::-1])  # RP - Reference Patches
+        # Ps/2 - Patches half sizes -  half size of the patch to crop, to compute positions
+        self.half_crop_sizes = torch.IntTensor(np.array(crop_sizes) // 2)
+        cvs = crop_sizes[1:]  # take out the smaller size, as is the reference to the smaller patch
+        cvs.append(in_img_shape)
+        cvs = cvs[::-1]
+        self.ref_patch = torch.IntTensor(cvs)  # RP - Reference Patches
         # pre-compute Patch Dynamic Range (pixel wise)
         self._pdr = self.ref_patch - self.crop_sizes
         # saves the last patch centers
@@ -79,7 +83,7 @@ class MultiResCAEEncoder(nn.Module):
             c = self.channels
             w, h = self.res_px[i]  # resolution of the image for the encoder
 
-            for j in range(l_conv_sizes):
+            for j in range(len(l_conv_sizes)):
                 enc = CAEEncoder(w, h, c, levels, j, conv_features)
                 res_encoders.append(enc)
             self.encoders.append(res_encoders)
@@ -95,7 +99,7 @@ class MultiResCAEEncoder(nn.Module):
             c = self.channels
             w, h = self.res_px[i]  # resolution of the image for the encoder
 
-            for j in range(l_conv_sizes):
+            for j in range(len(l_conv_sizes)):
                 enc = CAEDecoder(self.encoders[i][j], w, h, c, levels, j, conv_features)
                 res_decoders.append(enc)
             self.decoders.append(res_decoders)
