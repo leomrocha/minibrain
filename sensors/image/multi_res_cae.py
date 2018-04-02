@@ -15,9 +15,6 @@ from .helpers import *
 from .helper_modules import *
 
 
-# NOTE: all patches will be square
-# full size image will be resized to a square image, beacause it's easy
-
 class MultiResCAEEncoder(nn.Module):
     """
     Multi Resolution group of Convolutional Autoencoders
@@ -30,8 +27,9 @@ class MultiResCAEEncoder(nn.Module):
 
     def __init__(self, in_img_shape, channels=3, res_levels=3, conv_layer_feat=[32, 16, 16],
                  res_px=[[12, 12], [16, 16], [20, 20]], crop_sizes=[[12, 12], [32, 32], [64, 64]],
-                 # conv_sizes = [(3,5,7), (3,5,7,11), (3,5,7,11)],  # this is too much I think
-                 conv_sizes=[(3, 5, 7), (3, 5), (3, 5)]):
+                 # conv_sizes = [(3,5,7), (3,5,7,11), (3,5,7,11)]  # this is too much I think
+                 conv_sizes=[(3, 5, 7), (3, 5), (3, 5)]
+                 ):
         """
         @param in_imag_shape : [width, height]  # the input image shape, to be able to pre-compute the transform matrices
         """
@@ -61,7 +59,8 @@ class MultiResCAEEncoder(nn.Module):
         ##
         # Actual work is done in the following modules
         #
-        self.downsamplers = [DownsamplerLayer(w, h) for w, h in res_px]
+        self.downsamplers = [nn.AdaptiveAvgPool2d((w, h)) for w, h in res_px]
+        self.upsamplers = [nn.AdaptiveMaxPool2d((w, h)) for w, h in crop_sizes]
         self.encoders = nn.ModuleList()
         self.decoders = nn.ModuleList()
 
@@ -125,13 +124,13 @@ class MultiResCAEEncoder(nn.Module):
 
         return self._last_centers, self._last_px_mins, self._last_px_maxs
 
-    def encode(self, x, crop_centers):
+    def encode(self, x):
         full_img = x
         ########################
         # BEGIN Cropping
         ###
         # compute the patches positions
-        centers, min_px, max_px = self.compute_patches(crop_centers)
+        min_px, max_px = self._last_px_mins, self._last_px_maxs
         # make only one vector out of the needed ones
         ranges = min_px.cat(max_px)
         # Get all the cropped layers
@@ -144,8 +143,11 @@ class MultiResCAEEncoder(nn.Module):
             crops.append(crop)
             prev_crop = crop
 
-        # Reverse the list to compute from the fovea to the other dimensions -> I'm not sure if the computation is done in place or not, so starting from the more detailed one
+        # Reverse the list to compute from the fovea to the other dimensions
+        #  -> I'm not sure if the computation is done in place or not, so starting from the more detailed one
         crops = crops[::-1]
+        ####
+        # BEGIN Encoding
         # encoded outputs from each resolution layer
         codes = []
         for i in range(len(crops)):
@@ -162,19 +164,23 @@ class MultiResCAEEncoder(nn.Module):
             codes.append(cds)
         return codes
 
-    def decode(self, codes, crop_centers):
+    def decode(self, codes):
         # first decode each of the centers
         decoded_vec = []
+        dec_lin_dim = []
         for i in range(len(codes)):
             cl = codes[i]
             vec = []
             for j in range(len(cl)):
                 c = cl[j]
                 dec = self.decoders[i][j]
-                decoded_vec.append(dec(c))
+                vec.append(dec(c))
+            decoded_vec.append(vec)
+            # decoded vector dimensions for a layer should all be the same, so taking the first one in this layer
+            dec_lin_dim.append(vec[0].conv_dim)
         # first merge each resolution independently:
-        # I will do a simple mean merging instead of doing some learning, this might be good enough
         # TODO use my  TensorMergingLayer module (also to be developed before being able to use it)
+        # I will do a simple mean merging instead of doing some learning, this might be good enough
         declen = len(decoded_vec)
         reslayers = []
         for i in range(declen):
@@ -189,13 +195,28 @@ class MultiResCAEEncoder(nn.Module):
                 pass
             reslayers.append(rl)
 
-        # and now recreate the image using also the location information
-        # this is the difficult part
-        # I might want here to work on the Overcomplete Partitioned Dendritic Layers before going on ... seems hard here
-        # using a fully connected layer might be a bit slow to train and will introduce too much noise as there are
-        # non desired inputs
-        # TODO ... first need to create and test the Overcomplete Partitioned Dendritic Layers
-        img = None
+        # upsample all the layers
+        upsampled = []
+        for i in range(len(reslayers)):
+            t = reslayers[i]
+            ups = self.upsamplers[i]
+            usi = ups(t)
+            upsampled.append(usi)
+
+        # for the moment just replace each higher definition patch where it belongs
+        # TODO use my  TensorMergingLayer module instead (also to be developed before being able to use it)
+        min_px, max_px = self._last_px_mins, self._last_px_maxs
+        # reverse as the positions are defined from bigger to smaller patches but reconstruction is reversed
+        ranges = min_px.cat(max_px)[::-1]
+        for i in range(len(upsampled)-1):
+            #  pr == pixel_ranges = [x0,y0,x1,y1]
+            pr = ranges[i]
+            smaller = upsampled[i]
+            bigger = upsampled[i+1]
+            bigger[pr[0]:pr[2], pr[1]:pr[3]] = smaller  # reassign the pixels to the highest definition
+
+        # The biggest image is the one that we reconstructed
+        img = upsampled[-1]
 
         return img
 
@@ -206,12 +227,14 @@ class MultiResCAEEncoder(nn.Module):
         centers go from the larger one to the lower one
         """
         out = x
-        codes = self.encode(x, crop_centers)
+        _ = self.compute_patches(crop_centers)
+
+        codes = self.encode(out)
         # TODO maybe ...
         # Create a simple embedding (maybe later work with a multinomial probability distribution)
         # The embeddings contain also the crop_centers, the scaling (downsample),
         #     the zoom (upsample) and the relative crop sizes to the complete image
-        out = self.decode(codes, crop_centers)
+        out = self.decode(codes)
         ###
         # I'm in doubt here if I should do the reverse process of the encoding for each encoder and then use the outputs to generate the input,
         # or I should create a single composite decoder that handles the entire reconstruction

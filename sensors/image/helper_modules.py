@@ -6,16 +6,7 @@ import torchvision
 from torchvision import transforms
 
 
-class DownsamplerLayer(nn.Module):
-    """
-    """
-    def __init__(self, width, height):
-        super().__init__()
-        self.resizer = transforms.Compose([
-                        transforms.ToPILImage(),  #is this correct? will this be slow??
-                        transforms.Resize(width, height),
-                        transforms.ToTensor()
-                        ])
-    def forward(self, x):
-        return self.resizer(x)
-        #return self.conv(x)
+
+# If need Bilinear interpolation, take it from from here:
+# https://gist.github.com/peteflorence/a1da2c759ca1ac2b74af9a83f69ce20e
+
