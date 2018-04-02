@@ -4,8 +4,7 @@ from torch.nn import functional as F
 
 import os
 
-
-from helpers import *
+from .helpers import *
 
 ###
 # Mostly Taken from examples here:

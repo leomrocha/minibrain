@@ -10,9 +10,9 @@ from torch import nn, optim
 # from torchvision import datasets
 # from torchvision.utils import save_image
 
-from cae import *
-from helpers import *
-from helper_modules import *
+from .cae import *
+from .helpers import *
+from .helper_modules import *
 
 
 # NOTE: all patches will be square
@@ -24,9 +24,9 @@ class MultiResCAEEncoder(nn.Module):
     This module intends to group several autoencoders that accompany different resolutions
     The goal of this module is be able to train and maintain all the filters in one place
     This model can be saved and loaded as a single element
-    This model outputs tensor of dimension 1x1xN that is the concatenation of the output of all the encoders ensemble
-    the FULL IMAGE is not considered in this
+    the FULL IMAGE is not considered in this, only the foveated multi resolution
     """
+    # TODO This model outputs tensor of dimension 1x1xN that is the concatenation of the output of all the encoders ensemble
 
     def __init__(self, in_img_shape, channels=3, res_levels=3, conv_layer_feat=[32, 16, 16],
                  res_px=[[12, 12], [16, 16], [20, 20]], crop_sizes=[[12, 12], [32, 32], [64, 64]],
@@ -174,6 +174,7 @@ class MultiResCAEEncoder(nn.Module):
                 decoded_vec.append(dec(c))
         # first merge each resolution independently:
         # I will do a simple mean merging instead of doing some learning, this might be good enough
+        # TODO use my  TensorMergingLayer module (also to be developed before being able to use it)
         declen = len(decoded_vec)
         reslayers = []
         for i in range(declen):
@@ -190,10 +191,11 @@ class MultiResCAEEncoder(nn.Module):
 
         # and now recreate the image using also the location information
         # this is the difficult part
-        # I might want here to work on the Overcomplete Partitioned Connected Layers before going on ... this seems hard here
+        # I might want here to work on the Overcomplete Partitioned Dendritic Layers before going on ... seems hard here
         # using a fully connected layer might be a bit slow to train and will introduce too much noise as there are
         # non desired inputs
         # TODO ... first need to create and test the Overcomplete Partitioned Dendritic Layers
+        img = None
 
         return img
 
@@ -203,6 +205,7 @@ class MultiResCAEEncoder(nn.Module):
         crop_centers, a list of centers c where  c in [0:1],
         centers go from the larger one to the lower one
         """
+        out = x
         codes = self.encode(x, crop_centers)
         # TODO maybe ...
         # Create a simple embedding (maybe later work with a multinomial probability distribution)
@@ -220,3 +223,68 @@ class MultiResCAEEncoder(nn.Module):
         raise NotImplementedError()
         pass
 
+
+# NOTE: all patches will be square
+# full size image will be resized to a square image, beacause it's easy
+
+class MultiFullCAE(nn.Module):
+    """
+    Group of Convolutional Autoencoders for a single input resolution
+    The image is treated as monochrome
+
+    """
+
+    def __init__(self, channels=1, ds_full_image_cae=True, full_image_size=32, full_img_conv_feat=16,
+                 full_conv_sizes=(3, 5, 7)):
+        super(CAE, self).__init__()
+        self.channels = channels  # number of channels in the input image
+        # this will be the parameter given to create the resolution encoder
+        self.levels = prime_factors[full_image_size].count(2)
+        self.conv_sizes = full_conv_sizes  # filter sizes to create for each resolution
+        self.ds_full_img_cae = ds_full_image_cae  # indicate if create or not the full image downsample conv encoder
+        self.full_image_size = full_image_size  # image to which to redimension the entire input image (if previous is True)
+        self.full_img_conv_feat = full_img_conv_feat  # number of convolutional filters to use per layer
+        self.full_conv_sizes = full_conv_sizes  # sizes of the convolutional filters, one encoder per size
+
+        self.full_encoders = nn.ModuleList()
+        self.full_decoders = nn.ModuleList()
+        # separated as functions to be able to later LOAD the encoders instead of creating them each time
+        self._create_full_encoders()
+        self._create_full_decoders()
+
+    def _create_full_encoders(self, channels=1):
+        for cs in self.full_conv_sizes:
+            width = height = self.full_image_size
+            channels = self.channels  # although I'm thinking in making this monochrome instead to save processing time
+            enc = CAEEncoder(width, height, channels, self.levels, cs, self.full_img_conv_feat)
+            self.full_encoders.append(enc)
+
+    def _create_full_decoders(self, channels=1):
+        for i in range(self.full_conv_sizes):
+            cs = self.full_conv_sizes[i]
+            width = height = self.full_image_size
+            channels = self.channels  # although I'm thinking in making this monochrome instead to save processing time
+            enc = CAEDecoder(self.full_encoders[i], width, height, channels, self.levels, cs, self.full_img_conv_feat)
+            self.full_decoders.append(enc)
+
+    def forward(self, x):
+        out = x
+        # input = downsampled full image converted to monochrome
+        ########################
+        # BEGIN Encoding
+        ###
+
+        # for the moment this full image is computed each time, but in the future this will be
+        #     done ONLY if the input image changes
+        #     maybe what we want to work with is only the difference from previous frames -> future when working in dynamic environments
+        # encoder full downsampled image
+        #
+        # join  all encodings into a single vector
+        # END Encoding
+        ########################
+        # BEGIN decoding
+        return out
+
+    def save_models(self, name, path):
+        raise NotImplementedError()
+        pass

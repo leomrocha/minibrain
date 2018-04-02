@@ -5,41 +5,8 @@ import torchvision
 from torchvision import transforms, utils
 from torchvision import datasets
 from torchvision.utils import save_image
-from cae import *
-from helpers import *
-
-
-#definitions of the operations for the full image autoencoder
-normalize = transforms.Normalize(
-    mean=[0.485, 0.456, 0.406], # from example here https://github.com/pytorch/examples/blob/409a7262dcfa7906a92aeac25ee7d413baa88b67/imagenet/main.py#L94-L95
-    std=[0.229, 0.224, 0.225]
-    #   mean=[0.5, 0.5, 0.5], # from example here http://pytorch.org/tutorials/beginner/blitz/cifar10_tutorial.html
-    #    std=[0.5, 0.5, 0.5]
-)
-
-#the whole image gets resized to a small image that can be quickly analyzed to get important points
-def fullimage_preprocess(w=48,h=48):
-    return transforms.Compose([
-        transforms.Resize((w,h)), #this should be used ONLY if the image is bigger than this size
-        transforms.ToTensor(),
-        normalize
-    ])
-
-#the full resolution fovea just is a small 12x12 patch
-full_resolution_crop = transforms.Compose([
-    transforms.RandomCrop(12),
-    transforms.ToTensor(),
-    normalize
-])
-
-def downsampleTensor(crop_size, final_size=16):
-    sample = transforms.Compose([
-        transforms.RandomCrop(crop_size),
-        transforms.Resize(final_size),
-        transforms.ToTensor(),
-        normalize
-    ])
-    return sample
+from .cae import *
+from .helpers import *
 
 
 def get_loaders(batch_size, transformation, dataset = datasets.CIFAR100, cuda=True):
@@ -67,6 +34,7 @@ def to_img(x):
     x = x.clamp(0, 1)
     x = x.view(x.size(0), 3, 12, 12)
     return x
+
 
 def main():
 
@@ -106,9 +74,8 @@ def main():
             save_image(in_pic, './cae_results/2x2-in_image_{}.png'.format(epoch))
         if loss.data[0] < 0.15: #arbitrary number because I saw that it works well enough
             break
-
-
     model.save_model("2x2-layer", "CAE")
+
 
 if __name__ == "__main__":
     main()
