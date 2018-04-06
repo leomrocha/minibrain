@@ -59,6 +59,13 @@ normalize = transforms.Normalize(
 
 
 # the whole image gets resized to a small image that can be quickly analyzed to get important points
+def monochrome_preprocess(w=48, h=48):
+    return transforms.Compose([
+        transforms.Grayscale(),
+        transforms.Resize((w, h)),  # this should be used ONLY if the image is bigger than this size
+        transforms.ToTensor(),
+        normalize
+    ])
 
 
 def fullimage_preprocess(w=48, h=48):
@@ -89,8 +96,7 @@ def downsample_tensor(crop_size, final_size=16):
     return sample
 
 
-def get_loaders(batch_size, transformation, dataset = datasets.CIFAR100, cuda=True):
-
+def get_loaders(batch_size, transformation, dataset=datasets.CIFAR100, cuda=True):
     kwargs = {'num_workers': 1, 'pin_memory': True} if cuda else {}
     train_loader = torch.utils.data.DataLoader(
         dataset('../data', train=True, download=True,

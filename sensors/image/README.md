@@ -18,7 +18,7 @@ I Will be working on different types of Autoencoders:
 - Each resolution level can be moved in position, but higher resolution will always be inside the next lower resolution capture size
 - Zooming is allowed (means, changing -downsampling/upsampling- the resolution for the highest resolution part)
 - Curriculum learning will take place, from simpler to more complex tasks
-- Lower levels of the hierarchy 
+- Lower levels of the hierarchy will be trained and created first. Hierarchies will be created on due time
 
 ### Steps:
 
@@ -34,6 +34,6 @@ I Will be working on different types of Autoencoders:
 
 All experiments will be first developed in notebooks and later ported to the necessary libraries.
 
-Development will be done with pytorch, because it is one of the easiest frameworks avaiable.
+Development will be done with pytorch, because it is one of the easiest frameworks to learn and debug available with enough expressive power.
 
 

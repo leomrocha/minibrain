@@ -226,7 +226,7 @@ def train_all(models, epochs=10):
         print("training model "+ n)
         m.cuda()
         optimizer = optim.Adam(m.parameters(), lr=1e-3)
-        train_save_model(n,m, optimizer, loss_function, t, m.width, m.height, m.channels, dataset = datasets.CocoDetection, epochs=epochs)
+        train_save_model(n, m, optimizer, loss_function, t, m.width, m.height, m.channels, dataset=datasets.CocoDetection, epochs=epochs)
 
         
 if __name__ == "__main__":

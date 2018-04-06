@@ -118,10 +118,10 @@ class MultiResCAE(nn.Module):
 
         The returned elements contain the patches from the bigger to the smaller one
         """
-        # formula follows this -> see how to implement it in vector operations to make it faster, or precompute it for a fixed image size
+        # formula follows the algorithm (but implemented in vector operations) :
         # x_min = 0 + patch_width/2
         # x_max = full_img.width - patch_width/2
-        # x_pos = c * (x_max - x_min) == full_img.width - patch_width
+        # x_pos = x_center * (x_max - x_min) == full_img.width - patch_width
         # patch = img[x_pos - patch_width/2 : x_pos + patch_width/2] (warning on patch size)
 
         self._last_centers = crop_centers * self._pdr  # element wise multiplication
@@ -263,55 +263,70 @@ class MultiFullCAE(nn.Module):
 
     """
 
-    def __init__(self, channels=1, ds_full_image_cae=True, full_image_size=32, full_img_conv_feat=16,
-                 full_conv_sizes=(3, 5, 7)):
-        super(CAE, self).__init__()
+    def __init__(self, in_img_shape, channels=1, full_image_resize=(32, 32),
+                 full_img_conv_feat=16, full_conv_sizes=[3, 5, 7, 11]):
+        super(MultiFullCAE, self).__init__()
         self.channels = channels  # number of channels in the input image
         # this will be the parameter given to create the resolution encoder
-        self.levels = prime_factors[full_image_size].count(2)
+        self.width = in_img_shape[0]
+        self.height = in_img_shape[1]
+        self.channels = channels
+        self.levels = prime_factors(min(full_image_resize)).count(2)
         self.conv_sizes = full_conv_sizes  # filter sizes to create for each resolution
-        self.ds_full_img_cae = ds_full_image_cae  # indicate if create or not the full image downsample conv encoder
-        self.full_image_size = full_image_size  # image to which to redimension the entire input image (if previous is True)
+        self.full_image_resize = full_image_resize  # image to which to redimension the entire input image (if previous is True)
         self.full_img_conv_feat = full_img_conv_feat  # number of convolutional filters to use per layer
         self.full_conv_sizes = full_conv_sizes  # sizes of the convolutional filters, one encoder per size
 
-        self.full_encoders = nn.ModuleList()
-        self.full_decoders = nn.ModuleList()
+        self.encoders = nn.ModuleList()
+        self.decoders = nn.ModuleList()
         # separated as functions to be able to later LOAD the encoders instead of creating them each time
-        self._create_full_encoders()
-        self._create_full_decoders()
+        self.downsampler = nn.AdaptiveAvgPool2d(full_image_resize)
+        self.upsampler = nn.AdaptiveMaxPool2d(in_img_shape)
+        self._create_encoders()
+        self._create_decoders()
 
-    def _create_full_encoders(self, channels=1):
+    def _create_encoders(self):
         for cs in self.full_conv_sizes:
-            width = height = self.full_image_size
-            channels = self.channels  # although I'm thinking in making this monochrome instead to save processing time
-            enc = CAEEncoder(width, height, channels, self.levels, cs, self.full_img_conv_feat)
-            self.full_encoders.append(enc)
+            enc = CAEEncoder(self.width, self.height, self.channels, self.levels, cs, self.full_img_conv_feat)
+            self.encoders.append(enc)
 
-    def _create_full_decoders(self, channels=1):
-        for i in range(self.full_conv_sizes):
+    def _create_decoders(self):
+        for i in range(len(self.full_conv_sizes)):
             cs = self.full_conv_sizes[i]
-            width = height = self.full_image_size
-            channels = self.channels  # although I'm thinking in making this monochrome instead to save processing time
-            enc = CAEDecoder(self.full_encoders[i], width, height, channels, self.levels, cs, self.full_img_conv_feat)
-            self.full_decoders.append(enc)
+            dec = CAEDecoder(self.encoders[i], self.width, self.height, self.channels, self.levels, cs, self.full_img_conv_feat)
+            self.decoders.append(dec)
+
+    def encode(self, x):
+        # BEGIN Encoding
+        # encoded outputs from each resolution layer
+        # img = self.monochrome(x)
+        img = self.downsampler(x)
+        # apply all the encoders in the corresponding i'th layer
+        codes = []
+        for enc in self.encoders:
+            c = enc(img)
+            codes.append(c)
+        return codes
+
+    def decode(self, codes):
+        # first decode each of the centers
+        decoded_vec = []
+        for i in range(len(codes)):
+            dec = self.decoders[i]
+            decoded_vec.append(dec(codes[i]))
+        # TODO use my  TensorMergingLayer module (also to be developed before being able to use it)
+        # I will do a simple mean merging instead of doing some learning, this might be good enough
+        declen = len(decoded_vec)
+        img = decoded_vec[0]
+        for dr in decoded_vec[1:]:
+            img = img + dr
+        img = img / declen
+        img = self.upsampler(img)
+        return img
 
     def forward(self, x):
-        out = x
-        # input = downsampled full image converted to monochrome
-        ########################
-        # BEGIN Encoding
-        ###
-
-        # for the moment this full image is computed each time, but in the future this will be
-        #     done ONLY if the input image changes
-        #     maybe what we want to work with is only the difference from previous frames -> future when working in dynamic environments
-        # encoder full downsampled image
-        #
-        # join  all encodings into a single vector
-        # END Encoding
-        ########################
-        # BEGIN decoding
+        out = self.encode(x)
+        out = self.decode(out)
         return out
 
     def save_models(self, name, path):
