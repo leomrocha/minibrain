@@ -43,7 +43,7 @@ class MultiResCAE(nn.Module):
         ##
         # compute the maximum number of levels that this resolution can handle,
         # this will be the parameter given to create the resolution encoder
-        self.max_levels = [prime_factors([min(i)].count(2)) for i in res_px]
+        self.max_levels = [prime_factors(min(i)).count(2) for i in res_px]
         ##
         # Pre-computing cropping matrices
         self.crop_sizes = torch.IntTensor(crop_sizes)  # Ps - Patches sizes -  size of the patch to crop
@@ -84,7 +84,8 @@ class MultiResCAE(nn.Module):
             w, h = self.res_px[i]  # resolution of the image for the encoder
 
             for j in range(len(l_conv_sizes)):
-                enc = CAEEncoder(w, h, c, levels, j, conv_features)
+                ks = l_conv_sizes[j]
+                enc = CAEEncoder(w, h, c, levels, ks, conv_features)
                 res_encoders.append(enc)
             self.encoders.append(res_encoders)
 
@@ -100,7 +101,8 @@ class MultiResCAE(nn.Module):
             w, h = self.res_px[i]  # resolution of the image for the encoder
 
             for j in range(len(l_conv_sizes)):
-                enc = CAEDecoder(self.encoders[i][j], w, h, c, levels, j, conv_features)
+                ks = l_conv_sizes[j]
+                enc = CAEDecoder(self.encoders[i][j], w, h, c, levels, ks, conv_features)
                 res_decoders.append(enc)
             self.decoders.append(res_decoders)
 

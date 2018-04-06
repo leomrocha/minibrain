@@ -25,6 +25,7 @@ class CAEEncoder(nn.Module):
 
     def __init__(self, width, height, channels=3, levels=2, kernel_size=3, first_feature_count=16):
         super(CAEEncoder, self).__init__()
+        # print("CAE init ", width, height, channels, levels, kernel_size, first_feature_count)
         self.width = width
         self.height = height
         self.channels = channels
