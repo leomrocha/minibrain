@@ -70,6 +70,7 @@ class MultiResCAE(nn.Module):
         self.upsamplers = [nn.AdaptiveMaxPool2d((w, h)) for w, h in crop_sizes]
         self.encoders = nn.ModuleList()
         self.decoders = nn.ModuleList()
+        self.merging_layers = nn.ModuleList()
 
         # separated as functions to be able to later LOAD the encoders instead of creating them each time
         self._create_encoders()
@@ -108,6 +109,9 @@ class MultiResCAE(nn.Module):
                 enc = CAEDecoder(self.encoders[i][j], w, h, c, levels, ks, conv_features)
                 res_decoders.append(enc)
             self.decoders.append(res_decoders)
+            # now create the merging layer for each resolution
+            ml = SimpleMergingLayer(len(l_conv_sizes))
+            self.merging_layers.append(ml)
 
     def compute_patches(self, crop_centers):
         """
@@ -198,34 +202,34 @@ class MultiResCAE(nn.Module):
             # decoded vector dimensions for a layer should all be the same, so taking the first one in this layer
             dec_lin_dim.append(self.decoders[i][0].conv_dim)
         # first merge each resolution independently:
-        # TODO use my  TensorMergingLayer module (also to be developed before being able to use it)
-        # I will do a simple mean merging instead of doing some learning, this might be good enough
+        # DEPRECATED simple mean merging instead of doing some learning, this might be good enough
         declen = len(decoded_vec)
         reslayers = []
         for i in range(declen):
-            declayer = decoded_vec[i]
-            rl = declayer[0]
-            try:
-                for l in declayer[1:]:
-                    rl = rl + l
-                rl = rl / len(declayer)
-            except:
-                # nothing happened, there was only one image in this layer
-                pass
+            # declayer = decoded_vec[i]
+            # rl = declayer[0]
+            # try:
+            #     for l in declayer[1:]:
+            #         rl = rl + l
+            #     rl = rl / len(declayer)
+            # except:
+            #     # nothing happened, there was only one image in this layer
+            #     pass
+            # use the SimpleMergingLayer instead
+            ml = self.merging_layers[i]
+            rl = ml(decoded_vec[i])
             reslayers.append(rl)
 
         # upsample all the layers
         upsampled = []
         for i in range(len(reslayers)):
-            t = reslayers[i]
             ups = self.upsamplers[i]
-            usi = ups(t)
-            upsampled.append(usi)
+            upsampled.append(ups(reslayers[i]))
 
         min_px, max_px = self._last_px_mins, self._last_px_maxs
         ranges = torch.cat([min_px, max_px], dim=1)
         # for the moment just replace each higher definition patch where it belongs
-        # TODO use my  TensorMergingLayer module instead (also to be developed before being able to use it)
+        # TODO use my  SimpleMergingLayer module instead
         # print("ranges = ", ranges)
         for i in range(len(upsampled)-1):
             #  pr == pixel_ranges = [x0,y0,x1,y1]
@@ -302,6 +306,7 @@ class MultiFullCAE(nn.Module):
         # separated as functions to be able to later LOAD the encoders instead of creating them each time
         self.downsampler = nn.AdaptiveAvgPool2d(full_image_resize)
         self.upsampler = nn.AdaptiveMaxPool2d(in_img_shape)
+        self.merging_layer = SimpleMergingLayer(len(full_conv_sizes))
         self._create_encoders()
         self._create_decoders()
 
@@ -335,12 +340,13 @@ class MultiFullCAE(nn.Module):
             dec = self.decoders[i]
             decoded_vec.append(dec(codes[i]))
         # TODO use my  TensorMergingLayer module (also to be developed before being able to use it)
-        # I will do a simple mean merging instead of doing some learning, this might be good enough
-        declen = len(decoded_vec)
-        img = decoded_vec[0]
-        for dr in decoded_vec[1:]:
-            img = img + dr
-        img = img / declen
+        # # I will do a simple mean merging instead of doing some learning, this might be good enough
+        # declen = len(decoded_vec)
+        # img = decoded_vec[0]
+        # for dr in decoded_vec[1:]:
+        #     img = img + dr
+        # img = img / declen
+        img = self.merging_layer(decoded_vec)
         img = self.upsampler(img)
         return img
 
