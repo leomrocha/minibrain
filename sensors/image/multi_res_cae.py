@@ -224,27 +224,29 @@ class MultiResCAE(nn.Module):
 
         min_px, max_px = self._last_px_mins, self._last_px_maxs
         ranges = torch.cat([min_px, max_px], dim=1)
-        # TODO reverse as the positions are defined from bigger to smaller patches but reconstruction is reversed
-        # ranges = ranges[::-1]
         # for the moment just replace each higher definition patch where it belongs
         # TODO use my  TensorMergingLayer module instead (also to be developed before being able to use it)
         # print("ranges = ", ranges)
         for i in range(len(upsampled)-1):
             #  pr == pixel_ranges = [x0,y0,x1,y1]
-            pr = ranges[i+1]
             bigger = upsampled[i]
             smaller = upsampled[i+1]
-            # bpatch = bigger[:, :, pr[0]:pr[2], pr[1]:pr[3]]
+            pr = ranges[i+1]
+            bpatch = bigger[:, :, pr[0]:pr[2], pr[1]:pr[3]]
             # print("merging ", i, pr, smaller.shape, bigger.shape, bpatch.shape)
             # print("merging ", i, smaller.shape, bigger.shape, bpatch.shape)
+            # bigger[pr[0]:pr[2], pr[1]:pr[3]] = smaller  # reassign the pixels to the highest definition
             bigger[:, :, pr[0]:pr[2], pr[1]:pr[3]] = smaller  # reassign the pixels to the highest definition
+            # print(torch.equal(smaller, bigger[:, :, pr[0]:pr[2], pr[1]:pr[3]]))
+            # assert(torch.equal(smaller, bigger[:, :, pr[0]:pr[2], pr[1]:pr[3]]))
 
         # The biggest image is the one that we reconstructed
         img = upsampled[0]
 
         return img
 
-    def forward(self, x, crop_centers=torch.FloatTensor([[0.5, 0.5], [0.4, 0.5], [0.3, 0.5]])):
+    def forward(self, x, crop_centers=torch.FloatTensor([[0.5, 0.5], [0.5, 0.5], [0.5, 0.5]])):
+    # def forward(self, x, crop_centers=torch.FloatTensor([[0.5, 0.5], [0.1, 0.5], [0.1, 0.5]])):  # looking to the left to test
         """
         x the input image
         crop_centers, a list of centers c where  c in [0:1],
