@@ -26,17 +26,19 @@ class MultiResCAE(nn.Module):
     """
     # TODO This model outputs tensor of dimension 1x1xN that is the concatenation of the output of all the encoders ensemble
 
-    def __init__(self, in_img_shape, channels=3, res_levels=3, conv_layer_feat=[32, 16, 16],
-                 res_px=[[12, 12], [16, 16], [20, 20]], crop_sizes=[[12, 12], [32, 32], [64, 64]],
+    def __init__(self, in_img_shape, channels=3, conv_layer_feat=[16, 16, 32],
+                 res_px=[[20, 20], [16, 16], [12, 12]], crop_sizes=[[64, 64], [32, 32],  [12, 12]],
                  # conv_sizes = [(3,5,7), (3,5,7,11), (3,5,7,11)]  # this is too much I think
-                 conv_sizes=[[3, 5, 7], [3, 5], [3, 5]]
+                 conv_sizes=[[3, 5], [3, 5], [3, 5, 7]]
                  ):
         """
         @param in_imag_shape : [width, height]  # the input image shape, to be able to pre-compute the transform matrices
         """
         super(MultiResCAE, self).__init__()
         self.channels = channels  # number of channels in the input image
-        self.res_levels = res_levels  # number of resolution levels (NOT including the full image)
+        # TODO refactor, this shapes and numbers should be detected and checked here
+        assert (len(res_px) == len(crop_sizes))
+        self.res_levels = len(res_px)  # number of resolution levels (NOT including the full image)
         self.conv_layer_feat = conv_layer_feat  # number of convolutional filters per CAE in the first level
         self.res_px = res_px  # downsampled resolution in pixels for each resolution
         self.conv_sizes = conv_sizes  # conv filter sizes per layer, one encoder per size per layer
@@ -49,12 +51,13 @@ class MultiResCAE(nn.Module):
         self.crop_sizes = torch.IntTensor(crop_sizes)  # Ps - Patches sizes -  size of the patch to crop
         # Ps/2 - Patches half sizes -  half size of the patch to crop, to compute positions
         self.half_crop_sizes = torch.IntTensor(np.array(crop_sizes) // 2)
-        cvs = crop_sizes[1:]  # take out the smaller size, as is the reference to the smaller patch
-        cvs.append(in_img_shape)
-        cvs = cvs[::-1]
+        cvs = crop_sizes[:-1]  # take out the smaller size, as is the reference to the smaller patch
+        cvs = [in_img_shape] + cvs
         self.ref_patch = torch.IntTensor(cvs)  # RP - Reference Patches
         # pre-compute Patch Dynamic Range (pixel wise)
         self._pdr = self.ref_patch - self.crop_sizes
+
+        # print(self.crop_sizes, self.half_crop_sizes, self.ref_patch, self._pdr)
         # saves the last patch centers
         self._last_centers = None  # make a variable placeholder here
         # saves the last patch ranges
@@ -113,20 +116,23 @@ class MultiResCAE(nn.Module):
          - The inner patches positions are relative to the outer ones, in the corresponding hierarchy
          - The patches can not go off the container image
 
-        @param crop_centers MUST be a HalfTensor or FloatTensor
+        @param crop_centers MUST be a FloatTensor or FloatTensor
         @returns : (centers, min_points, max_points) two IntTensors with the center and ranges that each patch occupies
 
         The returned elements contain the patches from the bigger to the smaller one
         """
-        # formula follows the algorithm (but implemented in vector operations) :
+        # formula follows the algorithm (but implemented in vector operations and a couple of optimizations) :
         # x_min = 0 + patch_width/2
         # x_max = full_img.width - patch_width/2
-        # x_pos = x_center * (x_max - x_min) == full_img.width - patch_width
+        # x_pos = x_center * (x_max - x_min) + (patch_width/2)
         # patch = img[x_pos - patch_width/2 : x_pos + patch_width/2] (warning on patch size)
 
-        self._last_centers = crop_centers * self._pdr  # element wise multiplication
-        self._last_px_mins = self._last_centers - self.half_crop_sizes
-        self._last_px_maxs = self._last_centers + self.half_crop_sizes
+        self._last_centers = crop_centers * self._pdr.float()  # + self.half_crop_sizes # element wise multiplication
+        self._last_px_mins = self._last_centers.int()  # - self.half_crop_sizes
+        self._last_px_maxs = self._last_centers.int() + self.crop_sizes  # + self.half_crop_sizes
+        # print(self._last_centers)
+        # print(self._last_px_mins)
+        # print(self._last_px_maxs)
 
         return self._last_centers, self._last_px_mins, self._last_px_maxs
 
@@ -138,29 +144,36 @@ class MultiResCAE(nn.Module):
         # compute the patches positions
         min_px, max_px = self._last_px_mins, self._last_px_maxs
         # make only one vector out of the needed ones
-        ranges = min_px.cat(max_px)
+        ranges = torch.cat([min_px, max_px], dim=1)
         # Get all the cropped layers
         crops = []
         # TODO find out how to do this without passing from GPU to CPU and vice versa
         prev_crop = full_img
+        # print(ranges)
+        # cropping from biggest patch to smaller
         for pr in ranges:
+            # print("prev_crop", prev_crop.shape)
+            # print("pr in range", pr)
+            # print(pr[0], pr[2], pr[1], pr[3])
             #  pr == pixel_ranges = [x0,y0,x1,y1]
-            crop = prev_crop[pr[0]:pr[2], pr[1]:pr[3]]  # crop the input
+            crop = prev_crop[:, :, pr[0]:pr[2], pr[1]:pr[3]]  # crop the input
+            # print(crop.shape)
             crops.append(crop)
             prev_crop = crop
 
         # Reverse the list to compute from the fovea to the other dimensions
         #  -> I'm not sure if the computation is done in place or not, so starting from the more detailed one
-        crops = crops[::-1]
+        # crops = crops[::-1]
         ####
         # BEGIN Encoding
         # encoded outputs from each resolution layer
         codes = []
         for i in range(len(crops)):
-            layer = crops(i)
+            layer = crops[i]
+            # print("encoding crop size = ", layer.shape)
             encs = self.encoders[i]  # encoders for the current resolution
             # downsample it as many times as needed (basically the )
-            downsampler = self.downsamplers[i]
+            downsampler = self.downsamplers[i]  # crops are reversed => downsamplers reversed too
             layer = downsampler(layer)
             # apply all the encoders in the corresponding i'th layer
             cds = []  # codes of the corresponding layer (at the same resolution)
@@ -183,7 +196,7 @@ class MultiResCAE(nn.Module):
                 vec.append(dec(c))
             decoded_vec.append(vec)
             # decoded vector dimensions for a layer should all be the same, so taking the first one in this layer
-            dec_lin_dim.append(vec[0].conv_dim)
+            dec_lin_dim.append(self.decoders[i][0].conv_dim)
         # first merge each resolution independently:
         # TODO use my  TensorMergingLayer module (also to be developed before being able to use it)
         # I will do a simple mean merging instead of doing some learning, this might be good enough
@@ -209,24 +222,29 @@ class MultiResCAE(nn.Module):
             usi = ups(t)
             upsampled.append(usi)
 
+        min_px, max_px = self._last_px_mins, self._last_px_maxs
+        ranges = torch.cat([min_px, max_px], dim=1)
+        # TODO reverse as the positions are defined from bigger to smaller patches but reconstruction is reversed
+        # ranges = ranges[::-1]
         # for the moment just replace each higher definition patch where it belongs
         # TODO use my  TensorMergingLayer module instead (also to be developed before being able to use it)
-        min_px, max_px = self._last_px_mins, self._last_px_maxs
-        # reverse as the positions are defined from bigger to smaller patches but reconstruction is reversed
-        ranges = min_px.cat(max_px)[::-1]
+        # print("ranges = ", ranges)
         for i in range(len(upsampled)-1):
             #  pr == pixel_ranges = [x0,y0,x1,y1]
-            pr = ranges[i]
-            smaller = upsampled[i]
-            bigger = upsampled[i+1]
-            bigger[pr[0]:pr[2], pr[1]:pr[3]] = smaller  # reassign the pixels to the highest definition
+            pr = ranges[i+1]
+            bigger = upsampled[i]
+            smaller = upsampled[i+1]
+            # bpatch = bigger[:, :, pr[0]:pr[2], pr[1]:pr[3]]
+            # print("merging ", i, pr, smaller.shape, bigger.shape, bpatch.shape)
+            # print("merging ", i, smaller.shape, bigger.shape, bpatch.shape)
+            bigger[:, :, pr[0]:pr[2], pr[1]:pr[3]] = smaller  # reassign the pixels to the highest definition
 
         # The biggest image is the one that we reconstructed
-        img = upsampled[-1]
+        img = upsampled[0]
 
         return img
 
-    def forward(self, x, crop_centers=torch.HalfTensor([[0.5, 0.5], [0.5, 0.5], [0.5, 0.5]])):
+    def forward(self, x, crop_centers=torch.FloatTensor([[0.5, 0.5], [0.4, 0.5], [0.3, 0.5]])):
         """
         x the input image
         crop_centers, a list of centers c where  c in [0:1],
