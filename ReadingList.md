@@ -328,6 +328,20 @@ Interesting paper taking a more closer approach the way humans learn from exampl
 Makes easier to iterate and improve learned tasks using a teacher-student approach where the teacher does NOT show every detail (so is not imitation) of a recorded experience.
 The main idea is to employ an auxiliary loss function which encourages the student policy to be close to the teacher policy on trajectories sampled by the student
 
+### Transforming Auto-encoders
+G. E. Hinton, A. Krizhevsky & S. D. Wang
+
+Introduces the idea of capsules in a computer vision setup that allow for better learning of a classification task, including ones with superimposed examples. Introduces more complex MNIST variations.
+
+Problems: really slow to train, needs to have all the categories know as it can not deal correctly with "everything else"
+
+
+### Dynamic Routing Between Capsules
+Sara Sabour, Nicholas Frosst, Geoffrey E Hinton
+(Submitted on 26 Oct 2017 (v1), last revised 7 Nov 2017 (this version, v2))
+
+Continuation of Transforming Auto-encoders introducing the novel concept of routing between capsules that allows it to predict what the higher layers will need making this a recursive algorithm. This concept is validated by "Towards deep learning with segregated dendrites" Guerguiev et al.
+
 
 # Papers yet to read ....
 
@@ -944,3 +958,219 @@ Rumen Dangovski, Li Jing, Marin Soljacic
 Hippocampal mediation of stimulus representation: a computational theory.
 Gluck MA1, Myers CE. 1993
 https://www.ncbi.nlm.nih.gov/pubmed/8269040
+
+
+Books:
+
+http://www.psywww.com/intropsych/index.html
+
+Artificial Intelligence: Foundations of Computational Agents,  2nd Edition
+David L. Poole and   Alan K. Mackworth
+http://artint.info/2e/html/ArtInt2e.html
+
+Bayesian Reinforcement Learning: A Survey
+
+Mohammad Ghavamzadeh, Shie Mannor, Joelle Pineau, Aviv Tamar
+(Submitted on 14 Sep 2016)
+https://arxiv.org/abs/1609.04436
+
+
+Papers:
+
+https://nickbostrom.com/
+https://nickbostrom.com/papers/aipolicy.pdf
+
+Disentangled Variational Auto-Encoder for Semi-supervised Learning
+Yang Li, Quan Pan, Suhang Wang, Haiyun Peng, Tao Yang, Erik Cambria
+(Submitted on 15 Sep 2017)
+
+Artificial Neural Networks Applied to Taxi Destination Prediction
+Alexandre de Brébisson, Étienne Simon, Alex Auvolat, Pascal Vincent, Yoshua Bengio
+(Submitted on 31 Jul 2015 (v1), last revised 21 Sep 2015 (this version, v2))
+
+Online Learning Rate Adaptation with Hypergradient Descent
+Atilim Gunes Baydin, Robert Cornish, David Martinez Rubio, Mark Schmidt, Frank Wood
+(Submitted on 14 Mar 2017 (v1), last revised 26 Feb 2018 (this version, v3))
+
+Super-Convergence: Very Fast Training of Residual Networks Using Large Learning Rates
+Leslie N. Smith, Nicholay Topin
+(Submitted on 23 Aug 2017 (v1), last revised 13 Dec 2017 (this version, v2))
+
+Scaling Memory-Augmented Neural Networks with Sparse Reads and Writes
+Jack W Rae, Jonathan J Hunt, Tim Harley, Ivo Danihelka, Andrew Senior, Greg Wayne, Alex Graves, Timothy P Lillicrap
+(Submitted on 27 Oct 2016)
+
+Learning to Learn without Gradient Descent by Gradient Descent
+Yutian Chen, Matthew W. Hoffman, Sergio Gomez Colmenarejo, Misha Denil, Timothy P. Lillicrap, Matt Botvinick, Nando de Freitas
+(Submitted on 11 Nov 2016 (v1), last revised 12 Jun 2017 (this version, v6))
+
+
+
+Solutions that are  More biologically plausible than today's,
+
+AMAZING video here: https://www.youtube.com/watch?v=YUVLgccVi54 If I implement the solution in pytorch this might be a great showcase ;)
+Fast Parametric Learning with Activation Memorization
+Jack W Rae, Chris Dyer, Peter Dayan, Timothy P Lillicrap
+(Submitted on 27 Mar 2018)
+https://arxiv.org/abs/1803.10049
+
+
+Neurons have the right shape for deep learning
+https://www.sciencedaily.com/releases/2017/12/171204091150.htm
+
+
+Random synaptic feedback weights support error backpropagation for deep learning
+Timothy P. Lillicrap
+, Daniel Cownden
+, Douglas B. Tweed
+ & Colin J. Akerman
+
+https://www.nature.com/articles/ncomms13276
+
+Psychol Res. 2008 May;72(3):321-30. Epub 2007 Apr 20.
+Solving the credit assignment problem: explicit and implicit learning of action sequences with probabilistic outcomes.
+Fu WT1, Anderson JR.
+
+https://www.ncbi.nlm.nih.gov/pubmed/17447083
+
+Sparse Bursts Optimize Information Transmission
+Richard Naud, Henning Sprekeler
+
+https://www.biorxiv.org/content/early/2017/11/28/143636
+
+Dendritic error backpropagation in deep cortical microcircuits
+João Sacramento, Rui Ponte Costa, Yoshua Bengio, Walter Senn
+(Submitted on 30 Dec 2017)
+https://arxiv.org/abs/1801.00062
+
+Continuous control with deep reinforcement learning
+Timothy P. Lillicrap, Jonathan J. Hunt, Alexander Pritzel, Nicolas Heess, Tom Erez, Yuval Tassa, David Silver, Daan Wierstra
+(Submitted on 9 Sep 2015 (v1), last revised 29 Feb 2016 (this version, v5))
+https://arxiv.org/abs/1509.02971
+
+
+Branching into brains
+Adam Shai Matthew E Larkum
+https://www.researchgate.net/publication/321539186_Branching_into_brains
+https://elifesciences.org/articles/33066
+
+The Persistence and Transience of Memory
+Blake A.Richards Paul W.Frankland
+
+
+There is also THE CODE!!!!
+http://linclab.org/code/
+Santoro A, Frankland PW, Richards BA, “Memory Transformation Enhances Reinforcement Learning in Dynamic Environments”, Journal of Neuroscience, 36 (48), 12228-12242
+http://linclab.org/santoro-a-frankland-pw-richards-ba-memory-transformation-enhances-reinforcement-learning-in-dynamic-environments-journal-of-neuroscience-36-48-12228-12242/
+
+
+Guerguiev J, Lillicrap TP, Richards BA, “Towards deep learning with segregated dendrites”
+http://linclab.org/deep-learning-with-segregated-dendrites/
+
+
+Richards BA, Frankland PW, “The Persistence and Transience of Memory”, Neuron, 94 (6), 1071-1074
+http://linclab.org/richards-ba-frankland-pw-the-persistence-and-transience-of-memory-neuron-94-6-1071-1074/
+
+
+Yiu AP, Mercaldo V, Yan C, Richards BA, Rashid AJ, Hsiang HL, Pressey J, Mahadevan V, Tran MM, Kushner SA, Woodin MA, Frankland PW and Josselyn SA, “Neurons are recruited to a memory trace based on relative neuronal excitability at the time of training”, Neuron, 83(3), 722-735
+http://linclab.org/yiu-ap-mercaldo-v-yan-c-richards-ba-rashid-aj-hsiang-hl-pressey-j-mahadevan-v-tran-mm-kushner-sa-woodin-ma-frankland-pw-and-josselyn-sa-neurons-are-recruited-to-a-memory-trace-based-on/
+
+
+van Rheede JJ, Richards BA, Akerman CJ, “Sensory-Evoked Spiking Behavior Emerges via an Experience-Dependent Plasticity Mechanism”, Neuron, 87(5), 1050-1062
+http://linclab.org/van-rheede-jj-richards-ba-akerman-cj-sensory-evoked-spiking-behavior-emerges-via-an-experience-dependent-plasticity-mechanism-neuron-875-1050-1062/
+
+
+Richards BA, Xia F, Santoro A, Husse J, Woodin MA, Josselyn SA, Frankland PW, “Patterns across multiple memories are identified over time”, Nature Neuroscience, 17(7), 981-986
+http://linclab.org/richards-ba-xia-f-santoro-a-husse-j-woodin-ma-josselyn-sa-frankland-pw-patterns-across-multiple-memories-are-identified-over-time-nature-neuroscience-177-981-986/
+
+
+Richards BA and Frankland PW, “The conjunctive trace”, Hippocampus, 23(3), 207-212
+http://linclab.org/richards-ba-and-frankland-pw-the-conjunctive-trace-hippocampus-233-207-212/
+
+
+Memory Transformation Enhances Reinforcement Learning in Dynamic Environments
+Adam Santoro, Paul W. Frankland and Blake A. Richards
+Journal of Neuroscience 30 November 2016, 36 (48) 12228-12242; DOI: https://doi.org/10.1523/JNEUROSCI.0763-16.2016
+http://www.jneurosci.org/content/36/48/12228
+
+STDP as presynaptic activity times rate of change of postsynaptic activity
+Yoshua Bengio, Thomas Mesnard, Asja Fischer, Saizheng Zhang, Yuhuai Wu
+(Submitted on 19 Sep 2015 (v1), last revised 21 Mar 2016 (this version, v2))
+
+Early Inference in Energy-Based Models Approximates Back-Propagation
+Yoshua Bengio, Asja Fischer
+(Submitted on 9 Oct 2015 (v1), last revised 7 Feb 2016 (this version, v2))
+
+STDP-Compatible Approximation of Backpropagation in an Energy-Based Model
+Yoshua Bengio , Thomas Mesnard , Asja Fischer ,Saizheng Zhang and Yuhuai Wu
+
+Dendritic error backpropagation in deep cortical microcircuits
+João Sacramento, Rui Ponte Costa, Yoshua Bengio, Walter Senn
+(Submitted on 30 Dec 2017)
+
+Equivalence of Equilibrium Propagation and Recurrent Backpropagation
+Benjamin Scellier, Yoshua Bengio
+(Submitted on 22 Nov 2017)
+
+
+Equilibrium Propagation: Bridging the Gap Between Energy-Based Models and Backpropagation
+Benjamin Scellier, Yoshua Bengio
+(Submitted on 16 Feb 2016 (v1), last revised 28 Mar 2017 (this version, v5))
+
+Feedforward Initialization for Fast Inference of Deep Generative Networks is biologically plausible
+Yoshua Bengio, Benjamin Scellier, Olexa Bilaniuk, Joao Sacramento, Walter Senn
+(Submitted on 6 Jun 2016 (v1), last revised 28 Jun 2016 (this version, v2))
+
+Difference Target Propagation
+Dong-Hyun Lee, Saizheng Zhang, Asja Fischer, Yoshua Bengio
+(Submitted on 23 Dec 2014 (v1), last revised 25 Nov 2015 (this version, v5))
+
+
+Tuning of MCMC with Langevin, Hamiltonian, and other stochastic autoregressive proposals
+Richard A. Norton, Colin Fox
+(Submitted on 3 Oct 2016)
+
+
+Deep Learning of Representations: Looking Forward
+Yoshua Bengio
+(Submitted on 2 May 2013 (v1), last revised 7 Jun 2013 (this version, v2))
+
+
+Disentangling Factors of Variation via Generative Entangling
+Guillaume Desjardins, Aaron Courville, Yoshua Bengio
+(Submitted on 19 Oct 2012)
+
+
+Neural Networks with Few Multiplications
+Zhouhan Lin, Matthieu Courbariaux, Roland Memisevic, Yoshua Bengio
+(Submitted on 11 Oct 2015 (v1), last revised 26 Feb 2016 (this version, v3))
+
+
+
+Transform Invariant Auto-encoder
+Tadashi Matsuo, Hiroya Fukuhara, Nobutaka Shimada
+(Submitted on 12 Sep 2017)
+
+
+
+Links:
+
+https://code.facebook.com/posts/1700437286678763/
+https://medium.com/onfido-tech/towards-faster-training-and-smaller-generalisation-gaps-in-deep-learning-b9767f68ec23
+http://blog.kaggle.com/
+https://tech.instacart.com/deep-learning-with-emojis-not-math-660ba1ad6cdc?gi=ed620fc2d22
+https://medium.com/the-graph/applying-deep-learning-to-related-pins-a6fee3c92f5e
+http://www.fast.ai/
+
+
+Online Trainings
+
+https://documents.epfl.ch/users/f/fl/fleuret/www/dlc/
+http://course.fast.ai/
+http://course.fast.ai/part2.html
+http://course.fast.ai/lessons/lessons.html
+http://data8.org/
+
+Videos:
+
+Word Embeddings https://www.youtube.com/watch?v=25nC0n9ERq4

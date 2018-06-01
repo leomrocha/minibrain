@@ -3,6 +3,7 @@ import torch
 #import pytorch_fft.fft.autograd as fft
 import pytorch_fft.fft as fft
 
+
 def fftshift(x):
     """
     One dimension vector fftshift
@@ -11,6 +12,7 @@ def fftshift(x):
 
 #One dimension vector ifftshift
 ifftshift = fftshift
+
 
 def complex_multiply(x,y):
     """
@@ -22,6 +24,7 @@ def complex_multiply(x,y):
     z_im = (x_re * y_im) + (x_im * y_re)
     return (z_re,z_im)
 
+
 def complex_divide(x,y):
     """
     Element wise division for complex numbers represented as pairs
@@ -32,6 +35,7 @@ def complex_divide(x,y):
     den = (y_re * y_re) - (y_im * (-1*y_im)) # is + because of the conjugate operation
     res = (num_re / den ), (num_im / den)
     return res
+
 
 def convolve(x,y):
     """
@@ -47,6 +51,7 @@ def convolve(x,y):
     tmp_re2, tmp_im2 = ifftshift(tmp_re1), ifftshift(tmp_im1)
     tmp_re3, tmp_im3 = fft.ifft(tmp_re2, tmp_im2)
     return fftshift(tmp_re3), fftshift(tmp_im3)
+
 
 def deconvolve(z, y):
     """
