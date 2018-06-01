@@ -224,8 +224,117 @@ Interesting about the concepts, although I need to dig much deeper to understand
 TODO read references and come back to this one
 
 
+### Towards deep learning with segregated dendrites
+Jordan Guerguiev,1,2 Timothy P Lillicrap,3 and Blake A Richards1,2,4
+https://www.ncbi.nlm.nih.gov/pubmed/29205151
+https://elifesciences.org/articles/22901
+
+Amazing paper, they provide a new neuron model that is not only more biologically inspired but also provides SoTA results without the need to do backpropagation in the current way but using a local update learning rule. A comparison is done with backpropagation too.
+The neuron model provides a similar implementation of what a neuron would look like in 3 modules:
+1. the apical dendrites (feedback)
+2. the somatical body
+3. the basal dendrites
+
+
+### Neural Turing Machines
+Alex Graves, Greg Wayne, Ivo Danihelka
+(Submitted on 20 Oct 2014 (v1), last revised 10 Dec 2014 (this version, v2))
+
+Great paper introducing external memory, was superseeded by Differentiable Neural Computer
+
+
+### Hybrid computing using a neural network with dynamic external memory
+Alex Graves, Greg Wayne, Malcolm Reynolds, Tim Harley, Ivo Danihelka, Agnieszka Grabska-Barwińska, Sergio Gómez Colmenarejo, Edward Grefenstette, Tiago Ramalho, John Agapiou, Adrià Puigdomènech Badia, Karl Moritz Hermann, Yori Zwols, Georg Ostrovski, Adam Cain, Helen King, Christopher Summerfield, Phil Blunsom, Koray Kavukcuoglu & Demis Hassabis
+
+Impressive paper on extending capabilities and taking out limitations of the NTMs showing results in different tasks that are beyond any previous work.
+
+
+### Implementation and Optimization of Differentiable Neural Computers
+Carol Hsin
+https://web.stanford.edu/class/cs224n/reports/2753780.pdf
+
+More details and studies on DNCs (previous paper)
+
+
+### One-Shot Generalization in Deep Generative Models
+Danilo Jimenez Rezende, Shakir Mohamed, Ivo Danihelka, Karol Gregor, Daan Wierstra
+(Submitted on 16 Mar 2016 (v1), last revised 25 May 2016 (this version, v2))
+
+Presents a class of sequential generative models that are built on the principles of feedback and attention
+Has great attention and iteration
+
+Lacks self control in # of steps, maybe due to the fact that it lacks compositionality and causality?
+Needs a lot of data
+
+
+### Neural Episodic Control
+Alexander Pritzel, Benigno Uria, Sriram Srinivasan, Adrià Puigdomènech, Oriol Vinyals, Demis Hassabis, Daan Wierstra, Charles Blundell
+(Submitted on 6 Mar 2017)
+
+Allows for fast assimilation of new experiences (few-shot?), the most interesting concept is the introduction of the  **Differentiable Neural Dictionary**
+
+### Rainbow: Combining Improvements in Deep Reinforcement Learning
+Matteo Hessel, Joseph Modayil, Hado van Hasselt, Tom Schaul, Georg Ostrovski, Will Dabney, Dan Horgan, Bilal Piot, Mohammad Azar, David Silver
+(Submitted on 6 Oct 2017)
+
+Compares different RL techniques and then merges them into one model. It shows that no single model wins, but combining them makes the model have a much better results and faster (orders of magnitude) trainig performance.
+Complex to implement such a system
+
+
+### Reinforcement Learning Neural Turing Machines - Revised
+Wojciech Zaremba, Ilya Sutskever
+(Submitted on 4 May 2015 (v1), last revised 12 Jan 2016 (this version, v3))
+
+Explores the possibility to use RL to add different non-differentiable discrete interfaces to the NTM. It seems feasible but learning memory access patterns with the REINFORCE algorithm is difficult.
+
+
+### A neural model of hierarchical reinforcement learning (PLoS ONE, 2017)
+Daniel Rasmussen, Aaron R. Voelker, Chris Eliasmith
+
+Impressive paper that shows how to implementreinforcement learning with a biologically plausible architecture showing SoTA and biologically comparable results. Seems quite interesting architecture for an intelligent agent as it shows a modular architecture that could also be implemented with current SoTA techniques in Deep Learning
+
+### Distral: Robust Multitask Reinforcement Learning
+Yee Whye Teh, Victor Bapst, Wojciech Marian Czarnecki, John Quan, James Kirkpatrick, Raia Hadsell, Nicolas Heess, Razvan Pascanu
+(Submitted on 13 Jul 2017)
+
+Tries to tackle the issues that arise when doing multi-task learning, although I did not dig too much on it.
+
+### Understanding deep learning requires rethinking generalization
+Chiyuan Zhang, Samy Bengio, Moritz Hardt, Benjamin Recht, Oriol Vinyals
+(Submitted on 10 Nov 2016 (v1), last revised 26 Feb 2017 (this version, v2))
+
+IMPRESSIVE PAPER -> shows that our current intuitions about regularization and generalization might be (are) wrong ... we don't actually know what's happening
+
+
+### A neural model of the development of expertise.
+Travis DeWolf, Chris Eliasmith
+http://compneuro.uwaterloo.ca/files/publications/aubin.2016a.pdf
+
+Relates the fact that learniing expertise is also known as developing *automaticity* and how this might be created and somehow *standardized* in the cortex and basal ganglia. I might have to read it again and dig deeper.
+
+
+### Learning to select data for transfer learning with Bayesian Optimization
+Sebastian Ruder, Barbara Plank
+(Submitted on 17 Jul 2017)
+
+Uses bayesian learning to try to create a model-independent approach to learn how to select data to be transfered. Is not my main interest but might be useful.
+
+
+### Kickstarting Deep Reinforcement Learning
+Simon Schmitt, Jonathan J. Hudson, Augustin Zidek, Simon Osindero, Carl Doersch, Wojciech M. Czarnecki, Joel Z. Leibo, Heinrich Kuttler, Andrew Zisserman, Karen Simonyan, S. M. Ali Eslami
+(Submitted on 10 Mar 2018)
+
+Interesting paper taking a more closer approach the way humans learn from examples
+Makes easier to iterate and improve learned tasks using a teacher-student approach where the teacher does NOT show every detail (so is not imitation) of a recorded experience.
+The main idea is to employ an auxiliary loss function which encourages the student policy to be close to the teacher policy on trajectories sampled by the student
+
 
 # Papers yet to read ....
+
+
+Scaling Memory-Augmented Neural Networks with Sparse Reads and Writes
+Jack W Rae, Jonathan J Hunt, Tim Harley, Ivo Danihelka, Andrew Senior, Greg Wayne, Alex Graves, Timothy P Lillicrap
+(Submitted on 27 Oct 2016)
 
 Unsupervised Predictive Memory in a Goal-Directed Agent
 Greg Wayne, Chia-Chun Hung, David Amos, Mehdi Mirza, Arun Ahuja, Agnieszka Grabska-Barwinska, Jack Rae, Piotr Mirowski, Joel Z. Leibo, Adam Santoro, Mevlana Gemici, Malcolm Reynolds, Tim Harley, Josh Abramson, Shakir Mohamed, Danilo Rezende, David Saxton, Adam Cain, Chloe Hillier, David Silver, Koray Kavukcuoglu, Matt Botvinick, Demis Hassabis, Timothy Lillicrap
@@ -716,12 +825,6 @@ Geoffrey Irving, Paul Christiano, Dario Amodei
 
 Prefrontal cortex as a meta-reinforcement learning system
 Jane X. Wang, Zeb Kurth-Nelson, Dharshan Kumaran, Dhruva Tirumala, Hubert Soyer, Joel Z. Leibo, Demis Hassabis & Matthew Botvinick
-
-
-
-A neural model of hierarchical reinforcement learning (PLoS ONE, 2017)
-Daniel Rasmussen, Aaron R. Voelker, Chris Eliasmith
-
 
 
 Dense Associative Memory for Pattern Recognition
