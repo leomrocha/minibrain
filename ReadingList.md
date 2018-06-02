@@ -345,6 +345,9 @@ Continuation of Transforming Auto-encoders introducing the novel concept of rout
 
 # Papers yet to read ....
 
+Convolutional Sequence to Sequence Learning
+Jonas Gehring, Michael Auli, David Grangier, Denis Yarats, Yann N. Dauphin
+(Submitted on 8 May 2017 (v1), last revised 25 Jul 2017 (this version, v3))
 
 Scaling Memory-Augmented Neural Networks with Sparse Reads and Writes
 Jack W Rae, Jonathan J Hunt, Tim Harley, Ivo Danihelka, Andrew Senior, Greg Wayne, Alex Graves, Timothy P Lillicrap

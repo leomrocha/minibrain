@@ -1,3 +1,5 @@
+# From https://github.com/locuslab/TCN
+# License for this file in the original repository, MIT at the moment of the writing of this note
 import torch
 import torch.nn as nn
 from torch.nn.utils import weight_norm
