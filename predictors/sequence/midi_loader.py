@@ -105,7 +105,7 @@ class MIDILoader(object):
                 instr.notes.append(note)
                 #reset position
                 active_notes[program][pitch] = None
-        # now put all in the
+        # now put all in the midi file
         for instr in instr_notes.values()
             midi.instruments.append(inst)
         return midi
