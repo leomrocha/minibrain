@@ -346,6 +346,18 @@ Continuation of Transforming Auto-encoders introducing the novel concept of rout
 # Papers yet to read ....
 
 
+Probabilistic Model-Agnostic Meta-Learning
+Chelsea Finn, Kelvin Xu, Sergey Levine
+(Submitted on 7 Jun 2018)
+
+
+Adaptive Engagement of Cognitive Control in Context-Dependent Decision Making
+Michael L. Waskom  Michael C. Frank  Anthony D. Wagner
+Cerebral Cortex, Volume 27, Issue 2, 1 February 2017, Pages 1270–1284, https://doi.org/10.1093/cercor/bhv333
+Published: 04 January 2016
+https://academic.oup.com/cercor/article/27/2/1270/3056315?keytype=ref&ijkey=5hjFprzQ7miiYZ4
+
+
 A Hierarchical Recurrent Neural Network for Symbolic Melody Generation
 Jian Wu, Changran Hu, Yulong Wang, Xiaolin Hu, Jun Zhu
 (Submitted on 14 Dec 2017)

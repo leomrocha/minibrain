@@ -10,7 +10,9 @@ from operator import itemgetter
 
 import pretty_midi
 
-from helpers import Lin2WaveEncoder
+from helpers import *
+
+from encoders import *
 
 _SUSTAIN_ON = 0
 _SUSTAIN_OFF = 1
@@ -41,11 +43,14 @@ logger = logging.getLogger("few-shot")
 class MIDILoader(object):
     """Objects of this class parse MIDI files into a sequence of note IDs
     """
-    def __init__(self, max_len, dtype=np.int32, persist=True):
+    def __init__(self, max_len, dtype=np.int32, persist=True, encoder="shannon", terms=10):
         self.max_len = max_len
         self.dtype = dtype
         self.persist = persist
-        self.velocity_encoder = Lin2WaveEncoder(MIN_MIDI_VELOCITY, MAX_MIDI_VELOCITY)
+        if encoder == "shannon":
+            self.velocity_encoder = Lin2WaveEncoder(MIN_MIDI_VELOCITY, MAX_MIDI_VELOCITY)
+        else:
+            self.velocity_encoder = Lin2Fourier(MIN_MIDI_VELOCITY, MAX_MIDI_VELOCITY, terms)
         self.time_encoder = None  # TODO make this better, more robust
 
     def read(self, filepath):
@@ -110,10 +115,13 @@ class MIDILoader(object):
             midi.instruments.append(inst)
         return midi
 
-    def encode(self, midi_events, end_time):
+    def encode(self, midi_events, end_time, encoder="shannon", terms=20):
         """
         """
-        self.time_encoder = Lin2WaveEncoder(0, end_time)
+        if encoder == "shannon":
+            self.time_encoder = Lin2WaveEncoder(0, end_time)
+        else:  # encoder == fourier
+            self.time_encoder = Lin2Fourier(0, end_time, terms=20)
 
 
         tokens = []
