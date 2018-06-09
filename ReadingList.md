@@ -345,6 +345,27 @@ Continuation of Transforming Auto-encoders introducing the novel concept of rout
 
 # Papers yet to read ....
 
+
+A Hierarchical Recurrent Neural Network for Symbolic Melody Generation
+Jian Wu, Changran Hu, Yulong Wang, Xiaolin Hu, Jun Zhu
+(Submitted on 14 Dec 2017)
+
+
+Learning a Latent Space of Multitrack Measures
+Ian Simon, Adam Roberts, Colin Raffel, Jesse Engel, Curtis Hawthorne, Douglas Eck
+(Submitted on 1 Jun 2018)
+
+
+Convolutional Sequence to Sequence Learning
+Jonas Gehring, Michael Auli, David Grangier, Denis Yarats, Yann N. Dauphin
+(Submitted on 8 May 2017 (v1), last revised 25 Jul 2017 (this version, v3))
+
+
+
+Unsupervised Predictive Memory in a Goal-Directed Agent
+Greg Wayne, Chia-Chun Hung, David Amos, Mehdi Mirza, Arun Ahuja, Agnieszka Grabska-Barwinska, Jack Rae, Piotr Mirowski, Joel Z. Leibo, Adam Santoro, Mevlana Gemici, Malcolm Reynolds, Tim Harley, Josh Abramson, Shakir Mohamed, Danilo Rezende, David Saxton, Adam Cain, Chloe Hillier, David Silver, Koray Kavukcuoglu, Matt Botvinick, Demis Hassabis, Timothy Lillicrap
+
+
 Convolutional Sequence to Sequence Learning
 Jonas Gehring, Michael Auli, David Grangier, Denis Yarats, Yann N. Dauphin
 (Submitted on 8 May 2017 (v1), last revised 25 Jul 2017 (this version, v3))
@@ -352,9 +373,6 @@ Jonas Gehring, Michael Auli, David Grangier, Denis Yarats, Yann N. Dauphin
 Scaling Memory-Augmented Neural Networks with Sparse Reads and Writes
 Jack W Rae, Jonathan J Hunt, Tim Harley, Ivo Danihelka, Andrew Senior, Greg Wayne, Alex Graves, Timothy P Lillicrap
 (Submitted on 27 Oct 2016)
-
-Unsupervised Predictive Memory in a Goal-Directed Agent
-Greg Wayne, Chia-Chun Hung, David Amos, Mehdi Mirza, Arun Ahuja, Agnieszka Grabska-Barwinska, Jack Rae, Piotr Mirowski, Joel Z. Leibo, Adam Santoro, Mevlana Gemici, Malcolm Reynolds, Tim Harley, Josh Abramson, Shakir Mohamed, Danilo Rezende, David Saxton, Adam Cain, Chloe Hillier, David Silver, Koray Kavukcuoglu, Matt Botvinick, Demis Hassabis, Timothy Lillicrap
 
 
 Rotational Unit of Memory
@@ -366,6 +384,13 @@ A Clockwork RNN
 Jan Koutník, Klaus Greff, Faustino Gomez, Jürgen Schmidhuber
 (Submitted on 14 Feb 2014)
 
+OptNet: Differentiable Optimization as a Layer in Neural Networks
+Brandon Amos, J. Zico Kolter
+(Submitted on 1 Mar 2017 (v1), last revised 12 Jan 2018 (this version, v3))
+
+Input Convex Neural Networks
+Brandon Amos, Lei Xu, J. Zico Kolter
+(Submitted on 22 Sep 2016 (v1), last revised 14 Jun 2017 (this version, v3))
 
 Where Do Rewards Come From?
 Satinder Singh Richard L. Lewis Andrew G. Barto
