@@ -346,6 +346,12 @@ Continuation of Transforming Auto-encoders introducing the novel concept of rout
 # Papers yet to read ....
 
 
+Differentiable plasticity: training plastic neural networks with backpropagation
+Thomas Miconi, Jeff Clune, Kenneth O. Stanley
+(Submitted on 6 Apr 2018 (v1), last revised 19 Jun 2018 (this version, v2))
+https://github.com/uber-research/differentiable-plasticity
+
+
 Probabilistic Model-Agnostic Meta-Learning
 Chelsea Finn, Kelvin Xu, Sergey Levine
 (Submitted on 7 Jun 2018)
