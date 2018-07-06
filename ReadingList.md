@@ -342,6 +342,13 @@ Sara Sabour, Nicholas Frosst, Geoffrey E Hinton
 
 Continuation of Transforming Auto-encoders introducing the novel concept of routing between capsules that allows it to predict what the higher layers will need making this a recursive algorithm. This concept is validated by "Towards deep learning with segregated dendrites" Guerguiev et al.
 
+# Papers yet to read for Few-Shot-Music-Generation ....
+
+### Dynamic Evaluation of Neural Sequence Models
+Ben Krause, Emmanuel Kahembwe, Iain Murray, Steve Renals
+(Submitted on 21 Sep 2017 (v1), last revised 25 Oct 2017 (this version, v2))
+
+
 
 # Papers yet to read ....
 
