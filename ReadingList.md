@@ -342,6 +342,16 @@ Sara Sabour, Nicholas Frosst, Geoffrey E Hinton
 
 Continuation of Transforming Auto-encoders introducing the novel concept of routing between capsules that allows it to predict what the higher layers will need making this a recursive algorithm. This concept is validated by "Towards deep learning with segregated dendrites" Guerguiev et al.
 
+
+### Differentiable plasticity: training plastic neural networks with backpropagation
+Thomas Miconi, Jeff Clune, Kenneth O. Stanley
+(Submitted on 6 Apr 2018 (v1), last revised 19 Jun 2018 (this version, v2))
+https://github.com/uber-research/differentiable-plasticity
+
+Incredible paper with a great plasticity method that is easy to implement.
+Numebr of trainable parameters duplicates, plus there is a hebbian trace to keep track of.
+Mermory usage is 3 times the one of a normal network but the power of the networs seems much higher.
+
 # Papers yet to read for Few-Shot-Music-Generation ....
 
 ### Dynamic Evaluation of Neural Sequence Models
@@ -353,10 +363,10 @@ Ben Krause, Emmanuel Kahembwe, Iain Murray, Steve Renals
 # Papers yet to read ....
 
 
-Differentiable plasticity: training plastic neural networks with backpropagation
-Thomas Miconi, Jeff Clune, Kenneth O. Stanley
-(Submitted on 6 Apr 2018 (v1), last revised 19 Jun 2018 (this version, v2))
-https://github.com/uber-research/differentiable-plasticity
+
+Analyzing Uncertainty in Neural Machine Translation
+Myle Ott, Michael Auli, David Grangier, Marc'Aurelio Ranzato
+(Submitted on 28 Feb 2018 (v1), last revised 12 Jun 2018 (this version, v3))
 
 
 Probabilistic Model-Agnostic Meta-Learning
