@@ -363,6 +363,11 @@ Ben Krause, Emmanuel Kahembwe, Iain Murray, Steve Renals
 # Papers yet to read ....
 
 
+Long-term Recurrent Convolutional Networks for Visual Recognition and Description
+Jeff Donahue, Lisa Anne Hendricks, Marcus Rohrbach, Subhashini Venugopalan, Sergio Guadarrama, Kate Saenko, Trevor Darrell
+(Submitted on 17 Nov 2014 (v1), last revised 31 May 2016 (this version, v4))
+
+
 Convolutional LSTM Network: A Machine Learning Approach for Precipitation Nowcasting
 Xingjian Shi, Zhourong Chen, Hao Wang, Dit-Yan Yeung, Wai-kin Wong, Wang-chun Woo
 (Submitted on 13 Jun 2015 (v1), last revised 19 Sep 2015 (this version, v2))
