@@ -363,6 +363,9 @@ Ben Krause, Emmanuel Kahembwe, Iain Murray, Steve Renals
 # Papers yet to read ....
 
 
+Convolutional LSTM Network: A Machine Learning Approach for Precipitation Nowcasting
+Xingjian Shi, Zhourong Chen, Hao Wang, Dit-Yan Yeung, Wai-kin Wong, Wang-chun Woo
+(Submitted on 13 Jun 2015 (v1), last revised 19 Sep 2015 (this version, v2))
 
 Analyzing Uncertainty in Neural Machine Translation
 Myle Ott, Michael Auli, David Grangier, Marc'Aurelio Ranzato
