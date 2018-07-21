@@ -363,6 +363,10 @@ Ben Krause, Emmanuel Kahembwe, Iain Murray, Steve Renals
 # Papers yet to read ....
 
 
+Deep Clustering for Unsupervised Learning of Visual Features
+Mathilde Caron, Piotr Bojanowski, Armand Joulin, Matthijs Douze
+(Submitted on 15 Jul 2018)
+
 Long-term Recurrent Convolutional Networks for Visual Recognition and Description
 Jeff Donahue, Lisa Anne Hendricks, Marcus Rohrbach, Subhashini Venugopalan, Sergio Guadarrama, Kate Saenko, Trevor Darrell
 (Submitted on 17 Nov 2014 (v1), last revised 31 May 2016 (this version, v4))
