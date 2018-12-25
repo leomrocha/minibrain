@@ -16,8 +16,6 @@ Nikhil Mishra, Mostafa Rohaninejad, Xi Chen, Pieter Abbeel
 
 Quite interesting idea, it seems simpler than other mechanisms, the idea of using temporal convolutional networks with attention mechanism is on the axe of TCNs.
 
-
-
 ### Independently Controllable Features
 Emmanuel Bengio, Valentin Thomas, Joelle Pineau, Doina Precup, Yoshua Bengio
 (Submitted on 22 Mar 2017)

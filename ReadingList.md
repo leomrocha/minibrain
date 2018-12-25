@@ -346,6 +346,10 @@ Continuation of Transforming Auto-encoders introducing the novel concept of rout
 # Papers yet to read ....
 
 
+Deep Learning: A Critical Appraisal
+Gary Marcus
+(Submitted on 2 Jan 2018)
+
 Probabilistic Model-Agnostic Meta-Learning
 Chelsea Finn, Kelvin Xu, Sergey Levine
 (Submitted on 7 Jun 2018)
@@ -372,15 +376,31 @@ Convolutional Sequence to Sequence Learning
 Jonas Gehring, Michael Auli, David Grangier, Denis Yarats, Yann N. Dauphin
 (Submitted on 8 May 2017 (v1), last revised 25 Jul 2017 (this version, v3))
 
+Learning Disentangled Representations with Semi-Supervised Deep Generative Models
+N. Siddharth, Brooks Paige, Jan-Willem van de Meent, Alban Desmaison, Noah D. Goodman, Pushmeet Kohli, Frank Wood, Philip H.S. Torr
+(Submitted on 1 Jun 2017 (v1), last revised 13 Nov 2017 (this version, v2))
 
 
 Unsupervised Predictive Memory in a Goal-Directed Agent
 Greg Wayne, Chia-Chun Hung, David Amos, Mehdi Mirza, Arun Ahuja, Agnieszka Grabska-Barwinska, Jack Rae, Piotr Mirowski, Joel Z. Leibo, Adam Santoro, Mevlana Gemici, Malcolm Reynolds, Tim Harley, Josh Abramson, Shakir Mohamed, Danilo Rezende, David Saxton, Adam Cain, Chloe Hillier, David Silver, Koray Kavukcuoglu, Matt Botvinick, Demis Hassabis, Timothy Lillicrap
 
 
-Convolutional Sequence to Sequence Learning
-Jonas Gehring, Michael Auli, David Grangier, Denis Yarats, Yann N. Dauphin
-(Submitted on 8 May 2017 (v1), last revised 25 Jul 2017 (this version, v3))
+
+Edge Attention-based Multi-Relational Graph Convolutional Networks
+Chao Shang, Qinqing Liu, Ko-Shin Chen, Jiangwen Sun, Jin Lu, Jinfeng Yi, Jinbo Bi
+(Submitted on 14 Feb 2018 (v1), last revised 20 May 2018 (this version, v2))
+
+
+Deeper Insights into Graph Convolutional Networks for Semi-Supervised Learning
+Qimai Li, Zhichao Han, Xiao-Ming Wu
+(Submitted on 22 Jan 2018)
+https://tkipf.github.io/graph-convolutional-networks/
+
+FastGCN: Fast Learning with Graph Convolutional Networks via Importance Sampling
+Jie Chen, Tengfei Ma, Cao Xiao
+(Submitted on 30 Jan 2018)
+
+
 
 Scaling Memory-Augmented Neural Networks with Sparse Reads and Writes
 Jack W Rae, Jonathan J Hunt, Tim Harley, Ivo Danihelka, Andrew Senior, Greg Wayne, Alex Graves, Timothy P Lillicrap
@@ -478,7 +498,9 @@ Predicting Future Instance Segmentations by Forecasting Convolutional Features
 Pauline Luc, Camille Couprie, Yann LeCun, Jakob Verbeek
 (Submitted on 30 Mar 2018)
 
-
+Neural Machine Translation in Linear Time
+Nal Kalchbrenner, Lasse Espeholt, Karen Simonyan, Aaron van den Oord, Alex Graves, Koray Kavukcuoglu
+(Submitted on 31 Oct 2016 (v1), last revised 15 Mar 2017 (this version, v2))
 
 AN EFFICIENT FRAMEWORK FOR LEARNING SENTENCE REPRESENTATIONS
 Lajanugen Logeswaran & Honglak Lee
