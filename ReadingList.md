@@ -343,12 +343,46 @@ Sara Sabour, Nicholas Frosst, Geoffrey E Hinton
 Continuation of Transforming Auto-encoders introducing the novel concept of routing between capsules that allows it to predict what the higher layers will need making this a recursive algorithm. This concept is validated by "Towards deep learning with segregated dendrites" Guerguiev et al.
 
 
-# Papers yet to read ....
+### Differentiable plasticity: training plastic neural networks with backpropagation
+Thomas Miconi, Jeff Clune, Kenneth O. Stanley
+(Submitted on 6 Apr 2018 (v1), last revised 19 Jun 2018 (this version, v2))
+https://github.com/uber-research/differentiable-plasticity
 
+Incredible paper with a great plasticity method that is easy to implement.
+Numebr of trainable parameters duplicates, plus there is a hebbian trace to keep track of.
+Mermory usage is 3 times the one of a normal network but the power of the networs seems much higher.
+
+# Papers yet to read for Few-Shot-Music-Generation ....
+
+### Dynamic Evaluation of Neural Sequence Models
+Ben Krause, Emmanuel Kahembwe, Iain Murray, Steve Renals
+(Submitted on 21 Sep 2017 (v1), last revised 25 Oct 2017 (this version, v2))
+
+
+
+# Papers yet to read ....
 
 Deep Learning: A Critical Appraisal
 Gary Marcus
 (Submitted on 2 Jan 2018)
+
+Deep Clustering for Unsupervised Learning of Visual Features
+Mathilde Caron, Piotr Bojanowski, Armand Joulin, Matthijs Douze
+(Submitted on 15 Jul 2018)
+
+Long-term Recurrent Convolutional Networks for Visual Recognition and Description
+Jeff Donahue, Lisa Anne Hendricks, Marcus Rohrbach, Subhashini Venugopalan, Sergio Guadarrama, Kate Saenko, Trevor Darrell
+(Submitted on 17 Nov 2014 (v1), last revised 31 May 2016 (this version, v4))
+
+
+Convolutional LSTM Network: A Machine Learning Approach for Precipitation Nowcasting
+Xingjian Shi, Zhourong Chen, Hao Wang, Dit-Yan Yeung, Wai-kin Wong, Wang-chun Woo
+(Submitted on 13 Jun 2015 (v1), last revised 19 Sep 2015 (this version, v2))
+
+Analyzing Uncertainty in Neural Machine Translation
+Myle Ott, Michael Auli, David Grangier, Marc'Aurelio Ranzato
+(Submitted on 28 Feb 2018 (v1), last revised 12 Jun 2018 (this version, v3))
+
 
 Probabilistic Model-Agnostic Meta-Learning
 Chelsea Finn, Kelvin Xu, Sergey Levine
@@ -385,7 +419,6 @@ Unsupervised Predictive Memory in a Goal-Directed Agent
 Greg Wayne, Chia-Chun Hung, David Amos, Mehdi Mirza, Arun Ahuja, Agnieszka Grabska-Barwinska, Jack Rae, Piotr Mirowski, Joel Z. Leibo, Adam Santoro, Mevlana Gemici, Malcolm Reynolds, Tim Harley, Josh Abramson, Shakir Mohamed, Danilo Rezende, David Saxton, Adam Cain, Chloe Hillier, David Silver, Koray Kavukcuoglu, Matt Botvinick, Demis Hassabis, Timothy Lillicrap
 
 
-
 Edge Attention-based Multi-Relational Graph Convolutional Networks
 Chao Shang, Qinqing Liu, Ko-Shin Chen, Jiangwen Sun, Jin Lu, Jinfeng Yi, Jinbo Bi
 (Submitted on 14 Feb 2018 (v1), last revised 20 May 2018 (this version, v2))
@@ -401,6 +434,9 @@ Jie Chen, Tengfei Ma, Cao Xiao
 (Submitted on 30 Jan 2018)
 
 
+Convolutional Sequence to Sequence Learning
+Jonas Gehring, Michael Auli, David Grangier, Denis Yarats, Yann N. Dauphin
+(Submitted on 8 May 2017 (v1), last revised 25 Jul 2017 (this version, v3))
 
 Scaling Memory-Augmented Neural Networks with Sparse Reads and Writes
 Jack W Rae, Jonathan J Hunt, Tim Harley, Ivo Danihelka, Andrew Senior, Greg Wayne, Alex Graves, Timothy P Lillicrap
