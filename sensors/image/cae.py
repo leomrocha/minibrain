@@ -18,8 +18,10 @@ from helpers import *
 # https://pgaleone.eu/neural-networks/2016/11/24/convolutional-autoencoders/
 ###
 
+
 class CAEEncoder(nn.Module):
     """
+    Encoder part for the Convolutional Auto Encoder
     The Encoder = Q(z|X) for the Network
     """
 
@@ -71,6 +73,7 @@ class CAEEncoder(nn.Module):
 
 class CAEDecoder(torch.nn.Module):
     """
+    Decoder part for the Convolutional Auto Encoder
     The Decoder = P(X|z) for the Network
     """
 
@@ -117,6 +120,9 @@ class CAEDecoder(torch.nn.Module):
 
 
 class CAE(nn.Module):
+    """
+    Convolutional Auto Encoder
+    """
     def __init__(self, width, height, channels, levels=2, conv_layer_feat=16):
         super(CAE, self).__init__()
         self.width = width
