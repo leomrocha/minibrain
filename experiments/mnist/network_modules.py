@@ -44,6 +44,8 @@ class FCModule(nn.Module):
         assert (self.n_layers == n_layers)  # should always be the same or something went really wrong
 
     def forward(self, x):
+        # view as the layer shape
+        # print(x.shape)
         for i in range(self.n_layers):
             x = self.layers[i](x)
             if self.activation is not None and i < self.n_layers - 1:
@@ -57,11 +59,45 @@ class FCNet(nn.Module):
     Input Instantiation Parameters correspond to the FCModule __init__ parameters
     """
     def __init__(self, layer_sizes, activation=None):
+        super(FCNet, self).__init__()
         self.fcnet = FCModule(layer_sizes, activation)
 
     def forward(self, x):
         x = self.fcnet(x)
-        return F.log_softmax(x)
+        return F.log_softmax(x, dim=1)
+        # return F.log_softmax(x)
+
+
+class ColumnNet(nn.Module):
+    """
+    Neural Network that contains several Fully Connected Neural Networks, each having a set number of layers
+    Takes as input an array with the layer input and output number of connections and the activation type of the layers
+    All layers will have the same activation functions between them, except for the last one that does gives the raw output
+    This is for the network is not a classifier, but intended to be used as a module somewhere and the output used in the given context
+    """
+    def __init__(self, layer_sizes, activations, last_layer=10):
+        """
+
+        :param layer_sizes: bidimensional array
+        :param last_layer:
+        :param activation:
+        """
+        super(ColumnNet, self).__init__()
+        assert(len(layer_sizes) == len(activations))
+        self.nets = nn.ModuleList()
+        self.catlayer_size = sum([l[-1] for l in layer_sizes])  # get the last layers embedding sizes of each subnetwork
+        for inet, activation in zip(layer_sizes, activations):
+            self.nets.append(FCModule(inet, activation))
+        self.last = nn.Linear(self.catlayer_size, last_layer)
+
+    def forward(self, x, device=torch.device("cuda" if torch.cuda.is_available() else "cpu")):
+        xis = []
+        for n in self.nets:
+            xis.append(n(x))
+        xcat = torch.cat(xis, dim=1)  # .to(device)
+        x = F.relu(self.last(xcat))
+        return F.log_softmax(x, dim=1)
+        # return F.log_softmax(x)
 
 
 # Note: I could add the sparsity to the previous FCNet but I want to make it explicit here
@@ -151,14 +187,3 @@ class ConvNet(nn.Module):
     #         self.indices.append(idx)
     #     return out
 
-
-
-#
-# TODO
-# class ColumnNet(nn.Module):
-#     """
-#     Neural Network that contains several Fully Connected Neural Networks, each having a set number of layers
-#     Takes as input an array with the layer input and output number of connections and the activation type of the layers
-#     All layers will have the same activation functions between them, except for the last one that does gives the raw output
-#     This is for the network is not a classifier, but intended to be used as a module somewhere and the output used in the given context
-#     """
