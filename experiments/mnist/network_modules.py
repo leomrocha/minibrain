@@ -106,7 +106,8 @@ class SparseNet(nn.Module):
     Sparse Forward Neural Network, sparsity level is provided as a probability of elements being set to 0
 
     """
-    def __init__(self, layer_sizes, sparsity=0.4, activation=None):
+    def __init__(self, layer_sizes, sparsity=0.4, activation=None, name="SparseNet",
+                 device=torch.device("cuda" if torch.cuda.is_available() else "cpu")):
         """
         param: layers_sizes -> list containing the input, hidden layers and output size, minimum len = 2
                                 First element is Input size
@@ -114,17 +115,21 @@ class SparseNet(nn.Module):
         param: sparsity -> percentage of an element being non zero
         param: activation -> Default None, else uses the given value
         """
-        super(FCNet, self).__init__()
+        super(SparseNet, self).__init__()
         assert (type(layer_sizes) is tuple or type(layer_sizes) is list)
         n_layers = len(layer_sizes) - 1  # there is one layer less than the number of elements in the input
         assert (n_layers >= 1)
+        self.name = name
+        self.device = device
         self.layers = nn.ModuleList()
-        self.sparsity = 1 - sparsity  # (bernoulli distribution )
+        self.sparsity = 1 - sparsity
         self.masks = []
         self.activation = ACTIVATIONS.get(activation) or None
         for i in range(n_layers):
             self.layers.append(nn.Linear(layer_sizes[i], layer_sizes[i + 1]))
-            self.mask.append(torch.bernoulli(...))  # TODO here is where the magic happens
+            t_mask = torch.FloatTensor(layer_sizes[i + 1]).uniform_() > (1 - sparsity)
+            self.masks.append(t_mask.to(device).float())
+
         self.n_layers = len(self.layers)
         assert (self.n_layers == n_layers)  # should always be the same or something went really wrong
 
@@ -133,7 +138,7 @@ class SparseNet(nn.Module):
             x = self.layers[i](x)
             if self.activation is not None and i < self.n_layers - 1:
                 x = self.activation(x)
-                x = x * self.mask[i]
+                x = x * self.masks[i]
         return x
 
 
