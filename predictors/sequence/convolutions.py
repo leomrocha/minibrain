@@ -1,6 +1,5 @@
-import numpy as np
-import torch
-#import pytorch_fft.fft.autograd as fft
+# import numpy as np
+# import torch
 import pytorch_fft.fft as fft
 
 
@@ -10,11 +9,12 @@ def fftshift(x):
     """
     return fft.roll_n(x,0,int(x.shape[0]/2))
 
-#One dimension vector ifftshift
+
+# One dimension vector ifftshift
 ifftshift = fftshift
 
 
-def complex_multiply(x,y):
+def complex_multiply(x, y):
     """
     Element wise multiplication for complex numbers represented as pairs
     """
@@ -22,22 +22,22 @@ def complex_multiply(x,y):
     y_re, y_im = y
     z_re = (x_re * y_re) - (x_im * y_im)
     z_im = (x_re * y_im) + (x_im * y_re)
-    return (z_re,z_im)
+    return z_re, z_im
 
 
 def complex_divide(x,y):
     """
     Element wise division for complex numbers represented as pairs
     """
-    x_re, x_im = x
-    y_re, y_im = y #denominator
-    num_re, num_im = complex_multiply(x,(y_re, -1*y_im)) #by complex conjugate
-    den = (y_re * y_re) - (y_im * (-1*y_im)) # is + because of the conjugate operation
+    # x_re, x_im = x
+    y_re, y_im = y  # denominator
+    num_re, num_im = complex_multiply(x, (y_re, -1*y_im))  # by complex conjugate
+    den = (y_re * y_re) - (y_im * (-1*y_im))  # is + because of the conjugate operation
     res = (num_re / den ), (num_im / den)
     return res
 
 
-def convolve(x,y):
+def convolve(x, y):
     """
     One dimensional vector convolution
     """

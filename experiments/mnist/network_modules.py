@@ -101,6 +101,7 @@ class ColumnNet(nn.Module):
 
 
 # Note: I could add the sparsity to the previous FCNet but I want to make it explicit here
+# something is not working on this one, NLLLoss diverges
 class SparseNet(nn.Module):
     """
     Sparse Forward Neural Network, sparsity level is provided as a probability of elements being set to 0
