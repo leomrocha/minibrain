@@ -1,5 +1,6 @@
+
 import torch
-import torchvision
+# import torchvision
 from torch import nn, optim
 from torch.nn import functional as F
 from torch.autograd import Variable
@@ -7,17 +8,18 @@ from torch.utils.data import DataLoader, Dataset
 from torchvision import transforms, utils
 from torchvision import datasets
 from torchvision.utils import save_image
-import skimage 
+# import skimage
 
 # import io
 # import requests
 # from PIL import Image
 
-import numpy as np
-import pandas as pd
+# import numpy as np
+# import pandas as pd
 # import matplotlib.pyplot as plt
-import sys
+# import sys
 import os
+
 
 # These classes are mostly taken and modified from the official examples here:
 # https://github.com/pytorch/examples/blob/master/vae/main.py 
@@ -71,6 +73,9 @@ class VAEDecoder(torch.nn.Module):
 
     
 class VAE(nn.Module):
+    """
+    Variational Auto Encoder
+    """
     def __init__(self, width, height, channels, h_dim=400, code_dim=100):
         super(VAE, self).__init__()
         self.width = width

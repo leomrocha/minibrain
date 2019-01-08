@@ -381,8 +381,19 @@ Xingjian Shi, Zhourong Chen, Hao Wang, Dit-Yan Yeung, Wai-kin Wong, Wang-chun Wo
 
 Analyzing Uncertainty in Neural Machine Translation
 Myle Ott, Michael Auli, David Grangier, Marc'Aurelio Ranzato
-(Submitted on 28 Feb 2018 (v1), last revised 12 Jun 2018 (this version, v3))
+(Submitted on 28 Feb 2018 (v1), last revised 12 Jun 2018 (this
 
+Differentiable plasticity: training plastic neural networks with backpropagation
+Thomas Miconi, Jeff Clune, Kenneth O. Stanley
+(Submitted on 6 Apr 2018 (v1), last revised 19 Jun 2018 (this version, v2))
+https://github.com/uber-research/differentiable-plasticity
+
+# Papers yet to read ....
+
+
+Deep Learning: A Critical Appraisal
+Gary Marcus
+(Submitted on 2 Jan 2018)
 
 Probabilistic Model-Agnostic Meta-Learning
 Chelsea Finn, Kelvin Xu, Sergey Levine
@@ -417,6 +428,12 @@ N. Siddharth, Brooks Paige, Jan-Willem van de Meent, Alban Desmaison, Noah D. Go
 
 Unsupervised Predictive Memory in a Goal-Directed Agent
 Greg Wayne, Chia-Chun Hung, David Amos, Mehdi Mirza, Arun Ahuja, Agnieszka Grabska-Barwinska, Jack Rae, Piotr Mirowski, Joel Z. Leibo, Adam Santoro, Mevlana Gemici, Malcolm Reynolds, Tim Harley, Josh Abramson, Shakir Mohamed, Danilo Rezende, David Saxton, Adam Cain, Chloe Hillier, David Silver, Koray Kavukcuoglu, Matt Botvinick, Demis Hassabis, Timothy Lillicrap
+
+
+Convolutional Sequence to Sequence Learning
+Jonas Gehring, Michael Auli, David Grangier, Denis Yarats, Yann N. Dauphin
+(Submitted on 8 May 2017 (v1), last revised 25 Jul 2017 (this version, v3))
+
 
 
 Edge Attention-based Multi-Relational Graph Convolutional Networks
