@@ -52,7 +52,7 @@ class TemporalConvNet(nn.Module):
         """
 
         :param num_inputs: number of inputs (temporal part)
-        :param num_channels: number of channels (spatial/current)
+        :param num_channels: list of number of channels (spatial/current) for each convolutional layer
         :param kernel_size: default 2, keep it this way as it is good for power of 2 layers
         :param dropout:
         """
