@@ -25,7 +25,7 @@ class FCModule(nn.Module):
     All layers will have the same activation functions between them, except for the last one that does gives the raw output
     This is for the network is not a classifier, but intended to be used as a module somewhere and the output used in the given context
     """
-    def __init__(self, layer_sizes, activation=None):
+    def __init__(self, layer_sizes, activation=None, p_noise=0.0, max_noise=0.0):
         """
         param: layers_sizes -> list containing the input, hidden layers and output size, minimum len = 2
                                 First element is Input size
@@ -58,7 +58,7 @@ class FCNet(nn.Module):
     Fully Connected Neural Network Classifier, with log_softmax output
     Input Instantiation Parameters correspond to the FCModule __init__ parameters
     """
-    def __init__(self, layer_sizes, activation=None):
+    def __init__(self, layer_sizes, activation=None, p_noise=0.0, max_noise=0.0):
         super(FCNet, self).__init__()
         self.fcnet = FCModule(layer_sizes, activation)
 
@@ -75,7 +75,7 @@ class ColumnNet(nn.Module):
     All layers will have the same activation functions between them, except for the last one that does gives the raw output
     This is for the network is not a classifier, but intended to be used as a module somewhere and the output used in the given context
     """
-    def __init__(self, layer_sizes, activations, last_layer=10):
+    def __init__(self, layer_sizes, activations, last_layer=10, p_noise=0.0, max_noise=0.0):
         """
 
         :param layer_sizes: bidimensional array
@@ -108,7 +108,8 @@ class SparseNet(nn.Module):
 
     """
     def __init__(self, layer_sizes, sparsity=0.4, activation=None, name="SparseNet",
-                 device=torch.device("cuda" if torch.cuda.is_available() else "cpu")):
+                 device=torch.device("cuda" if torch.cuda.is_available() else "cpu"),
+                 p_noise=0.0, max_noise=0.0):
         """
         param: layers_sizes -> list containing the input, hidden layers and output size, minimum len = 2
                                 First element is Input size
@@ -150,7 +151,8 @@ class ConvNet(nn.Module):
     TODO Can add frequency domain transforms (Fourier)
     """
 
-    def __init__(self, width, height, channels=1, kernel_sizes=[3, 3, 3],  n_features=[32, 64, 48]):
+    def __init__(self, width, height, channels=1, kernel_sizes=[3, 3, 3],
+                 n_features=[32, 64, 48], p_noise=0.0, max_noise=0.0):
         super(ConvNet, self).__init__()
         # print("ConvNet init ", width, height, channels,  kernel_size, n_features)
         self.width = width
@@ -161,7 +163,7 @@ class ConvNet(nn.Module):
         assert(len(kernel_sizes) == len(n_features))
         self.levels = len(kernel_sizes)
         self.kernel_sizes = kernel_sizes
-        self.n_features= n_features
+        self.n_features = n_features
         self.paddings = [k // 2 for k in kernel_sizes]
         self.indices = []
 
