@@ -1,3 +1,4 @@
+import torch
 import numpy as np
 import pickle
 
@@ -78,7 +79,7 @@ def encode_utf8_multihot(c, segments=4):
 #     code = np.zeros(36)  # 32 is the size of the input code + 4 of the extra redundancy
     nbytes = len(e_c)
     # assert( 0<nbytes && nbytes<=4)
-    assert(nbytes<=4)
+    assert(4 >= nbytes > 0)
     bin4 = eye4[nbytes-1]  # this adds redundant knowledge about the  part
     # this is ugly but explicit, for the moment is good enough and I can see what is
 #     code[:4] = bin4
@@ -92,7 +93,7 @@ def encode_utf8_multihot(c, segments=4):
     maxsizes = [eye256, eye64, eye64, eye64]
     masks = masks[:segments]
     indices = indices[:segments]
-    maxsizes = maxsizes [:segments]
+    maxsizes = maxsizes[:segments]
     # print(len(masks), len(indices), masks, indices)
 
     code[:4] = bin4
@@ -124,9 +125,9 @@ def create_tables(segments=4):
     code_matrix = []
     code_count = 0
     except_count = 0
-    txt2code = {}  # keeps a mapping from txtacter to the code
-    code2txt = {}  # keeps a mapping from  the code to the original txtacter
-    txt2num = {}  # from character to a coded index number for the table (for use in torch.nn.F.Embedding)
+    txt2code = {}  # keeps a mapping from txt character to the code
+    code2txt = {}  # keeps a mapping from  the code to the original txt character
+    txt2num = {}  # from character to a coded index number for the table (for use in torch.nn.F.Embedding?)
     num2txt = {}  # keeps a mapping from  the index in the table to the original character
     # to encode we need to take in account that there are 4 segments
 
@@ -145,7 +146,7 @@ def create_tables(segments=4):
     # generate all values for the first segment,
     for i in range(2**7):  # is the same as max1
         txt = str(bytes([i]), 'utf-8')
-        code_count
+        # code_count
         append_code(txt, code_count)
         code_count += 1
 
@@ -218,13 +219,27 @@ def load_obj(name):
     with open(name + '.pkl', 'rb') as f:
         return pickle.load(f)
 
+# Not needed when having the
+# def decode_multihot_utf8(code):
+#     """
+#     code
+#     :param code: a 4 bytes length element containing the code for
+#     :return:
+#     """
+#
+#     pass
 
-def decode_multihot_utf8(code):
-    """
-    code
-    :param code: a 4 bytes length element containing the code for
-    :return:
-    """
 
-    pass
+# from https://discuss.pytorch.org/t/how-to-convert-a-dense-matrix-to-a-sparse-one/7809
+def to_sparse(x):
+    """ converts dense tensor x to sparse format """
+    x_typename = torch.typename(x).split('.')[-1]
+    sparse_tensortype = getattr(torch.sparse, x_typename)
+
+    indices = torch.nonzero(x)
+    if len(indices.shape) == 0:  # if all elements are zeros
+        return sparse_tensortype(*x.shape)
+    indices = indices.t()
+    values = x[tuple(indices[i] for i in range(indices.shape[0]))]
+    return sparse_tensortype(indices, values, x.size())
 

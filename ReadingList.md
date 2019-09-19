@@ -3,6 +3,43 @@
 This file contains a list of papers that I've read, I'm reading or I want to read in a close future, but it keeps growing.
 I just take a few notes and write down some questions and ideas on those quite fast. I don't usually check for mistakes, but I do correct them if I find them when looking for something here.
 
+## For NLP
+
+
+### Neural Text Generation with Unlikelihood Training
+https://arxiv.org/abs/1908.04319 
+
+### Adaptive Attention Span in Transformers
+https://arxiv.org/abs/1905.07799
+
+### Augmenting Self-attention with Persistent Memory
+https://arxiv.org/abs/1907.01470
+
+### Language Modeling with Gated Convolutional Networks
+https://arxiv.org/abs/1612.08083
+
+### Large Memory Layers with Product Keys
+https://arxiv.org/abs/1907.05242
+
+
+
+###  Generating Long Sequences with Sparse Transformers 
+
+
+## Other papers
+
+###  Attention Augmented Convolutional Networks
+https://arxiv.org/pdf/1904.09925v1.pdf
+This idea is great for NLP too in 1D convolutions
+
+### Semantic Image Synthesis with Spatially-Adaptive Normalization (SPADE)
+
+
+### MultiFiT: Efficient Multi-lingual Language Model Fine-tuning
+
+### Universal Language Model Fine-tuning for Text Classification
+
+
 
 ### NEURAL GPUS LEARN ALGORITHMS
 Łukasz Kaiser & Ilya Sutskever 2016
