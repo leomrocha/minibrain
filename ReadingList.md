@@ -22,11 +22,24 @@ https://arxiv.org/abs/1612.08083
 https://arxiv.org/abs/1907.05242
 
 
+### Ilustrated Transformer
+ http://jalammar.github.io/illustrated-transformer/
+
+### Memory Augmented Neural Network Adaptive Controllers: Performance and Stability
+https://arxiv.org/pdf/1905.02832.pdf
 
 ###  Generating Long Sequences with Sparse Transformers 
 
+### Convolutional Self-Attention Networks
+https://arxiv.org/abs/1904.03107
+
+### Self-Attention with Relative Position Representations
+https://arxiv.org/pdf/1803.02155.pdf
 
 ## Other papers
+
+### Dual Attention Network for Scene Segmentation
+https://arxiv.org/pdf/1809.02983.pdf
 
 ###  Attention Augmented Convolutional Networks
 https://arxiv.org/pdf/1904.09925v1.pdf
@@ -40,6 +53,9 @@ This idea is great for NLP too in 1D convolutions
 ### Universal Language Model Fine-tuning for Text Classification
 
 
+
+### Compact Bilinear Pooling
+https://arxiv.org/abs/1511.06062
 
 ### NEURAL GPUS LEARN ALGORITHMS
 Łukasz Kaiser & Ilya Sutskever 2016

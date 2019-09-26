@@ -21,7 +21,7 @@ second there is a convolutional neural network with "memory" of N elements
 A TCN (Temporal Convolutional Neural Network) is used there
 
 This goes to a FC layer with a variational auto encoder like latent embedding
-(later I'd like to use a more complex latent space, maybe a complex space)
+(later I'd like to use a more complex latent space ... maybe a complex space?)
 
 This latent space should represent the current context from which the next character should be decoded
 
@@ -58,7 +58,7 @@ class CharConvPredictor(nn.Module):
         self.fc21 = nn.Linear(fc_hid_dim, fc_out_dim)
         self.fc22 = nn.Linear(fc_hid_dim, fc_out_dim)
         # output
-        pass
+        # pass
 
     def reparameterize(self, mu, logvar):
         if self.training:
