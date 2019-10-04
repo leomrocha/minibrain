@@ -1,6 +1,7 @@
 import torch
 import numpy as np
 import pickle
+from collections import OrderedDict
 
 
 # Bit of a whacky hack and for sure not the most efficient one, but it just works for what I want
@@ -125,10 +126,10 @@ def create_tables(segments=4):
     code_matrix = []
     code_count = 0
     except_count = 0
-    txt2code = {}  # keeps a mapping from txt character to the code
-    code2txt = {}  # keeps a mapping from  the code to the original txt character
-    txt2num = {}  # from character to a coded index number for the table (for use in torch.nn.F.Embedding?)
-    num2txt = {}  # keeps a mapping from  the index in the table to the original character
+    txt2code = OrderedDict()  # keeps a mapping from txt character to the code
+    code2txt = OrderedDict()  # keeps a mapping from  the code to the original txt character
+    txt2num = OrderedDict()  # from character to a coded index number for the table (for use in torch.nn.F.Embedding?)
+    num2txt = OrderedDict()  # keeps a mapping from  the index in the table to the original character
     # to encode we need to take in account that there are 4 segments
 
     def append_code(txt, index):

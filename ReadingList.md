@@ -5,6 +5,17 @@ I just take a few notes and write down some questions and ideas on those quite f
 
 ## For NLP
 
+### Levenshtein Transformer
+THIS ONE !!! as I was looking on how to do this
+https://arxiv.org/pdf/1905.11006.pdf
+
+### Pay Less Attention with Lightweight and Dynamic Convolutions
+https://arxiv.org/pdf/1901.10430.pdf
+
+
+### ALBERT: A LITE BERT FOR SELF-SUPERVISED LEARNING OF LANGUAGE REPRESENTATIONS
+ https://openreview.net/pdf?id=H1eA7AEtvS
+ https://arxiv.org/pdf/1909.11942.pdf
 
 ### Neural Text Generation with Unlikelihood Training
 https://arxiv.org/abs/1908.04319 
@@ -15,12 +26,11 @@ https://arxiv.org/abs/1905.07799
 ### Augmenting Self-attention with Persistent Memory
 https://arxiv.org/abs/1907.01470
 
-### Language Modeling with Gated Convolutional Networks
-https://arxiv.org/abs/1612.08083
-
 ### Large Memory Layers with Product Keys
 https://arxiv.org/abs/1907.05242
 
+### Language Modeling with Gated Convolutional Networks
+https://arxiv.org/abs/1612.08083
 
 ### Ilustrated Transformer
  http://jalammar.github.io/illustrated-transformer/
@@ -36,7 +46,18 @@ https://arxiv.org/abs/1904.03107
 ### Self-Attention with Relative Position Representations
 https://arxiv.org/pdf/1803.02155.pdf
 
+### The One Hundred Layers Tiramisu: Fully Convolutional DenseNets for Semantic Segmentation
+https://arxiv.org/abs/1611.09326
+
+
 ## Other papers
+
+### Deep Equilibrium Models
+https://arxiv.org/pdf/1909.01377.pdf
+
+### Convolution with Logarithmic Filter Groups for Efficient Shallow CNN
+https://arxiv.org/pdf/1707.09855.pdf
+
 
 ### Dual Attention Network for Scene Segmentation
 https://arxiv.org/pdf/1809.02983.pdf

@@ -1,0 +1,420 @@
+import torch
+import torch.nn as nn
+from torch.nn.utils import weight_norm
+from torch.nn import functional as F
+# from .fb_models import TransformerSeqLayer
+from fairseq.modules.transformer_layer import MultiheadAttention, TransformerDecoderLayer, TransformerEncoderLayer
+
+class FFColNet(nn.Module):
+    def __init__(self, utf8codes, input_size=1024, batch_size=128,
+                 in_channel_size=324,
+                 embed_size=30, hid_size=256, output_size=128, layers=3
+                 ):
+        # dimension would be:
+        # 1024,
+        super(FFColNet, self).__init__()
+        self.embeds = nn.Embedding(*(utf8codes.shape))
+        self.embeds.weight.data.copy_(torch.from_numpy(utf8codes))
+        # self.dense_embed = nn.Linear(input_size,)
+        # self.relu1 = nn.ReLU()
+        #
+        # self.lin1 = nn.Linear(in_channel_size, hid_size)
+        self.lin1 = nn.Linear(input_size, hid_size)
+        self.tanh1 = nn.Tanh()
+        self.lin2 = nn.Linear(hid_size, hid_size)
+        self.tanh2 = nn.Tanh()
+        self.lin3 = nn.Linear(hid_size, output_size)
+        # self.lin3 = nn.Linear(hid_size, in_channel_size)
+
+        # low and high bytes encodings for the multihot encoder
+        self.actv_out = nn.Sigmoid()
+        # self.outb1 = nn.Softmax()
+        # self.outb2 = nn.Softmax()
+        self.net = nn.Sequential(self.lin1, self.tanh1,
+                                 self.lin2, self.tanh2,
+                                 self.lin3)
+
+    def forward(self, x):
+        x = self.embeds(x).transpose(1, 2)
+        ret = self.net(x)
+        # redimension so sigmoid is applied per channel and we can decode each output separately
+        # ret = ret.transpose()
+        ret = self.actv_out(ret).transpose(1, 2)
+        return ret
+
+
+class NLPGatedConv1DColumnV1(nn.Module):
+    """
+    Represents one Convolutional column from an input, starting with a kernel size and then
+    all the next layers are a kernel 3x1
+    At the end there is an attention layer
+
+    The network is composed of 4 big layers:
+    input layer with one convolution size and stride
+    3 big layers, each with 2 sublayers, at the end of each big layer the dimension is diminished but there are more
+    channels to the output
+
+
+    Assume input dimension is an embedding of 1024 x c_in with embedding dimension c_in
+
+    """
+    def __init__(self, utf8codes, c_in, c_out=[64, 64, 128, 128],
+                 kernel_size=3, hid_kernel_size=3,
+                 # res_layers=3,
+                 # sub_res_layers=3,
+                 stride=1, hid_stride=1,
+                 dropout=0.2,
+                 activation="relu"):
+        """
+
+        :param c_in:
+        :param c_out1: number of output channels of each big convolutional layer
+        :param kernel_size: the first kernel size, all the others are size 2
+        :param res_layers:
+        :param stride: defaults to 1 but might be good to do something like min(1, kernel_size // 3)
+        :param dropout:
+        :param activation:
+        """
+        super(NLPGatedConv1DColumnV1, self).__init__()
+
+        # assert len(c_out) == res_layers
+        self.embeds = nn.Embedding(*(utf8codes.shape))
+        self.embeds.weight.data.copy_(torch.from_numpy(utf8codes))
+
+        pad = (kernel_size - 1)//2
+        self.leftpad = nn.ConstantPad1d(pad, 0.)
+        # first conv layer, the one with big kernel
+        self.conv1 = weight_norm(nn.Conv1d(c_in, c_out[0], kernel_size, stride=stride))
+
+        # now come the Residual Gated Convolutional Blocks
+
+        #############################
+        # First block of convolutions
+        pad2 = (hid_kernel_size - 1) // 2
+        leftpad1 = nn.ConstantPad1d(pad2, 0.)
+        b1_gsl1 = GatedConv1DBlock(c_out[0], c_out[1], hid_kernel_size, dropout, activation)
+        b1_gsl2 = GatedConv1DBlock(c_out[1], c_out[1], hid_kernel_size, dropout, activation)
+        # cut input dimension by 2
+        b1_maxp = nn.MaxPool1d(3, stride=2)
+        #############################
+        # Second block of convolutions
+        leftpad2 = nn.ConstantPad1d(pad2, 0.)
+        b2_gsl1 = GatedConv1DBlock(c_out[1], c_out[2], hid_kernel_size, dropout, activation)
+        b2_gsl2 = GatedConv1DBlock(c_out[2], c_out[2], hid_kernel_size, dropout, activation)
+        # cut input dimension by 2
+        b2_maxp = nn.MaxPool1d(3, stride=2)
+        # dimension is cut by 4 already
+        #############################
+        # Third block of convolutions
+        leftpad3 = nn.ConstantPad1d(pad2, 0.)
+        b3_gsl1 = GatedConv1DBlock(c_out[2], c_out[3], hid_kernel_size, dropout, activation)
+        b3_gsl2 = GatedConv1DBlock(c_out[3], c_out[3], hid_kernel_size, dropout, activation)
+        # cut input dimension by 2
+        b3_maxp = nn.MaxPool1d(3, stride=2)
+        # dimension got cut by 8 now
+        self.conv_col1 = nn.Sequential(b1_gsl1, b1_gsl2, leftpad1, b1_maxp)
+        self.conv_col2 = nn.Sequential(b2_gsl1, b2_gsl2, leftpad2, b2_maxp)
+        self.conv_col3 = nn.Sequential(b3_gsl1, b3_gsl2, leftpad3, b3_maxp)
+        #############################
+        # Now is Attention Column Layer
+        # TODO
+        # Now the last attention layer that joins all together
+        # And now the output activation
+
+    def forward(self, x):
+        print(11, x.shape)
+        x = self.embeds(x).transpose(1, 2)
+        print(22, x.shape)
+        x = self.leftpad(x)
+        # print(22, x.shape)
+        out = self.conv1(x)
+        print(33, out.shape)
+        out = self.conv_col1(out)
+        print(44, out.shape)
+        out = self.conv_col2(out)
+        print(55, out.shape)
+        out = self.conv_col3(out)
+        print(66, out.shape)
+        res = x if self.downsample is None else self.downsample(x)
+        print(77, res.shape)
+        return self.relu(out)  # self.relu(out + res)
+
+
+##########
+
+class Conv1DBlock(nn.Module):
+    def __init__(self, c_in, c_out, kernel_size=3, nlayers=5, dropout=0.3, groups=8):
+        """
+
+        :param c_in: input channels
+        :param c_out: output channels
+        :param kernel_size:
+        :param nlayers: number of convolutional layers per block
+        :param dropout:
+        :param groups: number of groups as in filter groups
+        """
+        super(Conv1DBlock, self).__init__()
+
+        if c_in == c_out:
+            self.use_proj = 0
+        else:
+            self.use_proj = 1
+
+        self.convresid = weight_norm(nn.Conv1d(c_in, c_out, 1))  # downsample for residual connection if needed
+
+        self.convs = []
+        for i in range(nlayers):
+            t_c_in = c_out
+            if i == 0:
+                t_c_in = c_in
+            # Left padding
+            # pad = nn.ConstantPad1d((kernel_size - 1) // 2, 0)
+            cnv = weight_norm(nn.Conv1d(t_c_in, c_out, kernel_size, padding=(kernel_size-1)//2, groups=groups))
+            # cnv = weight_norm(nn.Conv1d(t_c_in, c_out, kernel_size, groups=groups))
+            # self.convs.append(pad)
+            self.convs.append(cnv)
+
+        self.convs = nn.Sequential(*self.convs)
+        self.dropout = nn.Dropout(dropout)
+        self.activation = nn.ReLU()
+
+    def forward(self, x):
+        # not use padding -> is up to the main network to decide
+        # res = self.leftpad(x)
+        # print("1 conv1b", x.shape, x.dtype, x.is_cuda)
+        res = x
+        # residual connection channel dimension adaptation
+        if self.use_proj == 1:  # if in_c != out_c, need to change size of residual
+            res = self.convresid(res)
+        # print("2 conv1b", res.shape)
+        out = self.convs(x)
+        # print("3 conv1b", out.shape)
+        out = self.dropout(out)
+        # print("4 conv1b", out.shape)
+        return self.activation(out + res)
+
+
+class MixedConvAttentionColumn(nn.Module):
+    """, utf8codes
+
+    """
+    def __init__(self, utf8codes,
+                 c_in=[324, 64, 128, 128], c_out=[64, 128, 128, 324],  # channels for blocks
+                 b_layers=[3, 5, 5],  # number of layers for each bloc
+                 att_heads=[4, 4, 4, 4],  # attentional heads
+                 att_heads_hid=[8, 8, 8, 8],  # attentional heads
+                 att_in_dim=[],  # max span allowed as input (must be <= than the available input)
+                 att_out_dim=[],
+                 first_k_size=3, kernel_size=3,
+                 dropout=0.3, groups=4):
+        super(MixedConvAttentionColumn, self).__init__()
+
+        assert c_in[1:] == c_out[:-1]
+        # assert len(c_out) == res_layers
+        self.embeds = nn.Embedding(*(utf8codes.shape))
+        self.embeds.weight.data.copy_(torch.from_numpy(utf8codes))
+
+        # input convolution layer is the one who adapts the input for the following columns
+        self.conv0 = nn.Conv1d(c_in[0], c_out[0], first_k_size, padding=(kernel_size-1)//2, stride=(first_k_size-1)//2)
+        self.drop0 = nn.Dropout(dropout)
+
+        self.att1 = TransformerEncoderLayer()
+
+        # Convolutional blocks
+        self.conv_blocks = nn.ModuleList()
+        self.conv1x1_blocks = nn.ModuleList()
+        self.maxpool_blocks = nn.ModuleList()
+        for cin, cout, lays in zip(c_in[1:], c_out[1:], b_layers):
+            cnv = Conv1DBlock(cin, cout, kernel_size, lays, dropout, groups)
+            mp = nn.MaxPool1d(2, stride=2)
+            # mp = nn.MaxPool1d(3)
+            self.maxpool_blocks.append(mp)
+            self.conv_blocks.append(cnv)
+            # self.conv_blocks
+            # TODO MaxPooling here (or Attention Pooling or any other pooling with the needed factor)
+        # self.convolutions = nn.Sequential(*self.conv_blocks)
+
+        # TODO the attention layers
+        # Attention layers
+
+        #
+        self.dropout = nn.Dropout(dropout)
+        self.activation = nn.Sigmoid()
+
+    def forward(self, x):
+        print("1 mixcol", x.shape, x.dtype)
+        emb = self.embeds(x).transpose(1, 2)
+        print("2 mixcol", emb.shape)
+        cnv_col = self.conv0(emb)
+        print("3 mixcol", cnv_col.shape)
+        cnv_col = self.drop0(cnv_col)
+        print("4 mixcol", cnv_col.shape)
+        cnv_blocks = []
+        for conv, maxp in zip(self.conv_blocks, self.maxpool_blocks):
+            cnv_col = conv(cnv_col)
+            print("5 mixcol", cnv_col.shape)
+            cnv_col = maxp(cnv_col)
+            print("6 mixcol", cnv_col.shape)
+            # save the result of the conv block for the attention layers
+            cnv_blocks.append(cnv_col)
+        cnv_col = self.dropout(cnv_col)
+        print("7 mixcol", cnv_col.shape)
+        cnv_col = self.activation(cnv_col)
+        print("8 mixcol", cnv_col.shape)
+        cnv_col = cnv_col.transpose(1, 2)
+        # TODO add attention layers part
+        return ret
+
+
+class ConvColumn(nn.Module):
+    """
+
+    """
+    def __init__(self, utf8codes,
+                 c_in=[324, 64, 128, 128], c_out=[64, 128, 128, 324],  # channels for blocks
+                 b_layers=[3, 5, 5],  # number of layers for each bloc
+                 # att_heads=[4,8,4,8,4,8,4,8],  # attentional heads
+                 first_k_size=3, kernel_size=3,
+                 dropout=0.3, groups=4):
+        super(ConvColumn, self).__init__()
+
+        assert c_in[1:] == c_out[:-1]
+        # assert len(c_out) == res_layers
+        self.embeds = nn.Embedding(*(utf8codes.shape))
+        self.embeds.weight.data.copy_(torch.from_numpy(utf8codes))
+
+        # input convolution layer is the one who adapts the input for the following columns
+        self.conv0 = nn.Conv1d(c_in[0], c_out[0], first_k_size, padding=(kernel_size-1)//2, stride=(first_k_size-1)//2)
+        self.drop0 = nn.Dropout(dropout)
+
+        # Convolutional blocks
+        self.conv_blocks = nn.ModuleList()
+        self.maxpool_blocks = nn.ModuleList()
+        for cin, cout, lays in zip(c_in[1:], c_out[1:], b_layers):
+            cnv = Conv1DBlock(cin, cout, kernel_size, lays, dropout, groups)
+            mp = nn.MaxPool1d(2, stride=2)
+            self.conv_blocks.append(cnv)
+            self.conv_blocks.append(mp)
+            # self.conv_blocks
+            # TODO MaxPooling here (or Attention Pooling or any other pooling with the needed factor)
+        self.convolutions = nn.Sequential(*self.conv_blocks)
+
+        # TODO the attention layers
+        # Attention layers
+
+        #
+        self.dropout = nn.Dropout(dropout)
+        self.activation = nn.Sigmoid()  # Better for multihot than relu
+
+    def forward(self, x):
+        ret = self.embeds(x).transpose(1, 2)
+        ret = self.conv0(ret)
+        ret = self.drop0(ret)
+        ret = self.convolutions(ret)
+        # TODO add attention layers part
+        ret = self.dropout(ret)
+        ret = self.activation(ret)
+        return ret.transpose(1, 2)
+
+
+class GatedConv1DBlock(nn.Module):
+    def __init__(self, c_in, c_out, kernel_size, stride=1, dropout=0.2, activation="relu"):
+        """
+        :param c_in: # input channels
+        :param c_out: # output channels
+        :param kernel_size:
+        :param stride:
+        :param dropout:
+        :param activation: if None then no activation is done
+        """
+        # TODO add Coordinate Convolution addition here (if conf)
+        super(GatedConv1DBlock, self).__init__()
+        dropout = 0.2
+        stride=1
+        if c_in == c_out:
+            self.use_proj = 0
+        else:
+            self.use_proj = 1
+        # Left padding left to the master network to do
+        pad = (kernel_size - 1) // 2
+        self.leftpad = nn.ConstantPad1d(pad, 0)
+        self.convresid = weight_norm(nn.Conv1d(c_in, c_out, 1))  # downsample for residual connection if needed
+        #
+        self.conv1A = weight_norm(nn.Conv1d(c_in, c_out, kernel_size, stride=stride))
+        # self.chomp1A = Chomp1d(padding)
+        # gating unit
+        self.conv1B = weight_norm(nn.Conv1d(c_in, c_out, kernel_size, stride=stride))
+        # self.chomp1B = Chomp1d(padding)
+        self.gatingActiv1B = nn.Sigmoid()  # nn.Tanh()  #
+
+        # self.net1 = nn.Sequential(self.conv1A)
+        self.gate1 = nn.Sequential(self.conv1B, self.gatingActiv1B)
+
+        # self.activ1 = nn.ReLU()
+        self.dropout1 = nn.Dropout(dropout)
+
+        self.conv2A = weight_norm(nn.Conv1d(c_out, c_out, kernel_size, stride=stride))
+        # self.chomp2A = Chomp1d(padding)
+        # gating unit
+        self.conv2B = weight_norm(nn.Conv1d(c_out, c_out, kernel_size, stride=stride))
+        # self.chomp2B = Chomp1d(padding)
+        self.gatingActiv2B = nn.Sigmoid()  # nn.Tanh()  #
+
+        # self.activ2 = nn.ReLU()
+        self.dropout2 = nn.Dropout(dropout)
+
+        # self.net2 = nn.Sequential(self.convA, self.chomp2A)
+        self.gate2 = nn.Sequential(self.conv1B, self.gatingActiv1B)
+
+        # TODO improve the activation selection mechanism (take out the ifs and make it more meta)
+        self.activation = None
+        if activation and activation.lower() == "relu":
+            self.activation = nn.ReLU()
+        elif activation and activation.lower() == "tanh":
+            self.activation = nn.Tanh()
+        elif activation and activation.lower() == "sigmoid":
+            self.activation = nn.Sigmoid()
+        # self.init_weights()
+
+    # def init_weights(self):
+    #     self.conv1.weight.data.normal_(0, 0.01)
+    #     self.conv2.weight.data.normal_(0, 0.01)
+    #     if self.downsample is not None:
+    #         self.downsample.weight.data.normal_(0, 0.01)
+
+    def forward(self, x):
+        # not use padding -> is up to the main network to decide
+        # res = self.leftpad(x)
+        res = x
+        print(1, res.shape)
+        # residual connection channel dimension adaptation
+        if self.use_proj:  # if in_c != out_c, need to change size of residual
+            print("convresid")
+            res = self.convresid(res)
+        print(1, res.shape)
+        x = self.leftpad(x)
+        print(2, x.shape)
+        out_net1 = self.conv1A(x)
+        gt1 = self.gate1(x)
+        print(3, x.shape, res.shape, out_net1.shape, gt1.shape)
+
+        out1 = torch.mul(out_net1, gt1)
+        out1 = self.dropout1(out1)
+        print(4, out1.shape)
+
+        out1 = self.leftpad(out1)
+        out_net2 = self.conv2A(out1)
+        gt2 = self.gate2(out1)
+        print(5, out_net2.shape, gt2.shape)
+
+        out2 = torch.mul(out_net2, gt2)
+        out2 = self.dropout1(out2)
+        print(6, out2.shape)
+
+        if self.activation:
+            out = self.activation(out2 + res)
+        else:
+            out = out2 + res
+        # res = x if self.downsample is None else self.downsample(x)
+        print(7, out.shape)
+        return out

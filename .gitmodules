@@ -1,0 +1,3 @@
+[submodule "predictors/sequence/text/adaptive-span"]
+	path = predictors/sequence/text/adaptive-span
+	url = git@github.com:leomrocha/adaptive-span.git
