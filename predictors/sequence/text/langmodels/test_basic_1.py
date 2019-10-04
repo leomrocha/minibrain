@@ -75,7 +75,7 @@ def main():
         data = pickle.load(f)
     with open('/home/leo/projects/Datasets/text8.test.pkl', 'rb') as f:
         test_data = pickle.load(f)
-    model = MixedConvAttentionColumn()
+    model = MixedConvLinearColumns()
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adagrad(model.parameters(), lr=0.1, lr_decay=1e-5, weight_decay=1e-5)
     n_epochs = 2
