@@ -3,7 +3,14 @@
 This file contains a list of papers that I've read, I'm reading or I want to read in a close future, but it keeps growing.
 I just take a few notes and write down some questions and ideas on those quite fast. I don't usually check for mistakes, but I do correct them if I find them when looking for something here.
 
+### REVISITING SMALL BATCH TRAINING FOR DEEP NEURAL NETWORKS
+https://arxiv.org/pdf/1804.07612.pdf
+batch sizes entre 2 y 32, no mas ni menos.
+
 ## For NLP
+
+### Dynamic Coattention Networks For Question Answering
+https://arxiv.org/abs/1611.01604
 
 ### Levenshtein Transformer
 THIS ONE !!! as I was looking on how to do this
@@ -11,7 +18,6 @@ https://arxiv.org/pdf/1905.11006.pdf
 
 ### Pay Less Attention with Lightweight and Dynamic Convolutions
 https://arxiv.org/pdf/1901.10430.pdf
-
 
 ### ALBERT: A LITE BERT FOR SELF-SUPERVISED LEARNING OF LANGUAGE REPRESENTATIONS
  https://openreview.net/pdf?id=H1eA7AEtvS
