@@ -248,16 +248,24 @@ class MixedConvLinearColumns(nn.Module):
 
 
 class MixedColsTest(nn.Module):
-    def __init__(self):
+    def __init__(self):  # def __init__(self,  utf8codes):
         super(MixedColsTest, self).__init__()
         self.embeddings = nn.Embedding(1984, 32)
+        # self.embeddings = nn.Embedding(*(utf8codes.shape))
+        # self.embeddings.weight.data.copy_(torch.from_numpy(utf8codes))
         self.encoder = MixedConvAttentiveColumns()
-        self.decoder = TransformerDecoder(128, 8, 256, 5, 0.3, True)
+        self.decoder = TransformerDecoder(128, 1, 256, 5, 0.3, True)
+        # self.decoder = nn.Linear(128, 128)
 
     def forward(self, x):
+        print("Embedding: ", x.shape)
         ret = self.embeddings(x).transpose(1, 2)
+        print("Encoding: ", ret.shape)
         ret = self.encoder(ret)
+        print("Decoding: ", ret.shape)
         ret = self.decoder(ret, ret).transpose(1, 2)
+        # ret = self.decoder(ret).transpose(1, 2)
+        print("Returning: ", ret.shape)
         return ret
 
 
@@ -276,7 +284,7 @@ class MixedConvAttentiveColumns(nn.Module):
                  first_lin_size=1024,
                  first_k_sizes=[3, 5, 7, 9, 11, 15], kernel_size=3,
                  # first_k_sizes=[3, 5, 7, 9, 11, 15, 25], kernel_size=3,
-                 n_heads=8, dropout=0.3, groups=4):
+                 n_heads=8, dropout=0.3, groups=8):
         super(MixedConvAttentiveColumns, self).__init__()
         c_in = channels[:-1]
         c_out = channels[1:]
@@ -345,7 +353,7 @@ class MixedConvAttentiveColumns(nn.Module):
         return lin1, conv1x1_1, conv1x1_2
 
     def forward(self, x):
-        # print("1 mixcol", x.shape, x.dtype)
+        print("1 mixcol", x.shape, x.dtype)
         # emb = self.embeds(x).transpose(1, 2)
         emb = x
         # print("2 mixcol", emb.shape)
@@ -356,7 +364,7 @@ class MixedConvAttentiveColumns(nn.Module):
         cnv_col = self.conv0adapt(cnv_col)
         # print("3 mixcol", cnv_col.shape)
         cnv_col = self.drop0(cnv_col)
-        # print("4 mixcol", cnv_col.shape)
+        print("4 mixcol", cnv_col.shape)
         cnv_blocks = [cnv_col]
         for conv, maxp in zip(self.conv_blocks, self.maxpool_blocks):
             cnv_col = conv(cnv_col)
@@ -366,7 +374,7 @@ class MixedConvAttentiveColumns(nn.Module):
             # save the result of the conv block for the attention layers
             cnv_blocks.append(cnv_col)
         cnv_col = self.dropout(cnv_col)
-        # print("7 mixcol", cnv_col.shape)
+        print("7 mixcol", cnv_col.shape)
         cnv_col = self.activation(cnv_col)
         # print("8 mixcol", cnv_col.shape)
         # cnv_col = cnv_col.transpose(1, 2)
@@ -374,7 +382,7 @@ class MixedConvAttentiveColumns(nn.Module):
         mix_col = self.lin0(emb)
         # First attention layer
         mix_col = self.att0(mix_col)
-        # print("9 mixcol", mix_col.shape)
+        print("9 mixcol", mix_col.shape)
         # Mixed Linear layers must be processed after the relative dependent convolutional parts
         # print(len(self.lin_layers), len(self.convs1x1_lin), len(self.convs1x1_cnv), len(cnv_blocks))
         for lin, cnv1, cnv2, out_cnv in zip(self.att_layers, self.convs1x1_lin, self.convs1x1_cnv, cnv_blocks):
@@ -389,12 +397,12 @@ class MixedConvAttentiveColumns(nn.Module):
             # print("13 mixcol", mix_col.shape)
         # last linear layer
         ret = self.last_lin(mix_col)
-        # print("14 mixcol", ret.shape)
+        print("14 mixcol", ret.shape)
         # Sigmoid
         ret = self.activation(ret)
-        # print("15 mixcol", ret.shape)
-        # ret = ret.transpose(1, 2)  # revert to the original input
-        # print("16 mixcol", ret.shape)
+        print("15 mixcol", ret.shape)
+        ret = ret.transpose(1, 2)  # revert to the original input
+        print("16 mixcol", ret.shape)
         return ret
 
 

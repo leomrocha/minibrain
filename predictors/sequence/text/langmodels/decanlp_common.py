@@ -19,32 +19,33 @@ from torch.nn.utils.rnn import pack_padded_sequence as pack
 INF = 1e10
 EPSILON = 1e-10
 
-class LSTMDecoder(nn.Module):
 
-    def __init__(self, num_layers, input_size, rnn_size, dropout):
-        super(LSTMDecoder, self).__init__()
-        self.dropout = nn.Dropout(dropout)
-        self.num_layers = num_layers
-        self.layers = nn.ModuleList()
-
-        for i in range(num_layers):
-            self.layers.append(nn.LSTMCell(input_size, rnn_size))
-            input_size = rnn_size
-
-    def forward(self, input, hidden):
-        h_0, c_0 = hidden
-        h_1, c_1 = [], []
-        for i, layer in enumerate(self.layers):
-            input = self.dropout(input)
-            h_1_i, c_1_i = layer(input, (h_0[i], c_0[i]))
-            input = h_1_i
-            h_1 += [h_1_i]
-            c_1 += [c_1_i]
-
-        h_1 = torch.stack(h_1)
-        c_1 = torch.stack(c_1)
-
-        return input, (h_1, c_1)
+# class LSTMDecoder(nn.Module):
+#
+#     def __init__(self, num_layers, input_size, rnn_size, dropout):
+#         super(LSTMDecoder, self).__init__()
+#         self.dropout = nn.Dropout(dropout)
+#         self.num_layers = num_layers
+#         self.layers = nn.ModuleList()
+#
+#         for i in range(num_layers):
+#             self.layers.append(nn.LSTMCell(input_size, rnn_size))
+#             input_size = rnn_size
+#
+#     def forward(self, input, hidden):
+#         h_0, c_0 = hidden
+#         h_1, c_1 = [], []
+#         for i, layer in enumerate(self.layers):
+#             input = self.dropout(input)
+#             h_1_i, c_1_i = layer(input, (h_0[i], c_0[i]))
+#             input = h_1_i
+#             h_1 += [h_1_i]
+#             c_1 += [c_1_i]
+#
+#         h_1 = torch.stack(h_1)
+#         c_1 = torch.stack(c_1)
+#
+#         return input, (h_1, c_1)
 
 
 def positional_encodings_like(x, t=None):
@@ -121,6 +122,7 @@ class Attention(nn.Module):
         self.causal = causal
 
     def forward(self, query, key, value, padding=None):
+        print("decanlp: ", query.shape, key.shape, value.shape)
         dot_products = matmul(query, key.transpose(1, 2))
         if query.dim() == 3 and self.causal:
             tri = key.new_ones((key.size(1), key.size(1))).triu(1) * INF
