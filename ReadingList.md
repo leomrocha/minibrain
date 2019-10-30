@@ -9,6 +9,42 @@ batch sizes entre 2 y 32, no mas ni menos.
 
 ## For NLP
 
+__
+### Datasets:
+* [List of many datasets](http://nlpprogress.com/english/question_answering.html)
+* [HotspotQA](https://hotpotqa.github.io/)
+* [QAngaroo](https://qangaroo.cs.ucl.ac.uk/) 
+
+
+### Answering Complex Open-domain Questions Through Iterative Query Generation
+https://arxiv.org/pdf/1910.07000.pdf
+http://ai.stanford.edu/blog/answering-complex-questions/
+
+### Simple and Effective Multi-Paragraph Reading Comprehension
+https://arxiv.org/abs/1710.10723
+
+### MULTI-STEP RETRIEVER-READER INTERACTION FOR SCALABLE OPEN-DOMAIN QUESTION ANSWERING
+https://openreview.net/pdf?id=HkfPSh05K7
+
+### Cognitive Graph for Multi-Hop Reading Comprehension at Scale
+https://arxiv.org/pdf/1905.05460.pdf
+
+### Multi-hop Reading Comprehension through Question Decomposition and Rescoring
+https://www.aclweb.org/anthology/P19-1613.pdf
+
+### The Web as a Knowledge-base for Answering Complex Questions
+https://www.aclweb.org/anthology/N18-1059.pdf
+
+### Latent Retrieval for Weakly Supervised Open Domain Question Answering
+https://arxiv.org/pdf/1906.00300.pdf
+
+### CodeSearchNet Challenge: Evaluating the State of Semantic Code Search
+https://arxiv.org/pdf/1909.09436.pdf
+
+### R3: Reinforced Ranker-Reader for Open-Domain Question Answering
+https://arxiv.org/pdf/1709.00023.pdf
+
+__
 ### Dynamic Coattention Networks For Question Answering
 https://arxiv.org/abs/1611.01604
 
