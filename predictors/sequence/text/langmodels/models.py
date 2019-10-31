@@ -7,5 +7,5 @@ from torch.nn.modules.transformer import TransformerDecoder, TransformerDecoderL
 import torch.nn.functional as F
 
 
-
 class DynConvAttention(nn.Module):
+    pass

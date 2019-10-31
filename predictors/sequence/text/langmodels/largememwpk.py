@@ -23,12 +23,12 @@ class SubKeyColumn(nn.Module):
         # q : x -> q(x) belongs to Real domain of dimension dq (R^dq)
         lin1 = nn.Linear(indim, indim//2)  # , bias=False)
         bn = nn.BatchNorm1d()
-        self.preprocess = nn.ModuleList([lin1,bn])
+        self.preprocess = nn.ModuleList([lin1, bn])
 
     def forward(self, x):
         x1 = self.preprocess(x)
-        q =
-
+        # q =
+        pass
 
 
 class PKPreprocess(nn.Module):
