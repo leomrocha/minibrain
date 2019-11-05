@@ -15,19 +15,38 @@ __
 * [HotspotQA](https://hotpotqa.github.io/)
 * [QAngaroo](https://qangaroo.cs.ucl.ac.uk/) 
 
+### Massively Multilingual Neural Machine Translation in the Wild: Findings and Challenges
+This paper
+https://arxiv.org/pdf/1907.05019.pdf
+https://medium.com/syncedreview/google-introduces-huge-universal-language-translation-model-103-languages-trained-on-over-25-74f0eb71b177
+Great Paper to check ideas and see wht works and what does not and why
 
 ### Answering Complex Open-domain Questions Through Iterative Query Generation
 https://arxiv.org/pdf/1910.07000.pdf
 http://ai.stanford.edu/blog/answering-complex-questions/
+Interesting method and training, still we are far from a real solution. Uses DrQA and other things
+Code available with stanfordnlp framework
+
+### Learn to Grow: A Continual Structure Learning Framework for Overcoming Catastrophic Forgetting
+https://arxiv.org/abs/1904.00310
+Interesting but not what I'm looking for. This one use Neural Architecture Search (NAS) too resource intensive for me.
+
+### Revisiting Character-Based Neural Machine Translation with Capacity and Compression
+https://www.aclweb.org/anthology/D18-1461.pdf
+This one is interesting
+Is basically one of the papers I was looking for. More depth solves the issue of character level. Also they outperform other models.
+They study different NMT networks and how they work.
+
+### Cognitive Graph for Multi-Hop Reading Comprehension at Scale
+https://arxiv.org/pdf/1905.05460.pdf
+This paper seems interesting and on the lines of what I've been working on
+I have to give it a more thorough read
 
 ### Simple and Effective Multi-Paragraph Reading Comprehension
 https://arxiv.org/abs/1710.10723
 
 ### MULTI-STEP RETRIEVER-READER INTERACTION FOR SCALABLE OPEN-DOMAIN QUESTION ANSWERING
 https://openreview.net/pdf?id=HkfPSh05K7
-
-### Cognitive Graph for Multi-Hop Reading Comprehension at Scale
-https://arxiv.org/pdf/1905.05460.pdf
 
 ### Multi-hop Reading Comprehension through Question Decomposition and Rescoring
 https://www.aclweb.org/anthology/P19-1613.pdf
