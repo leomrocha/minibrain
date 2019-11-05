@@ -18,7 +18,7 @@ class UTF8Code(nn.Module):
         """
         # self._codebook = utf8codebook
         self._index = faiss.IndexFlatL2(utf8codebook)
-        faiss.IndexBin
+        # faiss.IndexBin
         # self._index = faiss.GpuIndexFlatL2(utf8codebook)
         # faiss.IVFL
         self._idx2char = idx2char
@@ -68,7 +68,7 @@ class UTF8Embedding(nn.Module):
 
 
 class UTF8AttentionalEmbedding(UTF8Embedding):
-    def __init__(self, utf8codebook, layers=2, nheads=4, ffdim=512, outdim=32):
+    def __init__(self, utf8codebook, layers=2, nheads=4, ffdim=1024, outdim=32):
         """
         Embedding Layer for UTF-8 based on pre-computed weights, it adds attentional and linear layers
         to be able to modify the embedding dimension.
@@ -77,7 +77,7 @@ class UTF8AttentionalEmbedding(UTF8Embedding):
         :param layers: number of attention layers (channel-wise, for each character)
         :param nheads: number of heads of the attentional layers
         :param ffdim: feed forward dimension of the attentional linear layer
-        :param outdim: aoutput dimension of the code
+        :param outdim: output dimension of the code
         """
 
         # dimension would be:

@@ -14,6 +14,7 @@ __
 * [List of many datasets](http://nlpprogress.com/english/question_answering.html)
 * [HotspotQA](https://hotpotqa.github.io/)
 * [QAngaroo](https://qangaroo.cs.ucl.ac.uk/) 
+* [Universal Dependencies Treebanks]()
 
 ### Massively Multilingual Neural Machine Translation in the Wild: Findings and Challenges
 This paper
@@ -64,6 +65,22 @@ https://arxiv.org/pdf/1909.09436.pdf
 https://arxiv.org/pdf/1709.00023.pdf
 
 __
+### A Comprehensive Survey on Graph Neural Networks
+https://arxiv.org/abs/1901.00596
+
+### Graph Neural Networks: A Review of Methods and Applications
+https://arxiv.org/pdf/1812.08434.pdf
+
+## Graph Convolutional Neural Networks for Web-Scale Recommender Systems
+https://arxiv.org/pdf/1806.01973.pdf
+Pinterest PinSage algorithm NN
+
+### Tutorial on Graph Neural Networks
+https://medium.com/@BorisAKnyazev/tutorial-on-graph-neural-networks-for-computer-vision-and-beyond-part-1-3d9fada3b80d
+
+### How Powerful are Graph Neural Networks?
+https://arxiv.org/abs/1810.00826
+
 ### Dynamic Coattention Networks For Question Answering
 https://arxiv.org/abs/1611.01604
 
