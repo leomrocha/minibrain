@@ -3,7 +3,8 @@ import numpy as np
 import pickle
 from collections import OrderedDict
 
-
+SEGMENT_INDICES_START = [0, 4, 256+4, 64+256+4, 2*64 + 256+4]
+SEGMENT_INDICES_END = [4, 256+4, 64+256+4, 2*64 + 256+4, 3*64 + 256+4]
 # Bit of a whacky hack and for sure not the most efficient one, but it just works for what I want
 def prepend_zeros(s, n):
     return '0' * (n - len(s))+s

@@ -120,6 +120,27 @@ class UTF8Decoder(nn.Module):
     pass
 
 
+class UTF8DecoderMultihot(nn.Module):
+    def __init__(self, utf8codebook, lin_layers=[None], seg_indices=(0, 4, 256+4, 64+256+4, 2*64 + 256+4)):
+        """
+        This modules decodes a given code, if the code_dim is given (an iterable not None) then a MLP decoder is created to adapt
+        from the input dimension to the utf8codebook dimension
+        :param utf8codebook:
+        :param lin_layers: if not None, creates a MLP with the given dimensions  for example[512, 512, 388] and after that
+        a multiple Softmax is used for each segment on the code
+        :param seg_indices: indices of the segments on the multihot code
+        """
+        # dimension would be:
+        # 1024,
+        super(UTF8Decoder, self).__init__()
+        self.embeds = nn.Embedding(*utf8codebook.shape)
+        self.embeds.weight.data.copy_(torch.from_numpy(utf8codebook))
+        self.embeds.weight.requires_grad(False)
+
+    pass
+
+
+
 class EncodeDecodeTest(nn.Module):
     pass
 
