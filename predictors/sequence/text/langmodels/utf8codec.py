@@ -103,7 +103,7 @@ class UTF8Embedding(nn.Module):
 
     def forward(self, x):
         # (batch size, sequence-width)
-        print(x.shape, type(x), x.dtype)
+        # print(x.shape, type(x), x.dtype)
         emb = self.embeds(x)
         dense = self.linear(emb)
         # ret = self.embedding(x)  # (batch size, sequence width[values]) -> # (batch size, sequence width, embedding)
