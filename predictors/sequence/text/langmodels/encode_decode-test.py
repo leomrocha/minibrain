@@ -40,16 +40,35 @@ class UTF8Code(nn.Module):
 
 
 class UTF8Embedding(nn.Module):
-    def __init__(self, utf8codebook, transpose=True):
+    def __init__(self, utf8codebook, transpose=False, lin_layers=None):
         """
         Embedding Layer for UTF-8 based on pre-computed weights
+
+        If the linear layers are created the output size of the embedding is the one of the last linear layer.
+        By default there are no linear layers and the output of the embedding is the one given as input
+
         :param utf8codebook: Codebook containing the entire index to code matrix
+        :param transpose: if the output should be transposed such as if True the result is shape
+                          (batch size, embedding, sequence width) if False (default) shape is
+                          (batch size, sequence width, embedding)
+        :param lin_layers: iterable with size of the output of each linear layer, examples: [64], [256,64]
         """
         self._transpose = transpose
         super(UTF8Embedding, self).__init__()
-        self.embeds = nn.Embedding(*utf8codebook.shape)
+        codebook_shape = utf8codebook.shape
+        self.embeds = nn.Embedding(*codebook_shape)
         self.embeds.weight.data.copy_(torch.from_numpy(utf8codebook))
         self.embeds.weight.requires_grad_(False)
+        self.lin = nn.ModuleList()
+        self.embedding = nn.ModuleList()
+        if lin_layers is not None:
+            prev_dim = codebook_shape[1]
+            for dim in lin_layers:
+                lin = nn.Linear(prev_dim, dim)
+                prev_dim = dim
+                self.lin.append(lin)
+        self.embedding.append(self.embeds)
+        self.embedding.extend(self.lin)
 
     @property
     def transpose(self):
@@ -61,7 +80,7 @@ class UTF8Embedding(nn.Module):
 
     def forward(self, x):
         # (batch size, sequence-width)
-        ret = self.embeds(x)  # (batch size, sequence width[values]) -> # (batch size, sequence width, embedding)
+        ret = self.embedding(x)  # (batch size, sequence width[values]) -> # (batch size, sequence width, embedding)
         if self._transpose:
             ret = ret.transpose(1, 2)  # (batch size, embedding, sequence width)
         return ret
