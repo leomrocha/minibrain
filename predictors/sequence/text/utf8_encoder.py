@@ -23,7 +23,6 @@ def get_npbintable(n):
 
 # this part makes sure to encode as bin
 eye4 = np.eye(4)
-eye5 = np.eye(5)
 eye64 = np.eye(64)
 eye128 = np.eye(128)
 eye256 = np.eye(256)
@@ -53,14 +52,14 @@ def encode_utf8(l):
     code = np.zeros(36)  # 32 is the size of the input code + 4 of the extra redundancy
     nbytes = len(el)
     # assert( 0<nbytes && nbytes<=4)
-    assert(nbytes <= 4)
+    assert(nbytes<=4)
     bin4 = eye4[nbytes-1]  # this adds redundant knowledge about the  part
     # this is ugly but explicit, for the moment is good enough and I can see what is
     code[:4] = bin4
     if nbytes == 1:
-        code[4:12] = code_b7[el[0] & 0b01111111]
+        code[4:12] = code_b7[el[0]& 0b01111111 ]
     elif nbytes == 2:
-        code[4:12] = code_b5[el[0] & 0b00011111]
+        code[4:12] = code_b5[el[0] & 0b00011111 ]
         code[12:20] = code_b6[el[1] & 0b00111111]
     elif nbytes == 3:
         code[4:12] = code_b4[el[0] & 0b00001111]
@@ -83,7 +82,7 @@ def encode_utf8_multihot(c, segments=4):
     nbytes = len(e_c)
     # assert( 0<nbytes && nbytes<=4)
     assert(4 >= nbytes > 0)
-    bin4 = eye4[nbytes-1]  # this adds redundant knowledge about the segment part
+    bin4 = eye4[nbytes-1]  # this adds redundant knowledge about the  part
     # this is ugly but explicit, for the moment is good enough and I can see what is
 #     code[:4] = bin4
     # max size of each part of the code
@@ -91,20 +90,15 @@ def encode_utf8_multihot(c, segments=4):
     # this has an extra benefit, when a code is there only certain regions will become 1 giving an extra hint to the network
     # maxsizes = [2**8, 2**6, 2**6, 2**6]
     code = np.zeros(4 + (2**8) + (segments-1)*(2**6))
-    # take out the extra redundancy of the first segment -> this reduces the size of the embedding by 2**7
-    code = np.zeros(4 + (2 ** 7) + (segments - 1) * (2 ** 6))
     masks = [0xff, 0x3f, 0x3f, 0x3f]
-    # indices = [256+4, 64+256+4, 2*64 + 256+4, 3*64 + 256+4]
-    # take out the extra redundancy of the first segment -> this reduces the size of the embedding by 128
-    indices = [128 + 4, 64 + 128 + 4, 2 * 64 + 128 + 4, 3 * 64 + 128 + 4]
-    # maxsizes = [eye256, eye64, eye64, eye64]
-    maxsizes = [eye128, eye64, eye64, eye64]
+    indices = [256+4, 64+256+4, 2*64 + 256+4, 3*64 + 256+4]
+    maxsizes = [eye256, eye64, eye64, eye64]
     masks = masks[:segments]
     indices = indices[:segments]
     maxsizes = maxsizes[:segments]
     # print(len(masks), len(indices), masks, indices)
 
-    code[:4] = bin4  # segment indicator bits
+    code[:4] = bin4
     prev_i = 4
     for i, n, e, m in zip(indices[:nbytes], e_c, maxsizes[:nbytes], masks[:nbytes]):
         code[prev_i:i] = e[n & m]  # masking
@@ -171,10 +165,9 @@ def create_tables(segments=4):
                     append_code(txt, code_count)
                     code_count += 1
                 except Exception as e:
-                    print(i, j, i | or_mask2[0], j | or_mask2[1])
+                    # print(i, j, i | or_mask2[0], j | or_mask2[1])
                     except_count +=1
-                    if i != 0 and j != 0 and i != 4:
-                        raise e
+                    # raise e
                     pass
     if segments >= 3:
         # generate all values for the third segment,
@@ -189,9 +182,9 @@ def create_tables(segments=4):
                         append_code(txt, code_count)
                         code_count += 1
                     except Exception as e:
-                        print(i, j, i | or_mask2[0], j | or_mask2[1])
+                        # print(i, j, i | or_mask2[0], j | or_mask2[1])
                         except_count += 1
-                        raise e
+                        # raise e
                         pass
 
     if segments == 4:
@@ -208,9 +201,9 @@ def create_tables(segments=4):
                             append_code(txt, code_count)
                             code_count += 1
                         except Exception as e:
-                            print(i, j, i | or_mask2[0], j | or_mask2[1])
+                            # print(i, j, i | or_mask2[0], j | or_mask2[1])
                             except_count += 1
-                            raise e
+                            # raise e
                             pass
     print("number of codes = ", code_count)
     print("number of code_exceptions = ", except_count)
@@ -236,18 +229,6 @@ def add_mappings(codebook, mappings={"<start>": 0x02, "<end>": 0x03, "unk": 0x0f
         txt2num[k] = v
         num2txt[v] = k
     return code_matrix, txt2code, code2txt, txt2num, num2txt
-
-# def add_special_codes(codebook, codelist=["<start>", "<end>", "unk", "err"]):
-#     """
-#
-#     :param codebook: input codebook to which to add special codes, it consists of a 5-tuple
-#     (code_matrix, txt2code, code2txt, txt2num, num2txt)
-#     :param codelist: the special codes to add to the encoding
-#     :return: a 5-tuple (code_matrix, txt2code, code2txt, txt2num, num2txt) with the last elements set as codelist
-#     and an extra dimension to signal the special codes
-#     """
-#     # TODO
-#     pass
 
 
 def save_obj(obj, name):
