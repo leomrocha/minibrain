@@ -2,9 +2,9 @@ import numpy as np
 import torch
 import torch.nn as nn
 # good that PyTorch v1.3.0+ has Transformers already implemented
-from torch.nn.modules.transformer import Transformer
+# from torch.nn.modules.transformer import Transformer
 from torch.nn.modules.transformer import TransformerEncoder, TransformerEncoderLayer
-from torch.nn.modules.transformer import TransformerDecoder, TransformerDecoderLayer
+# from torch.nn.modules.transformer import TransformerDecoder, TransformerDecoderLayer
 import torch.nn.functional as F
 import faiss
 
@@ -55,7 +55,7 @@ class UTF8Code(nn.Module):
 
 
 class UTF8Embedding(nn.Module):
-    def __init__(self, utf8codebook, transpose=False, lin_layers=(512, 512, 64, 32),
+    def __init__(self, utf8codebook, transpose=False, lin_layers=(512, 512, 32),
                  activation=None, dropout=0.1):
         """
         Embedding Layer for UTF-8 based on pre-computed weights
@@ -137,7 +137,7 @@ class UTF8AttentionalEmbedding(UTF8Embedding):
 
         self.lin = nn.Linear(codebook_shape[1], outdim)
         self.fw = nn.ModuleList()
-        # pre-coded / computed embeddings to (normally dim 64)
+        # pre-coded / pre-computed embeddings to (normally dim 32)
         self.fw.append(self.embeds)
         self.fw.extend(self.att)
         self.fw.append(self.lin)
@@ -150,7 +150,7 @@ class UTF8AttentionalEmbedding(UTF8Embedding):
         return ret
 
 
-class UTF8DecoderMultihot(nn.Module):
+class UTF8Decoder(nn.Module):
     def __init__(self, utf8codebook_shape, lin_layers=(32, 512, 512), activation="gelu",
                  seg_indices=(0, 4, 256+4, 64+256+4, 2*64 + 256+4, 3*64 + 256+4), dropout=0.1):
         """
@@ -167,7 +167,7 @@ class UTF8DecoderMultihot(nn.Module):
         for 4 segments is: seg_indices=(0, 4, 256+4, 64+256+4, 2*64 + 256+4, 3*64 + 256+4)
         but with the default value works for every segment encoding as it has a verification, so don't touch
         """
-        super(UTF8DecoderMultihot, self).__init__()
+        super(UTF8Decoder, self).__init__()
         # self.embeds = nn.Embedding(*utf8codebook.shape)
         # self.embeds.weight.data.copy_(torch.from_numpy(utf8codebook))
         # self.embeds.weight.requires_grad(False)
@@ -191,17 +191,17 @@ class UTF8DecoderMultihot(nn.Module):
                 self.lin.extend([lin, drop])
         self.activation = _get_activation_fn(activation)
         # Linear layers to adapt dimension for the separated softmax
+        #  precomputing dimensions and filtering
         sidx = np.array(seg_indices)
         sidx = sidx[sidx <= utf8codebook_shape[1]]  # filter out unused segments (dimension)
         ridx = np.roll(sidx, shift=-1)  # get the end index of each segment
         dims = ridx - sidx   # get segment dimensions
-        dims = dims[0 < dims]  # this takes out the unused segments
-        #
-        self.segments = nn.ModuleList()  # the order is important
+        dims = dims[0 < dims]  # this takes out the remaining problem dimensions (mainly 0)
+        # creating the separated pre-softmax linear layers
+        self.segments = nn.ModuleList()  # the order is important as it is the concatenation order
         for d in dims:
-            # the order is important
             lin = nn.Linear(utf8codebook_shape[1], d)
-            sm = nn.Softmax()
+            sm = nn.Softmax()  # softmax for this part of the code, the code has S+1 parts where S is the segment count
             self.segments.extend([lin, sm])
 
     def forward(self, x):
@@ -210,7 +210,7 @@ class UTF8DecoderMultihot(nn.Module):
         ret = self.lin(x)
         if self.activation:
             ret = self.activation(ret)
-        # process every part of the segment
+        # process every segment part of the multihot-encoding
         segments = []
         for net in self.segments:
             segments.append(net(ret))
