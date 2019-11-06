@@ -2,9 +2,25 @@ import torch
 import numpy as np
 import pickle
 from collections import OrderedDict
+"""
+recommended usage:
+...
+from utf8_encoder import create_tables, add_mappings, save_obj
+
+tables = create_tables(segments=2)
+tables = add_mappings(tables)
+recommended  naming:
+np.save("utf8_code_matrix_2seg", tables[0])
+save_obj(tables[1], "txt2code_2seg.pkl")
+save_obj(tables[2], "code2txt_2seg.pkl")
+save_obj(tables[3], "txt2num_2seg.pkl")
+save_obj(tables[4], "num2txt_2seg.pkl")
+"""
 
 SEGMENT_INDICES_START = [0, 4, 256+4, 64+256+4, 2*64 + 256+4]
 SEGMENT_INDICES_END = [4, 256+4, 64+256+4, 2*64 + 256+4, 3*64 + 256+4]
+
+
 # Bit of a whacky hack and for sure not the most efficient one, but it just works for what I want
 def prepend_zeros(s, n):
     return '0' * (n - len(s))+s
@@ -92,7 +108,7 @@ def encode_utf8_multihot(c, segments=4):
     # maxsizes = [2**8, 2**6, 2**6, 2**6]
     code = np.zeros(4 + (2**8) + (segments-1)*(2**6))
     masks = [0xff, 0x3f, 0x3f, 0x3f]
-    indices = [256+4, 64+256+4, 2*64 + 256+4, 3*64 + 256+4]
+    indices = [256+4, 64+256+4, 2*64 + 256+4, 3*64 + 256+4]  # end indices of each segment
     maxsizes = [eye256, eye64, eye64, eye64]
     masks = masks[:segments]
     indices = indices[:segments]
@@ -233,12 +249,12 @@ def add_mappings(codebook, mappings={"<start>": 0x02, "<end>": 0x03, "unk": 0x0f
 
 
 def save_obj(obj, name):
-    with open(name + '.pkl', 'wb') as f:
+    with open(name, 'wb') as f:
         pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
 
 
 def load_obj(name):
-    with open(name + '.pkl', 'rb') as f:
+    with open(name, 'rb') as f:
         return pickle.load(f)
 
 # Not needed when having the
