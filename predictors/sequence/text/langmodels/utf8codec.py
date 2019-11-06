@@ -6,7 +6,7 @@ import torch.nn as nn
 # good that PyTorch v1.3.0+ has Transformers already implemented
 from torch.nn.modules.transformer import TransformerEncoderLayer
 import torch.nn.functional as F
-import faiss
+# import faiss
 
 
 def _get_activation_fn(activation):
@@ -22,39 +22,40 @@ def _get_activation_fn(activation):
         return None
         # raise RuntimeError("activation should be sigmoid/tanh/relu/gelu, not %s." % activation)
 
-
-class UTF8Code(nn.Module):
-    def __init__(self, utf8codebook, idx2char, char2idx):
-        """
-
-        :param utf8codebook:
-        :param idx2char:
-        :param char2idx:
-        """
-        # self._codebook = utf8codebook
-        self._index = faiss.IndexFlatL2(utf8codebook)
-        # faiss.IndexBin
-        # self._index = faiss.GpuIndexFlatL2(utf8codebook)
-        # faiss.IVFL
-        self._idx2char = idx2char
-        self._char2idx = char2idx
-
-    def idx2char(self, idxs):
-        pass
-
-    def char2idx(self, chars):
-        pass
-
-    def embed2idx(self, embeds):
-        pass
-
-    def forward(self, x):
-        # this function basically calls embed2idx
-        # x should be (batch size, sequence width, embedding)
-        return self.embed2idx(x)
+#
+# class UTF8Code(nn.Module):
+#     def __init__(self, utf8codebook, idx2char, char2idx):
+#         """
+#
+#         :param utf8codebook:
+#         :param idx2char:
+#         :param char2idx:
+#         """
+#         # self._codebook = utf8codebook
+#         self._index = faiss.IndexFlatL2(utf8codebook)
+#         # faiss.IndexBin
+#         # self._index = faiss.GpuIndexFlatL2(utf8codebook)
+#         # faiss.IVFL
+#         self._idx2char = idx2char
+#         self._char2idx = char2idx
+#
+#     def idx2char(self, idxs):
+#         pass
+#
+#     def char2idx(self, chars):
+#         pass
+#
+#     def embed2idx(self, embeds):
+#         pass
+#
+#     def forward(self, x):
+#         # this function basically calls embed2idx
+#         # x should be (batch size, sequence width, embedding)
+#         return self.embed2idx(x)
 
 
 class UTF8Embedding(nn.Module):
+
     def __init__(self, utf8codebook, transpose=False, lin_layers=(512, 512, 32), activation=None, dropout=0.1):
         """
         Embedding Layer for UTF-8 based on pre-computed weights
@@ -77,7 +78,7 @@ class UTF8Embedding(nn.Module):
         self.embeds.weight.data.copy_(torch.from_numpy(utf8codebook))
         self.embeds.weight.requires_grad_(False)  # input embedding is fixed
         self.lin = nn.ModuleList()
-        self.embedding = nn.ModuleList()
+
         if lin_layers:
             prev_dim = codebook_shape[1]
             for dim in lin_layers:
@@ -87,8 +88,9 @@ class UTF8Embedding(nn.Module):
                 # self.lin.extend([lin, dropout])
                 self.lin.append(lin)
 
-        self.embedding.append(self.embeds)
-        self.embedding.extend(self.lin)
+        # self.embedding.append(self.embeds)
+        # self.embedding.extend(self.lin)
+        self.linear = nn.Sequential(*self.lin)
         self.activation = _get_activation_fn(activation)
 
     @property
@@ -101,12 +103,18 @@ class UTF8Embedding(nn.Module):
 
     def forward(self, x):
         # (batch size, sequence-width)
-        ret = self.embedding(x)  # (batch size, sequence width[values]) -> # (batch size, sequence width, embedding)
+        print(x.shape, type(x), x.dtype)
+        emb = self.embeds(x)
+        dense = self.linear(emb)
+        # ret = self.embedding(x)  # (batch size, sequence width[values]) -> # (batch size, sequence width, embedding)
         if self._transpose:
-            ret = ret.transpose(1, 2)  # (batch size, embedding, sequence width)
+            dense = dense.transpose(1, 2)  # (batch size, embedding, sequence width)
         if self.activation:
-            ret = self.activation(ret)
-        return ret
+            dense = self.activation(dense)
+        # the pre-computed embedding is needed to compute loss and avoid having to decode.
+        # As it is pre-computed and fixed (does NOT change) this avoids computation to get back to the index matrix
+        # during the decoding step
+        return emb, dense  # returns original pre-computed embedding plus the dense embedding
 
 
 class UTF8AttentionalEmbedding(UTF8Embedding):
@@ -136,11 +144,12 @@ class UTF8AttentionalEmbedding(UTF8Embedding):
             self.att.append(att)
 
         self.lin = nn.Linear(codebook_shape[1], outdim)
-        self.fw = nn.ModuleList()
+        fw = nn.ModuleList()
         # pre-coded / pre-computed embeddings to (normally dim 32)
-        self.fw.append(self.embeds)
-        self.fw.extend(self.att)
-        self.fw.append(self.lin)
+        fw.append(self.embeds)
+        fw.extend(self.att)
+        fw.append(self.lin)
+        self.fw = nn.Sequential(*fw)
 
     def forward(self, x):
         # (batch size, values)
@@ -190,6 +199,7 @@ class UTF8Decoder(nn.Module):
                 # drop = nn.Dropout(dropout)
                 # self.lin.extend([lin, drop])
                 self.lin.append(lin)
+        self.linear = nn.Sequential(*self.lin)
         self.activation = _get_activation_fn(activation)
         # Linear layers to adapt dimension for the separated softmax
         #  precomputing dimensions and filtering
@@ -202,21 +212,23 @@ class UTF8Decoder(nn.Module):
         self.segments = nn.ModuleList()  # the order is important as it is the concatenation order
         for d in dims:
             lin = nn.Linear(utf8codebook_shape[1], d)
-            sm = nn.Softmax()  # softmax for this part of the code, the code has S+1 parts where S is the segment count
-            self.segments.extend([lin, sm])
+            self.segments.append(lin)
 
     def forward(self, x):
         # assumes input shape as:  (batch size, sequence width, embedding)
         # adapt input dimension to codebook
-        ret = self.lin(x)
+        ret = self.linear(x)
         if self.activation:
             ret = self.activation(ret)
         # process every segment part of the multihot-encoding
         segments = []
         for net in self.segments:
-            segments.append(net(ret))
+            seg = F.softmax(net(ret), dim=-1)
+            # print("lin segment: ", net, seg.shape, seg.dtype)
+            segments.append(seg)
         # concatenate results in axis to get to the embedding size:
         res = torch.cat(segments, dim=-1)
+        # print("cat shape: ", res.shape, res.dtype)
         return res
 
 
@@ -227,13 +239,13 @@ class UTF8Autoencoder(nn.Module):
         self.decoder = UTF8Decoder(utf8codebook.shape)
 
     def forward(self, x):
-        enc = self.encoder(x)
+        emb, enc = self.encoder(x)
         dec = self.decoder(enc)
-        return dec
+        return emb, dec
 
     def save_model(self, name, path):
         torch.save(self.encoder, os.path.join(path, "utf8Autoencoder_embedding_"+name+".pth"))
-        torch.save(self.decoder, os.path.join(path, "utf8Autoencoder_decoder"+name+".pth"))
+        torch.save(self.decoder, os.path.join(path, "utf8Autoencoder_decoder_"+name+".pth"))
 
 
 def _load_pkl(name):
