@@ -6,7 +6,7 @@ import torch.nn as nn
 # good that PyTorch v1.3.0+ has Transformers already implemented
 from torch.nn.modules.transformer import TransformerEncoderLayer
 import torch.nn.functional as F
-# import faiss
+import faiss
 
 
 def _get_activation_fn(activation):
@@ -22,36 +22,36 @@ def _get_activation_fn(activation):
         return None
         # raise RuntimeError("activation should be sigmoid/tanh/relu/gelu, not %s." % activation)
 
-#
-# class UTF8Code(nn.Module):
-#     def __init__(self, utf8codebook, idx2char, char2idx):
-#         """
-#
-#         :param utf8codebook:
-#         :param idx2char:
-#         :param char2idx:
-#         """
-#         # self._codebook = utf8codebook
-#         self._index = faiss.IndexFlatL2(utf8codebook)
-#         # faiss.IndexBin
-#         # self._index = faiss.GpuIndexFlatL2(utf8codebook)
-#         # faiss.IVFL
-#         self._idx2char = idx2char
-#         self._char2idx = char2idx
-#
-#     def idx2char(self, idxs):
-#         pass
-#
-#     def char2idx(self, chars):
-#         pass
-#
-#     def embed2idx(self, embeds):
-#         pass
-#
-#     def forward(self, x):
-#         # this function basically calls embed2idx
-#         # x should be (batch size, sequence width, embedding)
-#         return self.embed2idx(x)
+
+class UTF8Code(nn.Module):
+    def __init__(self, utf8codebook, idx2char, char2idx):
+        """
+
+        :param utf8codebook:
+        :param idx2char:
+        :param char2idx:
+        """
+        # self._codebook = utf8codebook
+        self._index = faiss.IndexFlatL2(utf8codebook)
+        # faiss.IndexBin
+        # self._index = faiss.GpuIndexFlatL2(utf8codebook)
+        # faiss.IVFL
+        self._idx2char = idx2char
+        self._char2idx = char2idx
+
+    def idx2char(self, idxs):
+        pass
+
+    def char2idx(self, chars):
+        pass
+
+    def embed2idx(self, embeds):
+        pass
+
+    def forward(self, x):
+        # this function basically calls embed2idx
+        # x should be (batch size, sequence width, embedding)
+        return self.embed2idx(x)
 
 
 class UTF8Embedding(nn.Module):
