@@ -233,10 +233,10 @@ class UTF8Decoder(nn.Module):
 
 
 class UTF8Autoencoder(nn.Module):
-    def __init__(self, utf8codebook):
+    def __init__(self, utf8codebook, dim=32):
         super(UTF8Autoencoder, self).__init__()
-        self.encoder = UTF8Embedding(utf8codebook)
-        self.decoder = UTF8Decoder(utf8codebook.shape)
+        self.encoder = UTF8Embedding(utf8codebook, lin_layers=(512, 512, dim))
+        self.decoder = UTF8Decoder(utf8codebook.shape, lin_layers=[dim, 512, 512])
 
     def forward(self, x):
         emb, enc = self.encoder(x)
