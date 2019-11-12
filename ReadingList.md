@@ -5,7 +5,17 @@ I just take a few notes and write down some questions and ideas on those quite f
 
 ### REVISITING SMALL BATCH TRAINING FOR DEEP NEURAL NETWORKS
 https://arxiv.org/pdf/1804.07612.pdf
-batch sizes entre 2 y 32, no mas ni menos.
+batch sizes entre 2 y 32, no mas ni menos. (recommended by Yann LeCun)
+The paper is analyzed in images, the issue with text is that most studies are done with big batches (up to size 4M), 
+ No study shows the difference between small and big batches, but due to n# of parameters in current NLP tasks and 
+ the variability in input and output tasks I would think that big batches might be needed. 
+
+### Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer
+https://www.cs.toronto.edu/~hinton/absps/Outrageously.pdf
+https://arxiv.org/abs/1701.06538
+https://openreview.net/forum?id=B1ckMDqlg
+
+Read this paper
 
 ## For NLP
 
@@ -16,11 +26,41 @@ __
 * [QAngaroo](https://qangaroo.cs.ucl.ac.uk/) 
 * [Universal Dependencies Treebanks]()
 
+### T5 - Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer
+https://arxiv.org/pdf/1910.10683.pdf
+This is the biggest and SoTA paper by Google on NLP, the models are HUGE (up to 11B parameters)
+paper is long (53 pages)
+Need to read it, study it, overfit on it :p
+
+### The Bitter Lesson - Rich Sutton - March 13, 2019
+http://www.incompleteideas.net/IncIdeas/BitterLesson.html
+Interesting read, ignores the case of the curation of the data for training and other aspects but it goes into the subject of Processing power >>> than manual decisions 
+
+### ELECTRA: Pre-training Text Encoders as Discriminators Rather Than Generators 
+https://openreview.net/forum?id=r1xMH1BtvB
+https://openreview.net/pdf?id=r1xMH1BtvB
+
+Abstract: While masked language modeling (MLM) pre-training methods such as BERT produce excellent results on downstream NLP tasks, they require large amounts of compute to be effective. These approaches corrupt the input by replacing some tokens with [MASK] and then train a model to reconstruct the original tokens. As an alternative, we propose a more sample-efficient pre-training task called replaced token detection. Instead of masking the input, our approach corrupts it by replacing some input tokens with plausible alternatives sampled from a small generator network...
+
+
+### Parameter-Efficient Transfer Learning for NLP
+((Adapters: A Compact and Extensible Transfer Learning Method for NLP))
+https://arxiv.org/pdf/1902.00751.pdf
+To read, interesting and similar to some of my ideas (Adapters network for transfer and adding new tasks)
+
 ### Massively Multilingual Neural Machine Translation in the Wild: Findings and Challenges
 This paper
 https://arxiv.org/pdf/1907.05019.pdf
 https://medium.com/syncedreview/google-introduces-huge-universal-language-translation-model-103-languages-trained-on-over-25-74f0eb71b177
 Great Paper to check ideas and see wht works and what does not and why
+
+### Parameter-Efficient Transfer Learning for NLP
+https://arxiv.org/pdf/1902.00751.pdf
+Technique used/evaluated in T5-Google
+
+### Professor Forcing: A New Algorithm for Training Recurrent Networks
+https://arxiv.org/pdf/1610.09038.pdf
+Professor forcing, a technique modified from Teacher Forcing
 
 ### Answering Complex Open-domain Questions Through Iterative Query Generation
 https://arxiv.org/pdf/1910.07000.pdf
