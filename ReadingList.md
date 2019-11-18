@@ -15,7 +15,13 @@ https://www.cs.toronto.edu/~hinton/absps/Outrageously.pdf
 https://arxiv.org/abs/1701.06538
 https://openreview.net/forum?id=B1ckMDqlg
 
-Read this paper
+Interesting paper, although from what I'm looking for the lesson learned is that conditional execution makes a good choice and specialist/expert parts for each different task and choosing them with an expert chooser that is also trained there.
+
+
+### The Measure of Intelligence
+Francois Chollet Google, Inc. November 6, 2019
+https://arxiv.org/pdf/1911.01547.pdf
+
 
 ## For NLP
 
@@ -24,13 +30,17 @@ __
 * [List of many datasets](http://nlpprogress.com/english/question_answering.html)
 * [HotspotQA](https://hotpotqa.github.io/)
 * [QAngaroo](https://qangaroo.cs.ucl.ac.uk/) 
-* [Universal Dependencies Treebanks]()
+* [Universal Dependencies Treebanks](https://universaldependencies.org/)
 
 ### T5 - Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer
 https://arxiv.org/pdf/1910.10683.pdf
 This is the biggest and SoTA paper by Google on NLP, the models are HUGE (up to 11B parameters)
 paper is long (53 pages)
 Need to read it, study it, overfit on it :p
+
+Interesting, really interesting. Many lessons to get from there, a hugh study on different parameters, techniques and other elements.
+
+If there is one paper to read on NLP this is the one. An overview of the state of the art, the progress, what are the important things to learn, etc.  
 
 ### The Bitter Lesson - Rich Sutton - March 13, 2019
 http://www.incompleteideas.net/IncIdeas/BitterLesson.html
@@ -42,11 +52,38 @@ https://openreview.net/pdf?id=r1xMH1BtvB
 
 Abstract: While masked language modeling (MLM) pre-training methods such as BERT produce excellent results on downstream NLP tasks, they require large amounts of compute to be effective. These approaches corrupt the input by replacing some tokens with [MASK] and then train a model to reconstruct the original tokens. As an alternative, we propose a more sample-efficient pre-training task called replaced token detection. Instead of masking the input, our approach corrupts it by replacing some input tokens with plausible alternatives sampled from a small generator network...
 
+Proposes another way of training with some ideas from GANs (but not gans) and changing the objective to detecting which tokens are generated and which are false.
+Seems interesting and at the same time seems more difficult to create and tune as needs to be trained , tuned and hyper-parameters found.
+
 
 ### Parameter-Efficient Transfer Learning for NLP
 ((Adapters: A Compact and Extensible Transfer Learning Method for NLP))
 https://arxiv.org/pdf/1902.00751.pdf
-To read, interesting and similar to some of my ideas (Adapters network for transfer and adding new tasks)
+Interesting and similar to some of my ideas (Adapters network for transfer and adding new tasks)
+
+The Adapter Modules are trained (and grow ?) for each new Task, these are then fine tuned while the rest of the network is frozen.
+
+### BERT and PALs: Projected Attention Layers for Efficient Adaptation in Multi-Task Learning
+https://arxiv.org/abs/1902.02671
+
+This paper shows a way of using something n the style of Adapter Modules, but instead of adding it inside the transformer layer it adds it in parallel with a smaller attention, it also evaluates a serial element instead of a parallel one.
+ 
+
+### ERNIE 2.0: A CONTINUAL PRE-TRAINING FRAMEWORK FOR LANGUAGE UNDERSTANDING
+https://arxiv.org/pdf/1907.12412.pdf
+https://github.com/PaddlePaddle/ERNIE
+
+This one seems interesting:
+
+From Abstract: ".... In order to extract to the fullest extent, the lexical,
+syntactic and semantic information from training corpora, we propose a continual pre-training framework named ERNIE 2.0 which builds and learns incrementally pre-training tasks through constant
+multi-task learning..."
+
+### On the Variance of the Adaptive Learning Rate and Beyond
+https://arxiv.org/abs/1908.03265
+
+### Semi-supervised Multitask Learning for Sequence Labeling
+https://arxiv.org/abs/1704.07156
 
 ### Massively Multilingual Neural Machine Translation in the Wild: Findings and Challenges
 This paper
@@ -67,6 +104,10 @@ https://arxiv.org/pdf/1910.07000.pdf
 http://ai.stanford.edu/blog/answering-complex-questions/
 Interesting method and training, still we are far from a real solution. Uses DrQA and other things
 Code available with stanfordnlp framework
+
+
+### Can You Tell Me How to Get Past Sesame Street? Sentence-Level Pretraining Beyond Language Modeling
+https://www.aclweb.org/anthology/P19-1439.pdf
 
 ### Learn to Grow: A Continual Structure Learning Framework for Overcoming Catastrophic Forgetting
 https://arxiv.org/abs/1904.00310
