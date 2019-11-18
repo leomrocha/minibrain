@@ -23,8 +23,8 @@ def _get_activation_fn(activation):
         # raise RuntimeError("activation should be sigmoid/tanh/relu/gelu, not %s." % activation)
 
 
-class UTF8Code(nn.Module):
-    def __init__(self, utf8codebook, idx2char, char2idx):
+class UTF8CodeBook(nn.Module):
+    def __init__(self, utf8codebook, idx2char, char2idx, k=1):
         """
 
         :param utf8codebook:
@@ -38,20 +38,38 @@ class UTF8Code(nn.Module):
         # faiss.IVFL
         self._idx2char = idx2char
         self._char2idx = char2idx
+        self._k = k
 
     def idx2char(self, idxs):
+        """
+        :param idxs: a vector (numpy) containing the indices to convert to char
+        :return: a vector of characters (numpy)
+        """
+        ret = np.vectorize(self._idx2char.get)(idxs)
+        return ret
+
+    def char2idx_np(self, chars):
+        ret = np.vectorize(self._char2idx.get)(chars)
+        return ret
+
+    def char2idx_torch(self, chars):
+        # TODO ???
         pass
 
-    def char2idx(self, chars):
-        pass
+    def embed2idx_np(self, embeds):
+        _, indices = self._index.search(embeds, self._k)
+        return indices
 
-    def embed2idx(self, embeds):
-        pass
+    def embed2idx_torch(self, embeds):
+        _, indices = self._index.search(embeds, self._k)
+        ret = torch.from_numpy(indices)
+        return ret
 
     def forward(self, x):
         # this function basically calls embed2idx
         # x should be (batch size, sequence width, embedding)
-        return self.embed2idx(x)
+        # TODO check this cause this may go in gpu
+        return self.embed2idx_torch(x)
 
 
 class UTF8Embedding(nn.Module):
@@ -292,6 +310,42 @@ def _prepare_overfit_batch(num2txt, batch_size):
     return ret
 
 
+def train_overfit(model, optimizer, loss_function, batches, epoch, device, log_interval=10):
+    train_loss = 0
+    batch_loss = []
+    batch_idx = 0
+    for b in batches:
+        tensor_data = torch.from_numpy(b).to(device).long()  #.double()  #.float()
+        optimizer.zero_grad()
+        # emb is obtained from the the pre-computed utf8codebook
+        emb, res = model(tensor_data)
+#         print(emb.shape,emb.dtype, res.shape, res.dtype)
+        loss = loss_function(emb, res)
+        loss.backward()
+        train_loss += loss.data.item()  # [0]
+        optimizer.step()
+        if batch_idx % log_interval == 0:
+            print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
+                epoch, batch_idx, len(batches),
+                100. * batch_idx / len(tensor_data),
+                train_loss / len(tensor_data)))
+            batch_loss.append(train_loss)
+        batch_idx += 1
+    print('====> Epoch: {} Average loss: {:.8f}'.format(epoch, train_loss / len(batches)))
+    return batch_loss
+
+
+def test(model, test_data, loss_function, epoch, device):
+    model.eval()
+    test_loss = 0
+    for d in test_data:
+        tensor_data = torch.from_numpy(d).to(device)
+        res = model(d)
+        test_loss += loss_function(tensor_data, res).data.item()  # [0]
+
+    test_loss /= len(test_data)
+    print('epoch: {}====> Test set loss: {:.4f}'.format(epoch, test_loss))
+
 # from https://discuss.pytorch.org/t/shuffling-a-tensor/25422/4
 # TODO FIXME
 # def _prepare_overfit_batch_torch(num2txt, batch_size):
@@ -348,8 +402,9 @@ def _prepare_overfit_batch(num2txt, batch_size):
 #
 
 
-def train_overfit():
-    pass
+# from https://stackoverflow.com/questions/434287/what-is-the-most-pythonic-way-to-iterate-over-a-list-in-chunks
+def chunker(seq, size):
+    return (seq[pos:pos + size] for pos in range(0, len(seq), size))
 
 
 def main():

@@ -105,7 +105,6 @@ http://ai.stanford.edu/blog/answering-complex-questions/
 Interesting method and training, still we are far from a real solution. Uses DrQA and other things
 Code available with stanfordnlp framework
 
-
 ### Can You Tell Me How to Get Past Sesame Street? Sentence-Level Pretraining Beyond Language Modeling
 https://www.aclweb.org/anthology/P19-1439.pdf
 
