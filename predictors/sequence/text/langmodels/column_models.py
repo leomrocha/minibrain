@@ -87,7 +87,7 @@ class Conv1DBlock(nn.Module):
         else:
             self.use_proj = 1
 
-        self.convresid = weight_norm(nn.Conv1d(c_in, c_out, 1))  # downsample for residual connection if needed
+        self.convresid = weight_norm(nn.Conv1d(c_in, c_out, 1))  # [down|up]sample for residual connection if needed
 
         self.convs = []
         for i in range(nlayers):

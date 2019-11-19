@@ -594,6 +594,9 @@ Ben Krause, Emmanuel Kahembwe, Iain Murray, Steve Renals
 
 # Papers yet to read ....
 
+Visualizing the Loss Landscape of Neural Nets
+http://papers.nips.cc/paper/7875-visualizing-the-loss-landscape-of-neural-nets.pdf
+
 Deep Learning: A Critical Appraisal
 Gary Marcus
 (Submitted on 2 Jan 2018)
