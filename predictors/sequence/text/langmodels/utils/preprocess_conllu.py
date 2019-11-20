@@ -9,10 +9,11 @@ import ntpath
 
 # list of languages that won't be used:
 # this is because I'll be using only the first 2 segments of UTF-8, so the idea is that
-## Maybe blacklist
-# "Hebrew",
-MAYBE_BLACKLIST = ["Kurmanji", "Urdu", "Indonesian", "Coptic-Scriptorium", "Kazakh", "Marathi", "Tamil", "Thai", "Warlpiri"]
-LANG_TOKENS_BLACKLIST = ["Hindi", "Chinese", "Korean", "Tagalog", "Vietnamese", "Telugu", "Uyghur", "Cantonese",
+# Maybe blacklist
+MAYBE_BLACKLIST = ["Kurmanji", "Urdu", "Indonesian", "Coptic-Scriptorium", "Kazakh",
+                   "Marathi", "Tamil", "Thai", "Warlpiri"]
+LANG_TOKENS_BLACKLIST = ["Hindi", "Chinese", "Korean", "Tagalog", "Vietnamese",
+                         "Telugu", "Uyghur", "Cantonese", "Japanese",
                          "ar_nyuad-ud", "myv_jr-ud", "br_keb-ud"]  # last 2 -> processing errors with pyconll
 BLACKLIST = MAYBE_BLACKLIST + LANG_TOKENS_BLACKLIST
 
@@ -145,8 +146,6 @@ def conll2seq(conll, char2int_codebook, upos2int, deprel2int, deprel=True, retur
 #     charseq[2] is the deprel tag
     list_charseq = []
     list_ind_charseq = []
-
-    # es_pcnl = pyconll.load_from_file(es_test)
     for seq in conll:
         try:
             charseq = seq2charlevel(seq, deprel=deprel)
@@ -174,12 +173,12 @@ def process_conllu_file(fname, char2int_codebook, upos2int, deprel2int, deprel=T
     :param save_to:
     :return: the entire file encoded for charlevel in 2 parallel matrices (chars and int coding)
     """
-    print("processing: {}".format(path_leaf(fname)))
+    # print("processing: {}".format(path_leaf(fname)))
     conll = pyconll.load_from_file(fname)
     ret = conll2seq(conll, char2int_codebook, upos2int, deprel2int, deprel)
     if save_to:
         with open(save_to, "wb") as fout:
-            print("saving data to: {}".format(path_leaf(save_to)))
+            # print("saving data to: {}".format(path_leaf(save_to)))
             pickle.dump(ret, fout, protocol=pickle.HIGHEST_PROTOCOL)
     return ret
 
@@ -206,7 +205,7 @@ def process_all(flist, utf8_char2int_codebook, return_data=False, save_processed
         try:
             fout = None
             if save_processed:
-                fout = fin.replace('.conllu', '-charsec_code.pkl')
+                fout = fin.replace('.conllu', '-charseq_code.pkl')
             data = process_conllu_file(fin, utf8_char2int_codebook, UPOS_CHAR2IDX, DEPREL_CHAR2IDX, True, fout)
             if return_data:
                 all_data.append(data)
