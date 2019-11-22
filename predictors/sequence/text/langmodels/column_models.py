@@ -83,9 +83,9 @@ class Conv1DBlock(nn.Module):
         super(Conv1DBlock, self).__init__()
 
         if c_in == c_out:
-            self.use_proj = 0
+            self.use_proj = False
         else:
-            self.use_proj = 1
+            self.use_proj = True
 
         self.convresid = weight_norm(nn.Conv1d(c_in, c_out, 1))  # [down|up]sample for residual connection if needed
 
@@ -111,7 +111,7 @@ class Conv1DBlock(nn.Module):
         # print("1 conv1b", x.shape, x.dtype, x.is_cuda)
         res = x
         # residual connection channel dimension adaptation
-        if self.use_proj == 1:  # if in_c != out_c, need to change size of residual
+        if self.use_proj:  # if in_c != out_c, need to change size of residual
             res = self.convresid(res)
         # print("2 conv1b", res.shape)
         out = self.convs(x)
