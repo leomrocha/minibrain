@@ -1,34 +1,10 @@
-import math
-import torch
-import torch.nn as nn
-from torch.nn.utils import weight_norm
-from torch.nn import functional as F
+
 # from .fb_models import TransformerSeqLayer
 from fairseq.modules.transformer_layer import MultiheadAttention, TransformerDecoderLayer, TransformerEncoderLayer
-try:
-    from decanlp_common import *
-except:
-    from .decanlp_common import *
+from .utils.tools import *
+from .decanlp_common import *
 
-
-###############
-### from HuggingFace https://github.com/huggingface/transformers BERT implementation
-def gelu_old(x):
-    """ Original Implementation of the gelu activation function in Google Bert repo when initially created.
-        For information: OpenAI GPT's gelu is slightly different (and gives slightly different results):
-        0.5 * x * (1 + torch.tanh(math.sqrt(2 / math.pi) * (x + 0.044715 * torch.pow(x, 3))))
-        Also see https://arxiv.org/abs/1606.08415
-    """
-    return x * 0.5 * (1.0 + torch.erf(x / math.sqrt(2.0)))
-
-
-def gelu(x):
-    """ Implementation of the gelu activation function currently in Google Bert repo (identical to OpenAI GPT).
-        Also see https://arxiv.org/abs/1606.08415
-    """
-    return 0.5 * x * (1 + torch.tanh(math.sqrt(2 / math.pi) * (x + 0.044715 * torch.pow(x, 3))))
-# end from HuggingFace
-###############
+from .model_blocks import *
 
 
 class FFColNet(nn.Module):
@@ -67,58 +43,6 @@ class FFColNet(nn.Module):
         # ret = ret.transpose()
         ret = self.actv_out(ret).transpose(1, 2)
         return ret
-
-
-class Conv1DBlock(nn.Module):
-    def __init__(self, c_in, c_out, kernel_size=3, nlayers=5, dropout=0.3, groups=8):
-        """
-
-        :param c_in: input channels
-        :param c_out: output channels
-        :param kernel_size:
-        :param nlayers: number of convolutional layers per block
-        :param dropout:
-        :param groups: number of groups as in filter groups
-        """
-        super(Conv1DBlock, self).__init__()
-
-        if c_in == c_out:
-            self.use_proj = False
-        else:
-            self.use_proj = True
-
-        self.convresid = weight_norm(nn.Conv1d(c_in, c_out, 1))  # [down|up]sample for residual connection if needed
-
-        self.convs = []
-        for i in range(nlayers):
-            t_c_in = c_out
-            if i == 0:
-                t_c_in = c_in
-            # Left padding
-            # pad = nn.ConstantPad1d((kernel_size - 1) // 2, 0)
-            cnv = weight_norm(nn.Conv1d(t_c_in, c_out, kernel_size, padding=(kernel_size-1)//2, groups=groups))
-            # cnv = weight_norm(nn.Conv1d(t_c_in, c_out, kernel_size, groups=groups))
-            # self.convs.append(pad)
-            self.convs.append(cnv)
-
-        self.convs = nn.Sequential(*self.convs)
-        self.dropout = nn.Dropout(dropout)
-        self.activation = nn.ReLU()
-
-    def forward(self, x):
-        # not use padding -> is up to the main network to decide
-        # res = self.leftpad(x)
-        # print("1 conv1b", x.shape, x.dtype, x.is_cuda)
-        res = x
-        # residual connection channel dimension adaptation
-        if self.use_proj:  # if in_c != out_c, need to change size of residual
-            res = self.convresid(res)
-        # print("2 conv1b", res.shape)
-        out = self.convs(x)
-        # print("3 conv1b", out.shape)
-        out = self.dropout(out)
-        # print("4 conv1b", out.shape)
-        return self.activation(out + res)
 
 
 class MixedConvLinearColumns(nn.Module):
@@ -410,18 +334,17 @@ class ConvColumn(nn.Module):
     """
     """
     def __init__(self, utf8codes,
-                 c_in=[324, 64, 128, 128], c_out=[64, 128, 128, 324],  # channels for blocks
+                 c_in=[128, 256, 512, 128], c_out=[128, 256, 512, 128],  # channels for blocks
                  b_layers=[3, 5, 5],  # number of layers for each bloc
                  first_k_size=3, kernel_size=3,
-                 dropout=0.3, groups=4):
+                 dropout=0.3, groups=4,
+                 activation="sigmoid",  # "gelu"
+                 ):
         super(ConvColumn, self).__init__()
 
         assert c_in[1:] == c_out[:-1]
         # assert len(c_out) == res_layers
-        self.embeds = nn.Embedding(*(utf8codes.shape))
-        self.embeds.weight.data.copy_(torch.from_numpy(utf8codes))
-
-        # input convolution layer is the one who adapts the input for the following columns
+        # input convolution layer is the one who adapts the input for the columns that follow
         self.conv0 = nn.Conv1d(c_in[0], c_out[0], first_k_size, padding=(kernel_size-1)//2, stride=(first_k_size-1)//2)
         self.drop0 = nn.Dropout(dropout)
 
@@ -436,119 +359,15 @@ class ConvColumn(nn.Module):
         self.convolutions = nn.Sequential(*self.conv_blocks)
         #
         self.dropout = nn.Dropout(dropout)
-        self.activation = nn.Sigmoid()  # Better for multihot than relu
+        self.activation = get_activation_fn(activation)  # nn.Sigmoid()  # Better for multihot than relu
 
     def forward(self, x):
-        ret = self.embeds(x).transpose(1, 2)
-        ret = self.conv0(ret)
+        ret = self.conv0(x)
         ret = self.drop0(ret)
         ret = self.convolutions(ret)
         ret = self.dropout(ret)
         ret = self.activation(ret)
-        return ret.transpose(1, 2)
-
-
-class GatedConv1DBlock(nn.Module):
-    def __init__(self, c_in, c_out, kernel_size, stride=1, dropout=0.2, activation="relu"):
-        """
-        :param c_in: # input channels
-        :param c_out: # output channels
-        :param kernel_size:
-        :param stride:
-        :param dropout:
-        :param activation: if None then no activation is done
-        """
-        # TODO add Coordinate Convolution addition here (if conf)
-        super(GatedConv1DBlock, self).__init__()
-        dropout = 0.2
-        stride=1
-        if c_in == c_out:
-            self.use_proj = 0
-        else:
-            self.use_proj = 1
-        # Left padding left to the master network to do
-        pad = (kernel_size - 1) // 2
-        self.leftpad = nn.ConstantPad1d(pad, 0)
-        self.convresid = weight_norm(nn.Conv1d(c_in, c_out, 1))  # downsample for residual connection if needed
-        #
-        self.conv1A = weight_norm(nn.Conv1d(c_in, c_out, kernel_size, stride=stride))
-        # self.chomp1A = Chomp1d(padding)
-        # gating unit
-        self.conv1B = weight_norm(nn.Conv1d(c_in, c_out, kernel_size, stride=stride))
-        # self.chomp1B = Chomp1d(padding)
-        self.gatingActiv1B = nn.Sigmoid()  # nn.Tanh()  #
-
-        # self.net1 = nn.Sequential(self.conv1A)
-        self.gate1 = nn.Sequential(self.conv1B, self.gatingActiv1B)
-
-        # self.activ1 = nn.ReLU()
-        self.dropout1 = nn.Dropout(dropout)
-
-        self.conv2A = weight_norm(nn.Conv1d(c_out, c_out, kernel_size, stride=stride))
-        # self.chomp2A = Chomp1d(padding)
-        # gating unit
-        self.conv2B = weight_norm(nn.Conv1d(c_out, c_out, kernel_size, stride=stride))
-        # self.chomp2B = Chomp1d(padding)
-        self.gatingActiv2B = nn.Sigmoid()  # nn.Tanh()  #
-
-        # self.activ2 = nn.ReLU()
-        self.dropout2 = nn.Dropout(dropout)
-
-        # self.net2 = nn.Sequential(self.convA, self.chomp2A)
-        self.gate2 = nn.Sequential(self.conv1B, self.gatingActiv1B)
-
-        # TODO improve the activation selection mechanism (take out the ifs and make it more meta)
-        self.activation = None
-        if activation and activation.lower() == "relu":
-            self.activation = nn.ReLU()
-        elif activation and activation.lower() == "tanh":
-            self.activation = nn.Tanh()
-        elif activation and activation.lower() == "sigmoid":
-            self.activation = nn.Sigmoid()
-        # self.init_weights()
-
-    # def init_weights(self):
-    #     self.conv1.weight.data.normal_(0, 0.01)
-    #     self.conv2.weight.data.normal_(0, 0.01)
-    #     if self.downsample is not None:
-    #         self.downsample.weight.data.normal_(0, 0.01)
-
-    def forward(self, x):
-        # not use padding -> is up to the main network to decide
-        # res = self.leftpad(x)
-        res = x
-        # print(1, res.shape)
-        # residual connection channel dimension adaptation
-        if self.use_proj:  # if in_c != out_c, need to change size of residual
-            # print("convresid")
-            res = self.convresid(res)
-        # print(1, res.shape)
-        x = self.leftpad(x)
-        # print(2, x.shape)
-        out_net1 = self.conv1A(x)
-        gt1 = self.gate1(x)
-        # print(3, x.shape, res.shape, out_net1.shape, gt1.shape)
-
-        out1 = torch.mul(out_net1, gt1)
-        out1 = self.dropout1(out1)
-        # print(4, out1.shape)
-
-        out1 = self.leftpad(out1)
-        out_net2 = self.conv2A(out1)
-        gt2 = self.gate2(out1)
-        # print(5, out_net2.shape, gt2.shape)
-
-        out2 = torch.mul(out_net2, gt2)
-        out2 = self.dropout1(out2)
-        # print(6, out2.shape)
-
-        if self.activation:
-            out = self.activation(out2 + res)
-        else:
-            out = out2 + res
-        # res = x if self.downsample is None else self.downsample(x)
-        # print(7, out.shape)
-        return out
+        return ret
 
 
 class NLPGatedConv1DColumnV1(nn.Module):

@@ -8,19 +8,7 @@ from torch.nn.modules.transformer import TransformerEncoderLayer
 import torch.nn.functional as F
 import faiss
 
-
-def _get_activation_fn(activation):
-    if activation == "sigmoid":
-        return F.sigmoid
-    elif activation == "tanh":
-        return F.tanh
-    elif activation == "relu":
-        return F.relu
-    elif activation == "gelu":
-        return F.gelu
-    else:
-        return None
-        # raise RuntimeError("activation should be sigmoid/tanh/relu/gelu, not %s." % activation)
+from .utils.tools import *
 
 
 class UTF8CodeBook(nn.Module):
@@ -74,7 +62,7 @@ class UTF8CodeBook(nn.Module):
 
 class UTF8Embedding(nn.Module):
 
-    def __init__(self, utf8codebook, transpose=False, lin_layers=(512, 512, 32), activation=None, dropout=0.1):
+    def __init__(self, utf8codebook, transpose=False, lin_layers=(512, 512, 64), activation=None, dropout=0.1):
         """
         Embedding Layer for UTF-8 based on pre-computed weights
 
@@ -109,7 +97,7 @@ class UTF8Embedding(nn.Module):
         # self.embedding.append(self.embeds)
         # self.embedding.extend(self.lin)
         self.linear = nn.Sequential(*self.lin)
-        self.activation = _get_activation_fn(activation)
+        self.activation = get_activation_fn(activation)
 
     @property
     def transpose(self):
@@ -218,7 +206,7 @@ class UTF8Decoder(nn.Module):
                 # self.lin.extend([lin, drop])
                 self.lin.append(lin)
         self.linear = nn.Sequential(*self.lin)
-        self.activation = _get_activation_fn(activation)
+        self.activation = get_activation_fn(activation)
         # Linear layers to adapt dimension for the separated softmax
         #  precomputing dimensions and filtering
         sidx = np.array(seg_indices)
