@@ -1,8 +1,9 @@
-# From https://github.com/locuslab/TCN
+# Modified from https://github.com/locuslab/TCN
 # License for this file in the original repository, MIT at the moment of the writing of this note
 import torch
 import torch.nn as nn
 from torch.nn.utils import weight_norm
+from .utils.tools import get_activation_fn
 
 
 class Chomp1d(nn.Module):
@@ -34,8 +35,7 @@ class TemporalBlock(nn.Module):
                                  self.conv2, self.chomp2, self.activ2, self.dropout2)
         self.downsample = nn.Conv1d(n_inputs, n_outputs, 1) if n_inputs != n_outputs else None
 
-        #TODO change the activation layer selecting from conf param
-        self.activation = nn.ReLU()
+        self.activation = get_activation_fn(activation)
         self.init_weights()
 
     def init_weights(self):
@@ -51,7 +51,7 @@ class TemporalBlock(nn.Module):
 
 
 class TemporalConvNet(nn.Module):
-    def __init__(self, num_inputs, num_channels, kernel_size=2, dropout=0.2):
+    def __init__(self, num_inputs, num_channels, kernel_size=2, dropout=0.1):
         """
 
         :param num_inputs: number of inputs (temporal part)
