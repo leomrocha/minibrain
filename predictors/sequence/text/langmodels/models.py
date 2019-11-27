@@ -128,6 +128,30 @@ class GenericNet(nn.Module):
             name = name + ".pth"
             torch.save(data, name)
 
+    def load_model(self, path, base_name, saved_statedict=True):
+        """
+        Loads each part of the model (positional embedding, channelwise linear, encoder, decoder) from different files
+        with the base_name in the path
+        :param path: path where to load the models from
+        :param base_name: the base part of the name
+        :param saved_statedict: if yes will save the statedict instead of the model (should be lighter)
+        """
+        # check directory exists or create it
+        if not os.path.exists(path):
+            os.makedirs(path)
+        bname = os.path.join(path, base_name)
+        pos_embed_name = bname + "_pos-embedding"
+        lin_name = bname + "_lin_encoder"
+        enc_name = bname + "_encoder"
+        dec_name = bname + "_decoder"
+
+        names = [pos_embed_name, lin_name, enc_name, dec_name]
+        nets = [self.position_embeddings, self.lin_chann, self.encodernet, self.decodernet]
+        for name, net in zip(names, nets):
+            name = name + ".state_dict" if saved_statedict else name
+            name = name + ".pth"
+            net.load_state_dict(torch.load(name))
+
 
 class Conv1DPoS(nn.Module):
     """
@@ -227,13 +251,13 @@ class LinearUposDeprelDecoder(nn.Module):
         ret = self.linears(ret)
         # apply Softmax per PoS characteristic
         # ret[:, :, :self.upos_dim] = F.softmax(ret[:, :, :self.upos_dim], dim=-1)  # upos decoding
-        upos = F.softmax(ret, dim=-1)  # upos decoding
-        # upos = ret
+        # upos = F.softmax(ret, dim=-1)  # upos decoding
+        upos = F.log_softmax(ret, dim=-1)  # upos decoding  # for NLL loss
         # commented while I make it work, TODO add it back
         # upos = F.softmax(ret[:, :, :self.upos_dim], dim=-1)  # upos decoding
-        # ret[:, :, self.upos_dim:] = F.softmax(ret[:, :, self.upos_dim:], dim=-1)# deprel decoding (from upos position)
+        # ret[:, :, self.upos_dim:] = F.log_softmax(ret[:, :, self.upos_dim:], dim=-1)# deprel decoding (from upos position)
         # commented while I make it work, TODO add it back
-        # deprel = F.softmax(ret[:, :, self.upos_dim:], dim=-1)  # deprel decoding (from upos position)
+        # deprel = F.log_softmax(ret[:, :, self.upos_dim:], dim=-1)  # deprel decoding (from upos position)
         return upos, None  # deprel # commented while I make it work, TODO add it back
 
 
