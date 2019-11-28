@@ -26,7 +26,7 @@ def train_test(model, checkpoint_path, base_name, test_accuracy=True, max_data=5
     # optimizer = torch.optim.AdamW(model.parameters(), lr=1e-4, weight_decay=1e-4)
     optimizer = torch.optim.AdamW(model.parameters())
     # loss_function = F.nll_loss
-    loss_function = pos_loss_function()
+    loss_function = pos_loss_function
     epoch_size = 10000
     batch_size = 50
     # TODO tis is for testing purposes
@@ -56,4 +56,13 @@ def main_conv1d():
     model = Conv1DPoS(utf8codes)
     path = "./trained_models/conv1dcol"
     base_name = "conv1dcol_nll-loss"
+    train_test(model, path, base_name)
+
+
+def main_gatedconv1d():
+    utf8codes = np.load(fcodebook)
+    utf8codes = utf8codes.reshape(1987, 64)
+    model = GatedConv1DPoS(utf8codes)
+    path = "./trained_models/GatedConv1DCol"
+    base_name = "GatedConv1DPoS_nll-loss"
     train_test(model, path, base_name)

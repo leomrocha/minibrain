@@ -168,7 +168,7 @@ class GenericNet(nn.Module):
             name = name + ".pth"
             torch.save(data, name)
 
-    @deprecated
+    # @deprecated
     def old_load_model(self, path, base_name, saved_statedict=True):
         """
         Loads each part of the model (positional embedding, channelwise linear, encoder, decoder) from different files
@@ -191,7 +191,7 @@ class GenericNet(nn.Module):
         for name, net in zip(names, nets):
             name = name + ".state_dict" if saved_statedict else name
             name = name + ".pth"
-            net.load_state_dict(torch.load(name))
+            net.load_state_dict(torch.load(name), strict=False)
 
 
 @deprecated
@@ -209,6 +209,29 @@ class OLD_Conv1DPoS(nn.Module):
 
         # Encoder
         self.encoder = Conv1DPartOfSpeechEncoder()  # use all default values
+        self.decoder = LinearUposDeprelDecoder()
+
+        self.network = GenericNet(self.embeds, self.encoder, self.decoder)
+
+    def forward(self, x):
+        return self.network(x)
+
+
+class GatedConv1DPoS(nn.Module):
+    """
+    Part Of Speech, fixed network for testing purposes
+    """
+
+    def __init__(self, utf8codes):
+        super(GatedConv1DPoS, self).__init__()
+        # this time uses the already pre-computed UTF8 -> 64 dimensions encoder, make sure not to train it again
+        with torch.no_grad():
+            self.embeds = nn.Embedding(*(utf8codes.shape))
+            self.embeds.weight.data.copy_(torch.from_numpy(utf8codes))
+
+        # Encoder
+        conv_col = Conv1DPartOfSpeechEncoder()  # use all default values
+        self.encoder = GatedConv1DPartOfSpeechEncoder(conv_col)
         self.decoder = LinearUposDeprelDecoder()
 
         self.network = GenericNet(self.embeds, self.encoder, self.decoder)
@@ -248,10 +271,11 @@ class Conv1DPartOfSpeechEncoder(nn.Module):
 
 class GatedConv1DPartOfSpeechEncoder(nn.Module):
     def __init__(self, conv_column,  # the pretrained Conv1D Column from which will get intermediate results
-                 nchannels_in=[64, 128, 128, 128, 128],  # Conv1D resampled + prev GatedConv channels
-                 nchannels_out=[64, 64, 64, 64, 96],
-                 kernels=[3, 3, 3, 3, 3],
-                 nlayers=[3, 3, 3, 3, 3],
+                 conv1d_out=[128, 256, 512, 256, 96],  # output dimensions from the conv1d column
+                 nchannels_in=[64, 128, 128, 128, 128, 192],  # Conv1D resampled + prev GatedConv channels
+                 nchannels_out=[64, 64, 64, 64, 64, 96],
+                 kernels=[3, 3, 3, 3, 3, 3],
+                 nlayers=[3, 3, 3, 3, 3, 2],
                  dropout=0.1,
                  activation="gelu",
                  gating_activation="sigmoid"
@@ -263,7 +287,7 @@ class GatedConv1DPartOfSpeechEncoder(nn.Module):
         self.conv1d_col = conv_column
         # downsampling from conv_column
         self.downsamples = nn.ModuleList()
-        for din, dout in zip(nchannels_in[1:], nchannels_out[:-1]):
+        for din, dout in zip(conv1d_out, nchannels_out[1:]):
             self.downsamples.append((nn.Conv1d(din, dout, kernel_size=1)))
 
         self.gconvs = nn.ModuleList()
@@ -275,21 +299,20 @@ class GatedConv1DPartOfSpeechEncoder(nn.Module):
     def forward(self, x):
         # get outputs from pre-trained conv1d col
         conv1d_ret = self.conv1d_col(x)
-        assert len(conv1d_ret) == len(self.downsamples)
+        print(x.shape, len(conv1d_ret), len(self.downsamples))
+        assert len(conv1d_ret) == len(self.downsamples) == len(self.gconvs) - 1
         # downsample for joining data with input from
         downsamples = []
         for ds, dta in zip(self.downsamples, conv1d_ret):
             downsamples.append((ds(dta)))
-        # compute inputs for each gated block (basically join by channels
-        inputs = [x]
-        for d1, d2 in zip(conv1d_ret, downsamples):
-            dta = torch.cat([d1, d2], dim=-1).contiguous()
-            inputs.append(dta)
-
+        # compute result of each for each gated block
         rets = []
-        for cnv, dta in zip(self.gconvs, inputs):
-            ret = cnv(dta)
-            rets.append(ret)
+        last_ret = self.gconvs[0](x)  # this is only when i == 0 i.e. when reading data from the input
+        for i, cnv in enumerate(self.gconvs[1:]):
+            dta = torch.cat([downsamples[i], last_ret], dim=1)
+            print("merging shapes: ", downsamples[i].shape, last_ret.shape, dta.shape)
+            last_ret = cnv(dta)
+            rets.append(last_ret)
 
         return rets
 
@@ -345,13 +368,11 @@ class LinearUposDeprelDecoder(nn.Module):
         # apply Softmax per PoS characteristic
         # ret[:, :, :self.upos_dim] = F.softmax(ret[:, :, :self.upos_dim], dim=-1)  # upos decoding
         # upos = F.softmax(ret, dim=-1)  # upos decoding
-        upos = F.log_softmax(ret, dim=-1)  # upos decoding  # for NLL loss
-        # commented while I make it work, TODO add it back
-        # upos = F.softmax(ret[:, :, :self.upos_dim], dim=-1)  # upos decoding
+        # upos = F.log_softmax(ret, dim=-1)  # upos decoding  # for NLL loss
+        upos = F.softmax(ret[:, :, :self.upos_dim], dim=-1)  # upos decoding
         # ret[:, :, self.upos_dim:] = F.log_softmax(ret[:, :, self.upos_dim:], dim=-1)# deprel decoding (from upos position)
-        # commented while I make it work, TODO add it back
-        # deprel = F.log_softmax(ret[:, :, self.upos_dim:], dim=-1)  # deprel decoding (from upos position)
-        return upos, None  # deprel # commented while I make it work, TODO add it back
+        deprel = F.log_softmax(ret[:, :, self.upos_dim:], dim=-1)  # deprel decoding (from upos position)
+        return upos, deprel
 
 
 class DynConvAttention(nn.Module):

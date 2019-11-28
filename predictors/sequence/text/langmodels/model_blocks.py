@@ -166,30 +166,32 @@ class GatedConv1DLayer(nn.Module):
         # not use padding -> is up to the main network to decide
         # res = self.leftpad(x)
         res = x
-        # print(1, res.shape)
+        print(1, res.shape)
         # residual connection channel dimension adaptation
-        if self.use_proj:  # if in_c != out_c, need to change size of residual
-            # print("convresid")
-            res = self.convresid(res)
-        # print(1, res.shape)
         x = self.leftpad(x)
-        # print(2, x.shape)
+        print(2, x.shape)
         out_net1 = self.conv1A(x)
         gt1 = self.gate1(x)
-        # print(3, x.shape, res.shape, out_net1.shape, gt1.shape)
+        print(3, x.shape, res.shape, out_net1.shape, gt1.shape)
 
         out1 = torch.mul(out_net1, gt1)
         out1 = self.dropout1(out1)
-        # print(4, out1.shape)
+        print(4, out1.shape)
 
         out1 = self.leftpad(out1)
         out_net2 = self.conv2A(out1)
+        print(4, out1.shape, out_net2.shape)
         gt2 = self.gate2(out1)
-        # print(5, out_net2.shape, gt2.shape)
+        print(5, out_net2.shape, gt2.shape)
 
         out2 = torch.mul(out_net2, gt2)
         out2 = self.dropout1(out2)
-        # print(6, out2.shape)
+        print(6, out2.shape)
+
+        if self.use_proj:  # if in_c != out_c, need to change size of residual
+            print("convresid")
+            res = self.convresid(res)
+        print(1, res.shape)
 
         if self.activation:
             out = self.activation(out2 + res)
