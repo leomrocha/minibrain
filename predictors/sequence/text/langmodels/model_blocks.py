@@ -62,6 +62,47 @@ class Conv1DBlock(nn.Module):
 
 
 class GatedConv1DBlock(nn.Module):
+    """
+    Stack of GatedConv1DBlocks
+    """
+    def __init__(self, c_in, c_out, kernel_size, nlayers, stride=1, dropout=0.2,
+                 activation="relu", gating_activation="sigmoid"):
+        """
+        :param c_in: # input channels
+        :param c_out: # output channels
+        :param kernel_size:
+        :param nlayers: number of layers to use in this stack
+        :param stride:
+        :param dropout:
+        :param activation: if None then no activation is done
+        :param gating_activation: activation layer type for the gating mechanism
+        """
+        super(GatedConv1DBlock, self).__init__()
+        self.convs = []
+        for i in range(nlayers):
+            t_c_in = c_out
+            if i == 0:
+                t_c_in = c_in
+            activ = None  # no activation for the intermediate blocks
+            if i >= nlayers - 1:  # only activation for the last block
+                activ = activation
+            # Left padding
+            # pad = nn.ConstantPad1d((kernel_size - 1) // 2, 0)
+            cnv = GatedConv1DLayer(t_c_in, c_out, kernel_size, stride, dropout, activ, gating_activation)
+            self.convs.append(cnv)
+
+        self.dropout = nn.Dropout(dropout)
+        self.network = nn.Sequential(*self.convs)
+
+    def forward(self, x):
+        res = x  # residual
+        # TODO add positional embeddings by block
+        # ret = x +
+        ret = self.network(x)
+        return ret + res
+
+
+class GatedConv1DLayer(nn.Module):
     def __init__(self, c_in, c_out, kernel_size, stride=1, dropout=0.2,
                  activation="relu", gating_activation="sigmoid"):
         """
@@ -74,7 +115,7 @@ class GatedConv1DBlock(nn.Module):
         :param gating_activation: activation layer type for the gating mechanism
         """
         # TODO add Coordinate Convolution addition here (if conf) ???
-        super(GatedConv1DBlock, self).__init__()
+        super(GatedConv1DLayer, self).__init__()
         # FIXME these values are not being taken from the input ???
         dropout = 0.2
         stride = 1
@@ -92,7 +133,7 @@ class GatedConv1DBlock(nn.Module):
         # gating unit
         self.conv1B = weight_norm(nn.Conv1d(c_in, c_out, kernel_size, stride=stride))
         # self.chomp1B = Chomp1d(padding)
-        self.gatingActiv1B = get_activation_fn(gating_activation)
+        self.gatingActiv1B = nn.Sigmoid()  # get_activation_fn(gating_activation)
 
         # self.net1 = nn.Sequential(self.conv1A)
         self.gate1 = nn.Sequential(self.conv1B, self.gatingActiv1B)
@@ -104,7 +145,7 @@ class GatedConv1DBlock(nn.Module):
         # gating unit
         self.conv2B = weight_norm(nn.Conv1d(c_out, c_out, kernel_size, stride=stride))
         # self.chomp2B = Chomp1d(padding)
-        self.gatingActiv2B = get_activation_fn(gating_activation)
+        self.gatingActiv2B = nn.Sigmoid()  # get_activation_fn(gating_activation)
 
         # self.activ2 = nn.ReLU()
         self.dropout2 = nn.Dropout(dropout)
@@ -113,13 +154,13 @@ class GatedConv1DBlock(nn.Module):
         self.gate2 = nn.Sequential(self.conv1B, self.gatingActiv1B)
 
         self.activation = get_activation_fn(activation)
-        self.init_weights()
+        # self.init_weights()
 
-    def init_weights(self):
-        self.conv1.weight.data.normal_(0, 0.01)
-        self.conv2.weight.data.normal_(0, 0.01)
-        if self.convresid is not None:
-            self.convresid.weight.data.normal_(0, 0.01)
+    # def init_weights(self):
+    #     self.conv1.weight.data.normal_(0, 0.01)
+    #     self.conv2.weight.data.normal_(0, 0.01)
+    #     if self.convresid is not None:
+    #         self.convresid.weight.data.normal_(0, 0.01)
 
     def forward(self, x):
         # not use padding -> is up to the main network to decide

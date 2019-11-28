@@ -22,6 +22,9 @@ Interesting paper, although from what I'm looking for the lesson learned is that
 Francois Chollet Google, Inc. November 6, 2019
 https://arxiv.org/pdf/1911.01547.pdf
 
+### Sparse Networks from Scratch: Faster Training without Losing Performance
+https://arxiv.org/abs/1907.04840
+Trying to get better things from the resources we have, faster training
 
 ## For NLP
 

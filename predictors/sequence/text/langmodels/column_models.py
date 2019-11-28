@@ -419,23 +419,23 @@ class NLPGatedConv1DColumnV1(nn.Module):
         # First block of convolutions
         pad2 = (hid_kernel_size - 1) // 2
         leftpad1 = nn.ConstantPad1d(pad2, 0.)
-        b1_gsl1 = GatedConv1DBlock(c_out[0], c_out[1], hid_kernel_size, dropout, activation)
-        b1_gsl2 = GatedConv1DBlock(c_out[1], c_out[1], hid_kernel_size, dropout, activation)
+        b1_gsl1 = GatedConv1DLayer(c_out[0], c_out[1], hid_kernel_size, dropout, activation)
+        b1_gsl2 = GatedConv1DLayer(c_out[1], c_out[1], hid_kernel_size, dropout, activation)
         # cut input dimension by 2
         b1_maxp = nn.MaxPool1d(3, stride=2)
         #############################
         # Second block of convolutions
         leftpad2 = nn.ConstantPad1d(pad2, 0.)
-        b2_gsl1 = GatedConv1DBlock(c_out[1], c_out[2], hid_kernel_size, dropout, activation)
-        b2_gsl2 = GatedConv1DBlock(c_out[2], c_out[2], hid_kernel_size, dropout, activation)
+        b2_gsl1 = GatedConv1DLayer(c_out[1], c_out[2], hid_kernel_size, dropout, activation)
+        b2_gsl2 = GatedConv1DLayer(c_out[2], c_out[2], hid_kernel_size, dropout, activation)
         # cut input dimension by 2
         b2_maxp = nn.MaxPool1d(3, stride=2)
         # dimension is cut by 4 already
         #############################
         # Third block of convolutions
         leftpad3 = nn.ConstantPad1d(pad2, 0.)
-        b3_gsl1 = GatedConv1DBlock(c_out[2], c_out[3], hid_kernel_size, dropout, activation)
-        b3_gsl2 = GatedConv1DBlock(c_out[3], c_out[3], hid_kernel_size, dropout, activation)
+        b3_gsl1 = GatedConv1DLayer(c_out[2], c_out[3], hid_kernel_size, dropout, activation)
+        b3_gsl2 = GatedConv1DLayer(c_out[3], c_out[3], hid_kernel_size, dropout, activation)
         # cut input dimension by 2
         b3_maxp = nn.MaxPool1d(3, stride=2)
         # dimension got cut by 8 now

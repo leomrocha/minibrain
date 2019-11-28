@@ -1,4 +1,3 @@
-
 import numpy as np
 import torch
 import torch.nn as nn
@@ -13,6 +12,8 @@ from .tcn import TemporalBlock, TemporalConvNet
 # from torch.nn.modules.transformer import TransformerDecoder, TransformerDecoderLayer
 import torch.nn.functional as F
 
+from deprecation import deprecated
+
 
 ###
 # Taken from https://github.com/facebookresearch/XLM  (though there are not many ways of doing this)
@@ -25,6 +26,8 @@ def create_sinusoidal_embeddings(n_pos, dim, out):
     out[:, 1::2] = torch.FloatTensor(np.cos(position_enc[:, 1::2]))
     out.detach_()
     out.requires_grad = False
+
+
 ###
 
 
@@ -33,6 +36,7 @@ class GenericNet(nn.Module):
     Generic module for handling the entire network
     The data flow and returned elements from
     """
+
     def __init__(self, utf8encoder, encodernet, decodernet,
                  time_dim=1024,
                  in_enc_dim=64,
@@ -59,6 +63,8 @@ class GenericNet(nn.Module):
         create_sinusoidal_embeddings(max_sequence_len, in_enc_dim, out=self.position_embeddings.weight)
         # fib_positions are fixed by the sequence position and added as extra channels
         self.fib_positions = torch.from_numpy(get_coord_emb(shape=(time_dim, fib_coord_channels), fibinit=6))
+        # TODO take this out, and leave it for each encoder
+        #  (as each of them might need some of this to see new things when incremental training)
         # adapt sinusoidal embeddings dimension to the desired size before the columns process the code
         self.lin_chann = nn.Sequential(
             # nn.Linear(in_enc_dim+fib_coord_channels, hid_code_dim),
@@ -101,9 +107,43 @@ class GenericNet(nn.Module):
         # return multihot, txtcode, positions, latent, dec
         return txtcode, positions, latent, dec
 
-    def save_model(self, path, base_name, nid="001", save_statedict=True):
+    def save_checkpoint(self, path, base_name, cid="001"):
         """
         Saves each part of the model (positional embedding, channelwise linear, encoder, decoder) to different files
+        with the base_name in the path
+        :param path: path where to save the models
+        :param base_name: the base part of the name
+        :param cid: id to add to the model (for checkpointing)
+        """
+        # check directory exists or create it
+        if not os.path.exists(path):
+            os.makedirs(path)
+        bname = os.path.join(path, base_name)
+        name = bname + "_" + cid
+        name = name + ".state_dict.pth"
+        data = {
+            "pos_embedding": self.position_embeddings,
+            "lin_encoder": self.lin_chann,
+            "encoder": self.encodernet,
+            "decoder": self.decodernet
+        }
+        torch.save(data, name)
+
+    def load_checkpoint(self, fpath):
+        """
+        Loads the model
+        :param fpath: the file with path where to load the models from
+        """
+        checkpoint = torch.load(fpath)
+        nets = [self.position_embeddings, self.lin_chann, self.encodernet, self.decodernet]
+        keys = ["pos_embedding", "lin_encoder", "encoder", "decoder"]
+        for k, net in zip(keys, nets):
+            net.load_state_dict(checkpoint)
+
+    @deprecated
+    def old_save_model(self, path, base_name, nid="001", save_statedict=True):
+        """
+        Saves each part of the model (positional embedding, channel-wise linear, encoder, decoder) to different files
         with the base_name in the path
         :param path: path where to save the models
         :param base_name: the base part of the name
@@ -128,7 +168,8 @@ class GenericNet(nn.Module):
             name = name + ".pth"
             torch.save(data, name)
 
-    def load_model(self, path, base_name, saved_statedict=True):
+    @deprecated
+    def old_load_model(self, path, base_name, saved_statedict=True):
         """
         Loads each part of the model (positional embedding, channelwise linear, encoder, decoder) from different files
         with the base_name in the path
@@ -153,12 +194,14 @@ class GenericNet(nn.Module):
             net.load_state_dict(torch.load(name))
 
 
-class Conv1DPoS(nn.Module):
+@deprecated
+class OLD_Conv1DPoS(nn.Module):
     """
     Part Of Speech, fixed network for testing purposes
     """
+
     def __init__(self, utf8codes):
-        super(Conv1DPoS, self).__init__()
+        super(OLD_Conv1DPoS, self).__init__()
         # this time uses the already pre-computed UTF8 -> 64 dimensions encoder, make sure not to train it again
         with torch.no_grad():
             self.embeds = nn.Embedding(*(utf8codes.shape))
@@ -203,10 +246,59 @@ class Conv1DPartOfSpeechEncoder(nn.Module):
         return rets
 
 
+class GatedConv1DPartOfSpeechEncoder(nn.Module):
+    def __init__(self, conv_column,  # the pretrained Conv1D Column from which will get intermediate results
+                 nchannels_in=[64, 128, 128, 128, 128],  # Conv1D resampled + prev GatedConv channels
+                 nchannels_out=[64, 64, 64, 64, 96],
+                 kernels=[3, 3, 3, 3, 3],
+                 nlayers=[3, 3, 3, 3, 3],
+                 dropout=0.1,
+                 activation="gelu",
+                 gating_activation="sigmoid"
+                 ):
+        super(GatedConv1DPartOfSpeechEncoder, self).__init__()
+        assert len(nchannels_in) == len(nchannels_out) == len(nlayers) == len(kernels)
+        # store each block in a list so I can return each layer separately for other kind of processing
+
+        self.conv1d_col = conv_column
+        # downsampling from conv_column
+        self.downsamples = nn.ModuleList()
+        for din, dout in zip(nchannels_in[1:], nchannels_out[:-1]):
+            self.downsamples.append((nn.Conv1d(din, dout, kernel_size=1)))
+
+        self.gconvs = nn.ModuleList()
+        for inc, outc, k, l in zip(nchannels_in, nchannels_out, kernels, nlayers):
+            cnv = GatedConv1DBlock(c_in=inc, c_out=outc, kernel_size=k, nlayers=l,
+                                   dropout=dropout, activation=activation, gating_activation=gating_activation)
+            self.gconvs.append(cnv)
+
+    def forward(self, x):
+        # get outputs from pre-trained conv1d col
+        conv1d_ret = self.conv1d_col(x)
+        assert len(conv1d_ret) == len(self.downsamples)
+        # downsample for joining data with input from
+        downsamples = []
+        for ds, dta in zip(self.downsamples, conv1d_ret):
+            downsamples.append((ds(dta)))
+        # compute inputs for each gated block (basically join by channels
+        inputs = [x]
+        for d1, d2 in zip(conv1d_ret, downsamples):
+            dta = torch.cat([d1, d2], dim=-1).contiguous()
+            inputs.append(dta)
+
+        rets = []
+        for cnv, dta in zip(self.gconvs, inputs):
+            ret = cnv(dta)
+            rets.append(ret)
+
+        return rets
+
+
 class TCNColumn(nn.Module):
     """
     Processes the input BxNSeqxchannels time and creates an output of Bx1xNseq
     """
+
     def __init__(self, in_chann=64, n_channels=[128, 128, 256, 64]):
         # what I want with the TCN is to be able to "summarize" the input to use it with the Transformer Layers
         # so, if the input is by default 1024x64, the output should be 128x64 (which is later concatenated with
@@ -227,6 +319,7 @@ class LinearUposDeprelDecoder(nn.Module):
     Decoding is Linear to make the encoding network do all the work so the embedding can be reused by other
     Tasks later
     """
+
     def __init__(self, lin_in_dim=96, lin_hidd_dim=768,
                  upos_dim=18, deprel_dim=278,  # the number of features of UPOS and DEPREL in Conllu files
                  ):
