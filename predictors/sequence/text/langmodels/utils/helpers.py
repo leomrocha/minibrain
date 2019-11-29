@@ -28,8 +28,8 @@ def pos_loss_function(upos, deprel, target_upos, target_deprel):
     # the issue is that upos is easier than deprel (18 vs 278 classes)
     # upos_loss = F.mse_loss(upos, target_upos)
     # deprel_loss = F.mse_loss(deprel, target_deprel)
-    upos_loss = F.nll_loss(upos, target_upos)
-    deprel_loss = F.nll_loss(deprel, target_deprel)
+    upos_loss = F.nll_loss(upos, target_upos.long())
+    deprel_loss = F.nll_loss(deprel, target_deprel.long())
     # upos_loss = F.kl_div(upos, target_upos)
     # deprel_loss = F.kl_div(deprel, target_deprel)
     loss = upos_loss + deprel_loss
@@ -42,15 +42,15 @@ writer = SummaryWriter()
 
 
 def train(model, optimizer, loss_function, batches, epoch, ndatapoints, device):
+    torch.cuda.empty_cache()
     model.train()
     train_loss = 0
     #     batch_loss = []
     batch_idx = 1
     for b_data in batches:
-        torch.cuda.empty_cache()  # make sure the cache is emptied to begin the nexxt batch
-        b_train = torch.from_numpy(b_data[:, 0, :].astype("int64")).squeeze().to(device).long()
-        b_upos = torch.from_numpy(b_data[:, 1, :].astype("int64")).squeeze().to(device).long()
-        b_deprel = torch.from_numpy(b_data[:, 2, :].astype("int64")).squeeze().to(device).long()
+        b_train = torch.from_numpy(b_data[:, 0, :].astype("int32")).squeeze().to(device).long()
+        b_upos = torch.from_numpy(b_data[:, 1, :].astype("int32")).squeeze().to(device).long()
+        b_deprel = torch.from_numpy(b_data[:, 2, :].astype("int32")).squeeze().to(device).long()
         #
         optimizer.zero_grad()
         txtcode, positions, latent, dec = model(b_train)
@@ -63,7 +63,7 @@ def train(model, optimizer, loss_function, batches, epoch, ndatapoints, device):
 
         loss.backward()
         train_loss += loss.data.item()  # [0]
-        writer.add_scalar("Loss/train", loss.data.item(), global_step=epoch * batch_idx)
+        writer.add_scalar("Loss/train", loss.data.item(), global_step=(epoch * batch_idx))
         optimizer.step()
         batch_idx += 1
         del b_train
@@ -90,15 +90,15 @@ def test(model, loss_function, test_data, epoch, device, max_data=50):
     test_loss = 0
     for lang, d in test_data:
         torch.cuda.empty_cache()  # make sure the cache is emptied to begin the nexxt batch
-        b_test = torch.from_numpy(d[:max_data, 0, :].astype("int64")).squeeze().to(device).long()
+        b_test = torch.from_numpy(d[:max_data, 0, :].astype("int32")).squeeze().to(device).long()
         # TODO move the testing part to CPU so it takes less memory in the GPU and can keep training while testing
-        b_upos = torch.from_numpy(d[:max_data, 1, :].astype("int64")).squeeze().to(device).long()
-        b_deprel = torch.from_numpy(d[:, 2, :].astype("int64")).squeeze().to(device).long()
+        b_upos = torch.from_numpy(d[:max_data, 1, :].astype("int32")).squeeze().to(device).int()  # .long()
+        b_deprel = torch.from_numpy(d[:max_data, 2, :].astype("int32")).squeeze().to(device).int()  # .long()
         _, _, _, dec = model(b_test)
 #         last_latent = latent[-1]
         upos, deprel = dec
-        loss = loss_function(upos.view([-1, 18]), b_upos.view([-1]))
-#         loss =  loss_function(res, tensor_data).data.item()  # [0]
+        # loss = loss_function(upos.view([-1, 18]), b_upos.view([-1]))
+        loss = loss_function(upos.view([-1, 18]), deprel.view([-1, 278]), b_upos.view([-1]), b_deprel.view([-1]))
         test_loss += loss.data.item()
         writer.add_scalar("LangLoss/test/"+lang, loss.data.item(), global_step=epoch)
         del b_test
@@ -111,6 +111,7 @@ def test(model, loss_function, test_data, epoch, device, max_data=50):
 
 
 def test_accuracy(model, test_data, epoch, device, max_data=50):
+    torch.cuda.empty_cache()  # make sure the cache is emptied
     model.eval()
     epoch_acc = 0
 
@@ -126,20 +127,20 @@ def test_accuracy(model, test_data, epoch, device, max_data=50):
         deprel_emb.to(device)
 
     for lang, d in test_data:
-        torch.cuda.empty_cache()  # make sure the cache is emptied to begin the nexxt batch
-        b_test = torch.from_numpy(d[:max_data, 0, :].astype("int64")).squeeze().to(device).long()
-        # TODO move the testing part to CPU so it takes less memory in the GPU and can keep training while testing
-        # doing operations in boolean form so it takes less space in gpu
-        b_upos = torch.from_numpy(d[:max_data, 1, :].astype("bool")).squeeze().to(device).bool()
-        b_deprel = torch.from_numpy(d[:, 2, :].astype("bool")).squeeze().to(device).bool()
-        _, _, _, dec = model(b_test)
-        #         last_latent = latent[-1]
-        upos, deprel = dec
-        upos = torch.where(upos > 0.9, 1, 0).bool()
-        deprel = torch.where(deprel > 0.9, 1, 0).bool()
+        with torch.no_grad():
+            b_test = torch.from_numpy(d[:max_data, 0, :].astype("int32")).squeeze().to(device).int()
+            # TODO move the testing part to CPU so it takes less memory in the GPU and can keep training while testing
+            # doing operations in boolean form so it takes less space in gpu
+            b_upos = torch.from_numpy(d[:max_data, 1, :].astype("bool")).squeeze().to(device).bool()
+            b_deprel = torch.from_numpy(d[:, 2, :].astype("bool")).squeeze().to(device).bool()
+            _, _, _, dec = model(b_test)
+            #         last_latent = latent[-1]
+            upos, deprel = dec
+            upos = torch.where(upos > 0.9, 1, 0).bool()
+            deprel = torch.where(deprel > 0.9, 1, 0).bool()
 
-        upos_acc = (upos.view([-1, 18]) == b_upos.view([-1, 18])).sum(dim=1)
-        deprel_acc = (deprel.view([-1, 278]) == b_deprel.view([-1, 278])).sum(dim=1)
+        upos_acc = (upos.view([-1, 18]) == upos_emb(b_upos).view([-1, 18])).sum(dim=1)
+        deprel_acc = (deprel.view([-1, 278]) == deprel_emb(b_deprel).view([-1, 278])).sum(dim=1)
         acc = (upos_acc + deprel_acc) / 2
 
         writer.add_scalar("LangAccuracy/test/" + lang, acc, global_step=epoch)

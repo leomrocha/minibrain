@@ -18,6 +18,15 @@ https://openreview.net/forum?id=B1ckMDqlg
 Interesting paper, although from what I'm looking for the lesson learned is that conditional execution makes a good choice and specialist/expert parts for each different task and choosing them with an expert chooser that is also trained there.
 
 
+### Books and Lectures online for NLP
+
+* [Stanford cs224](http://web.stanford.edu/class/cs224n/)
+* [Introduction to Information Retrieval](https://nlp.stanford.edu/IR-book/html/htmledition/irbook.html)
+* [Speech and Language Processing (3rd ed. draft)](https://web.stanford.edu/~jurafsky/slp3/)
+
+
+
+
 ### The Measure of Intelligence
 Francois Chollet Google, Inc. November 6, 2019
 https://arxiv.org/pdf/1911.01547.pdf
@@ -44,6 +53,9 @@ Need to read it, study it, overfit on it :p
 Interesting, really interesting. Many lessons to get from there, a hugh study on different parameters, techniques and other elements.
 
 If there is one paper to read on NLP this is the one. An overview of the state of the art, the progress, what are the important things to learn, etc.  
+
+### Right for the Wrong Reasons: Diagnosing Syntactic Heuristics in Natural Language Inference
+https://www.aclweb.org/anthology/P19-1334.pdf
 
 ### The Bitter Lesson - Rich Sutton - March 13, 2019
 http://www.incompleteideas.net/IncIdeas/BitterLesson.html

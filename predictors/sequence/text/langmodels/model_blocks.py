@@ -66,7 +66,7 @@ class GatedConv1DBlock(nn.Module):
     Stack of GatedConv1DBlocks
     """
     def __init__(self, c_in, c_out, kernel_size, nlayers, stride=1, dropout=0.2,
-                 activation="relu", gating_activation="sigmoid"):
+                 activation="relu", gating_activation="sigmoid", use_residual=False):
         """
         :param c_in: # input channels
         :param c_out: # output channels
@@ -76,9 +76,19 @@ class GatedConv1DBlock(nn.Module):
         :param dropout:
         :param activation: if None then no activation is done
         :param gating_activation: activation layer type for the gating mechanism
+        :param use_residual: If residual should be added to the module. Default False (each sub-block uses already a residual
         """
         super(GatedConv1DBlock, self).__init__()
-        self.convs = []
+        self.use_residual = use_residual
+        self.convresid = None
+
+        if c_in != c_out and self.use_residual:
+            self.use_proj = 1
+            self.convresid = weight_norm(nn.Conv1d(c_in, c_out, 1))  # downsample for residual connection if needed
+        else:  # if c_in == c_out or not use_residual:
+            self.use_proj = 0
+
+        self.convs = nn.ModuleList()
         for i in range(nlayers):
             t_c_in = c_out
             if i == 0:
@@ -97,9 +107,17 @@ class GatedConv1DBlock(nn.Module):
     def forward(self, x):
         res = x  # residual
         # TODO add positional embeddings by block
-        # ret = x +
+        ret = x
+        # print("GatedBlock: ", x.shape)
         ret = self.network(x)
-        return ret + res
+        # for cnv in self.convs:
+        #     print(res.shape)
+        #     ret = cnv(ret)
+        if self.use_proj and self.use_residual:  # if in_c != out_c, need to change size of residual
+            res = self.convresid(res)
+        if self.use_residual:
+            ret = ret + res
+        return ret
 
 
 class GatedConv1DLayer(nn.Module):
@@ -129,29 +147,21 @@ class GatedConv1DLayer(nn.Module):
         self.convresid = weight_norm(nn.Conv1d(c_in, c_out, 1))  # downsample for residual connection if needed
         #
         self.conv1A = weight_norm(nn.Conv1d(c_in, c_out, kernel_size, stride=stride))
-        # self.chomp1A = Chomp1d(padding)
         # gating unit
         self.conv1B = weight_norm(nn.Conv1d(c_in, c_out, kernel_size, stride=stride))
-        # self.chomp1B = Chomp1d(padding)
         self.gatingActiv1B = nn.Sigmoid()  # get_activation_fn(gating_activation)
 
-        # self.net1 = nn.Sequential(self.conv1A)
         self.gate1 = nn.Sequential(self.conv1B, self.gatingActiv1B)
 
         self.dropout1 = nn.Dropout(dropout)
-
         self.conv2A = weight_norm(nn.Conv1d(c_out, c_out, kernel_size, stride=stride))
-        # self.chomp2A = Chomp1d(padding)
         # gating unit
         self.conv2B = weight_norm(nn.Conv1d(c_out, c_out, kernel_size, stride=stride))
-        # self.chomp2B = Chomp1d(padding)
         self.gatingActiv2B = nn.Sigmoid()  # get_activation_fn(gating_activation)
 
-        # self.activ2 = nn.ReLU()
         self.dropout2 = nn.Dropout(dropout)
 
-        # self.net2 = nn.Sequential(self.convA, self.chomp2A)
-        self.gate2 = nn.Sequential(self.conv1B, self.gatingActiv1B)
+        self.gate2 = nn.Sequential(self.conv2B, self.gatingActiv2B)
 
         self.activation = get_activation_fn(activation)
         # self.init_weights()
@@ -166,32 +176,32 @@ class GatedConv1DLayer(nn.Module):
         # not use padding -> is up to the main network to decide
         # res = self.leftpad(x)
         res = x
-        print(1, res.shape)
+        # print(1, res.shape)
         # residual connection channel dimension adaptation
         x = self.leftpad(x)
-        print(2, x.shape)
+        # print(2, x.shape)
         out_net1 = self.conv1A(x)
         gt1 = self.gate1(x)
-        print(3, x.shape, res.shape, out_net1.shape, gt1.shape)
+        # print(3, x.shape, res.shape, out_net1.shape, gt1.shape)
 
         out1 = torch.mul(out_net1, gt1)
         out1 = self.dropout1(out1)
-        print(4, out1.shape)
+        # print(4, out1.shape)
 
         out1 = self.leftpad(out1)
         out_net2 = self.conv2A(out1)
-        print(4, out1.shape, out_net2.shape)
+        # print(4, out1.shape, out_net2.shape)
         gt2 = self.gate2(out1)
-        print(5, out_net2.shape, gt2.shape)
+        # print(5, out_net2.shape, gt2.shape)
 
         out2 = torch.mul(out_net2, gt2)
         out2 = self.dropout1(out2)
-        print(6, out2.shape)
+        # print(6, out2.shape)
 
         if self.use_proj:  # if in_c != out_c, need to change size of residual
-            print("convresid")
+            # print("convresid")
             res = self.convresid(res)
-        print(1, res.shape)
+        # print(1, res.shape)
 
         if self.activation:
             out = self.activation(out2 + res)

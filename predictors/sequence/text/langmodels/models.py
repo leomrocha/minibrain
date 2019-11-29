@@ -114,6 +114,7 @@ class GenericNet(nn.Module):
         :param path: path where to save the models
         :param base_name: the base part of the name
         :param cid: id to add to the model (for checkpointing)
+        :return: the absolute path (including file name) to the ckeckpoint file
         """
         # check directory exists or create it
         if not os.path.exists(path):
@@ -122,12 +123,13 @@ class GenericNet(nn.Module):
         name = bname + "_" + cid
         name = name + ".state_dict.pth"
         data = {
-            "pos_embedding": self.position_embeddings,
-            "lin_encoder": self.lin_chann,
-            "encoder": self.encodernet,
-            "decoder": self.decodernet
+            "pos_embedding": self.position_embeddings.state_dict(),
+            "lin_encoder": self.lin_chann.state_dict(),
+            "encoder": self.encodernet.state_dict(),
+            "decoder": self.decodernet.state_dict()
         }
         torch.save(data, name)
+        return name
 
     def load_checkpoint(self, fpath):
         """
@@ -137,8 +139,10 @@ class GenericNet(nn.Module):
         checkpoint = torch.load(fpath)
         nets = [self.position_embeddings, self.lin_chann, self.encodernet, self.decodernet]
         keys = ["pos_embedding", "lin_encoder", "encoder", "decoder"]
+        # keys = ["lin_encoder", "encoder", "decoder"]
         for k, net in zip(keys, nets):
-            net.load_state_dict(checkpoint)
+            net.load_state_dict(checkpoint[k])
+            # net.load_state_dict(checkpoint[k], strict=False)
 
     @deprecated
     def old_save_model(self, path, base_name, nid="001", save_statedict=True):
@@ -187,7 +191,8 @@ class GenericNet(nn.Module):
         dec_name = bname + "_decoder"
 
         names = [pos_embed_name, lin_name, enc_name, dec_name]
-        nets = [self.position_embeddings, self.lin_chann, self.encodernet, self.decodernet]
+        # nets = [self.position_embeddings, self.lin_chann, self.encodernet, self.decodernet]
+        nets = [self.position_embeddings, self.lin_chann, self.encodernet]
         for name, net in zip(names, nets):
             name = name + ".state_dict" if saved_statedict else name
             name = name + ".pth"
@@ -231,13 +236,15 @@ class GatedConv1DPoS(nn.Module):
 
         # Encoder
         conv_col = Conv1DPartOfSpeechEncoder()  # use all default values
-        self.encoder = GatedConv1DPartOfSpeechEncoder(conv_col)
+        self.encoder = GatedConv1DPartOfSpeechEncoder(conv_col, return_all_layers=False)
         self.decoder = LinearUposDeprelDecoder()
 
         self.network = GenericNet(self.embeds, self.encoder, self.decoder)
 
     def forward(self, x):
-        return self.network(x)
+        ret = self.embeds(x).float()
+        ret = self.network(x)
+        return ret
 
 
 class Conv1DPartOfSpeechEncoder(nn.Module):
@@ -273,21 +280,23 @@ class GatedConv1DPartOfSpeechEncoder(nn.Module):
     def __init__(self, conv_column,  # the pretrained Conv1D Column from which will get intermediate results
                  conv1d_out=[128, 256, 512, 256, 96],  # output dimensions from the conv1d column
                  nchannels_in=[64, 128, 128, 128, 128, 192],  # Conv1D resampled + prev GatedConv channels
-                 nchannels_out=[64, 64, 64, 64, 64, 96],
+                 nchannels_out=[64, 64, 64, 64, 96, 96],
                  kernels=[3, 3, 3, 3, 3, 3],
                  nlayers=[3, 3, 3, 3, 3, 2],
                  dropout=0.1,
                  activation="gelu",
-                 gating_activation="sigmoid"
+                 gating_activation="sigmoid",
+                 return_all_layers=False  # if should return the result of all layers
                  ):
         super(GatedConv1DPartOfSpeechEncoder, self).__init__()
+        self.return_all_layers = return_all_layers
         assert len(nchannels_in) == len(nchannels_out) == len(nlayers) == len(kernels)
         # store each block in a list so I can return each layer separately for other kind of processing
 
         self.conv1d_col = conv_column
         # downsampling from conv_column
         self.downsamples = nn.ModuleList()
-        for din, dout in zip(conv1d_out, nchannels_out[1:]):
+        for din, dout in zip(conv1d_out, nchannels_out[:-1]):
             self.downsamples.append((nn.Conv1d(din, dout, kernel_size=1)))
 
         self.gconvs = nn.ModuleList()
@@ -299,7 +308,7 @@ class GatedConv1DPartOfSpeechEncoder(nn.Module):
     def forward(self, x):
         # get outputs from pre-trained conv1d col
         conv1d_ret = self.conv1d_col(x)
-        print(x.shape, len(conv1d_ret), len(self.downsamples))
+        # print(x.shape, len(conv1d_ret), len(self.downsamples))
         assert len(conv1d_ret) == len(self.downsamples) == len(self.gconvs) - 1
         # downsample for joining data with input from
         downsamples = []
@@ -308,12 +317,15 @@ class GatedConv1DPartOfSpeechEncoder(nn.Module):
         # compute result of each for each gated block
         rets = []
         last_ret = self.gconvs[0](x)  # this is only when i == 0 i.e. when reading data from the input
+        rets = [last_ret]
         for i, cnv in enumerate(self.gconvs[1:]):
             dta = torch.cat([downsamples[i], last_ret], dim=1)
-            print("merging shapes: ", downsamples[i].shape, last_ret.shape, dta.shape)
+            # print("merging shapes: ", i, downsamples[i].shape, last_ret.shape, dta.shape)
             last_ret = cnv(dta)
-            rets.append(last_ret)
-
+            if self.return_all_layers:
+                rets.append(last_ret)
+            else:  # saving memory (need it
+                rets = [last_ret]  # this saves memory
         return rets
 
 
@@ -349,8 +361,8 @@ class LinearUposDeprelDecoder(nn.Module):
         super(LinearUposDeprelDecoder, self).__init__()
         self.upos_dim = upos_dim
         self.deprel_dim = deprel_dim
-        # lin_out = upos_dim + deprel_dim  # commented while I make it work, TODO add it back
-        lin_out = upos_dim
+        lin_out = upos_dim + deprel_dim  # commented while I make it work, TODO add it back
+        # lin_out = upos_dim
 
         self.linears = nn.Sequential(
             weight_norm(nn.Linear(lin_in_dim, lin_hidd_dim)),
@@ -369,9 +381,10 @@ class LinearUposDeprelDecoder(nn.Module):
         # ret[:, :, :self.upos_dim] = F.softmax(ret[:, :, :self.upos_dim], dim=-1)  # upos decoding
         # upos = F.softmax(ret, dim=-1)  # upos decoding
         # upos = F.log_softmax(ret, dim=-1)  # upos decoding  # for NLL loss
-        upos = F.softmax(ret[:, :, :self.upos_dim], dim=-1)  # upos decoding
+        upos = F.log_softmax(ret[:, :, :self.upos_dim], dim=-1)  # upos decoding
         # ret[:, :, self.upos_dim:] = F.log_softmax(ret[:, :, self.upos_dim:], dim=-1)# deprel decoding (from upos position)
         deprel = F.log_softmax(ret[:, :, self.upos_dim:], dim=-1)  # deprel decoding (from upos position)
+        # print("Lin decoding ", upos.shape, deprel.shape)
         return upos, deprel
 
 
