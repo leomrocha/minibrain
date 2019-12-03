@@ -5,7 +5,9 @@ from torch.nn.utils import weight_norm
 from torch.nn import functional as F
 
 from fairseq.modules.dynamic_convolution import DynamicConv1dTBC
-from fairseq.modules.transformer_layer import TransformerEncoderLayer
+# from fairseq.modules.transformer_layer import TransformerEncoderLayer
+from torch.nn.modules.transformer import TransformerEncoder, TransformerEncoderLayer
+
 
 from .utils.tools import get_activation_fn
 
@@ -283,17 +285,19 @@ class ConvAttBlock(nn.Module):
         self.conv_adapt = nn.Conv1d(in_conv_channels, lin_channels, 1)  # adapt number of channels for linear layers
         self.lin_adapt = nn.Linear(in_conv_dim, conv_proj_dim)  # adapt (project) number of samples for next
         self.att_adapt = nn.Linear(conv_proj_dim + att_dim, att_dim)  # adapt (project) number of samples for att layers
-        args = SimpleNamespace(**{"encoder_embed_dim": att_dim,
-                                  "encoder_attention_heads": att_encoder_heads,
-                                  "attention_dropout": att_dropout,
-                                  "dropout": dropout,
-                                  "activation_fn": "gelu",
-                                  "encoder_normalize_before": True,
-                                  "encoder_ffn_embed_dim": att_encoder_ff_embed_dim,
-                                  })
+        # args = SimpleNamespace(**{"encoder_embed_dim": att_dim,
+        #                           "encoder_attention_heads": att_encoder_heads,
+        #                           "attention_dropout": att_dropout,
+        #                           "dropout": dropout,
+        #                           "activation_fn": "gelu",
+        #                           "encoder_normalize_before": True,
+        #                           "encoder_ffn_embed_dim": att_encoder_ff_embed_dim,
+        #                           })  # this is for FairSeq module instead
         _att = []
         for i in range(att_layers):
-            _att.append(TransformerEncoderLayer(args))
+            # _att.append(TransformerEncoderLayer(args))  # this is for FairSeq module instead
+            att = TransformerEncoderLayer(att_dim, att_encoder_heads, att_encoder_ff_embed_dim, att_dropout, "gelu")
+            _att.append(att)
         # print("att layers = ", len(self._att))
         self.att = nn.Sequential(*_att)
         self.dropout = nn.Dropout(dropout)

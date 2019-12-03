@@ -142,16 +142,17 @@ class ConvAttColNet(AbstractColumnNet):
         # self._encoder = nn.Sequential(self._convattblocks)
         # linear adaptor for final output receives the output of convolutional layer passed by maxpool1d
         self._out_lin_adapt = nn.Linear(in_conv_dim // 2, out_seq_len)
-        args = SimpleNamespace(**{"encoder_embed_dim": out_seq_len,
-                                  "encoder_attention_heads": att_encoder_heads,
-                                  "attention_dropout": att_dropout,
-                                  "dropout": dropout,
-                                  "activation_fn": "gelu",
-                                  "encoder_normalize_before": True,
-                                  "encoder_ffn_embed_dim": out_seq_len*4,
-                                  })
+        # args = SimpleNamespace(**{"encoder_embed_dim": out_seq_len,
+        #                           "encoder_attention_heads": att_encoder_heads,
+        #                           "attention_dropout": att_dropout,
+        #                           "dropout": dropout,
+        #                           "activation_fn": "gelu",
+        #                           "encoder_normalize_before": True,
+        #                           "encoder_ffn_embed_dim": out_seq_len*4,
+        #                           })  # this is for FairSeq module instead
 
-        self._out_att = TransformerEncoderLayer(args)
+        # self._out_att = TransformerEncoderLayer(args)  # this is for FairSeq module
+        self._out_att = TransformerEncoderLayer(out_seq_len, att_encoder_heads, out_seq_len*4, att_dropout, "gelu")
 
         # channel-wise decoder
         self._decoder = nn.Sequential(
