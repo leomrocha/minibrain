@@ -28,7 +28,168 @@ def create_sinusoidal_embeddings(n_pos, dim, out):
     out.requires_grad = False
 
 
-###
+class AbstractColumnNet(nn.Module):
+    """
+    Represents one column of the adaptation, consists of an encoder adapter from the Embedding to the shape that
+    will be used later, a column of some Block type and a decoder.
+    The decoder is NOT suposed to give a one-hot or multi-hot output, that part is left
+    for the final decoder used for the final task
+
+    """
+
+    def __init__(self):
+        super(AbstractColumnNet, self).__init__()
+        self._input_encoder = None
+        self._encoder = None
+        self._decoder = None
+
+    @property
+    def input_coder(self):
+        return self._input_encoder
+
+    @property
+    def input_coder(self, encoder):
+        self._input_encoder = encoder
+
+    @property
+    def encoder(self):
+        return self._encoder
+
+    @property
+    def encoder(self, encoder):
+        self._encoder = encoder
+
+    @property
+    def decoder(self):
+        return self._decoder
+
+    @property
+    def decoder(self, decoder):
+        self._decoder = decoder
+
+    def forward(self, *input, **kwargs):
+        raise NotImplementedError("Must subclass and override")
+
+
+class Conv1DColNet(AbstractColumnNet):
+    """
+
+    """
+
+    def __init__(self, in_dim=324, hidd_embed_dim=768, out_embed_dim=96,  # input Embedding adaptor channelwise
+                 nchannels_in=[96, 128, 256, 512, 256, 128],  # Convolutional blocks
+                 nchannels_out=[128, 256, 512, 256, 128, 96],
+                 kernels=[3, 3, 3, 3, 3, 3],  # kernel_sizes for conv blocks
+                 nlayers=[6, 5, 4, 5, 3, 3],  # number of layers for each block
+                 groups=[1, 4, 8, 4, 2, 1],  # allow more specialization of the block with most features
+                 dropout=0.1,  # dropout of each block
+                 activation="relu",  # activation of each block (end of each)
+                 out_in_dim=96, out_hidd_embed_dim=768,  # decoder channel_wise dimensions
+                 ):    # default conf = 2173824 trainable parameters
+        super(Conv1DColNet, self).__init__()
+        self._input_encoder = nn.Sequential(
+            weight_norm(nn.Linear(in_dim, hidd_embed_dim)),
+            weight_norm(nn.Linear(hidd_embed_dim, out_embed_dim)),
+        )
+
+        self._encoder = Conv1DEncoder(nchannels_in, nchannels_out, kernels, nlayers, groups, dropout, activation)
+
+        self._decoder = nn.Sequential(
+            weight_norm(nn.Linear(out_in_dim, out_hidd_embed_dim)),
+            weight_norm(nn.Linear(out_hidd_embed_dim, out_embed_dim)),
+        )
+
+    def forward(self, x):
+        # input as [Batch, Seq_Len, Embedding channels]
+        x = self._input_encoder(x)
+        x = x.transpose(1, 2)
+        # output of input encoder as [Batch, Seq_Len, Embedding channels]
+        x = self._encoder(x)
+        x = self._decoder(x)
+        return x
+
+
+class ConvAttColNet(AbstractColumnNet):
+    def __init__(self, convcolnet,
+                 in_dim=324, hidd_embed_dim=768, out_embed_dim=96,  # input Embedding adaptor channel-wise
+                 in_conv_channels=96, lin_channels=96,
+                 in_conv_dim=1024, conv_proj_dim=192,  # 256,
+                 att_layers=2, att_dim=192,  # 256,
+                 att_encoder_heads=8, att_encoder_ff_embed_dim=1024,
+                 dropout=0.1, att_dropout=0.1, activation=None, residual=True,
+                 out_in_dim=96, out_hidd_embed_dim=768,  # 1024 # decoder channel_wise dimensions
+                 out_seq_len=384,  # 512,  # output sequence length, maximum attention that will appear there
+                 ):  # default conf = 12838560 trainable parameters
+        super(ConvAttColNet, self).__init__()
+
+        self._convcolnet = convcolnet
+        self._input_encoder = nn.Sequential(
+            weight_norm(nn.Linear(in_dim, hidd_embed_dim)),
+            weight_norm(nn.Linear(hidd_embed_dim, out_embed_dim)),
+        )
+        # to merge both linear embedding inputs into a single network
+        self._embed_project = weight_norm(nn.Linear(in_conv_channels + out_embed_dim, out_embed_dim, False))  # no bias
+
+        # get the blocks from the convcolnet
+        self._convattblocks = nn.ModuleList()
+
+        for convb in self._convcolnet._encoder._blocks:
+            att = ConvAttBlock(convb, in_conv_channels, lin_channels, in_conv_dim, conv_proj_dim, att_layers, att_dim,
+                               att_encoder_heads, att_encoder_ff_embed_dim, dropout, att_dropout, activation, residual)
+            self._convattblocks.append(att)
+
+        # TODO fix this ... somehow nicely
+        # self._encoder = nn.Sequential(self._convattblocks)
+        # linear adaptor for final output receives the output of convolutional layer passed by maxpool1d
+        self._out_lin_adapt = nn.Linear(in_conv_dim // 2, out_seq_len)
+        args = SimpleNamespace(**{"encoder_embed_dim": out_seq_len,
+                                  "encoder_attention_heads": att_encoder_heads,
+                                  "attention_dropout": att_dropout,
+                                  "dropout": dropout,
+                                  "activation_fn": "gelu",
+                                  "encoder_normalize_before": True,
+                                  "encoder_ffn_embed_dim": out_seq_len*4,
+                                  })
+
+        self._out_att = TransformerEncoderLayer(args)
+
+        # channel-wise decoder
+        self._decoder = nn.Sequential(
+            weight_norm(nn.Linear(out_in_dim, out_hidd_embed_dim)),
+            weight_norm(nn.Linear(out_hidd_embed_dim, out_embed_dim)),
+        )
+
+    def forward(self, x):
+        # input as [Batch, Seq_Len, Embedding channels]
+        # input for the convolutional block
+        x_conv = self._convcolnet.input_coder(x)
+        x_att = self._input_encoder(x)
+        # take advantage of the pre-trained network and add a new set of elements
+        x_att = torch.cat([x_conv, x_att], dim=-1)
+        # project input for the rest of the network to work in the defined shape and transpose to work on time
+        x_att = self._embed_project(x_att).transpose(1, 2)
+        x_conv = x_conv.transpose(1, 2)
+        # output of input encoder as [Batch, Embedding, Seq_Len]
+        for block in self._encoder:
+            # convolutions stay untouched by the new attention column, but gives input to each Attention block
+            x_conv, x_att = block(x_conv, x_att)
+        x_conv = F.max_pool1d(x_conv)  # reduce dimension by 2 ... reduces computation
+        # concatenate over "time" to make the last decisions, attention might have more importance than the conv part?
+        ret = torch.cat([x_conv, x_att], dim=-1)
+        # now ... what should I do? a big linear network with a final attention one? here is where things get tricky
+        # I'll then assume that I will only check the last N elements, where N is arbitrary by conf
+        ret = self._out_lin_adapt(ret)
+        ret = self.out_att(ret)
+        # now transpose
+        ret = ret.transpose(1, 2)
+        # output as [Batch, Seq_Len, Embedding channels]
+        ret = self._decoder(ret)
+        return ret
+
+
+############################################################################
+# OLD
+############################################################################
 
 
 class GenericNet(nn.Module):
@@ -62,7 +223,7 @@ class GenericNet(nn.Module):
         self.position_embeddings = nn.Embedding(max_sequence_len, in_enc_dim)
         create_sinusoidal_embeddings(max_sequence_len, in_enc_dim, out=self.position_embeddings.weight)
         # fib_positions are fixed by the sequence position and added as extra channels
-        self.fib_positions = torch.from_numpy(get_coord_emb(shape=(time_dim, fib_coord_channels), fibinit=6))
+        # self.fib_positions = torch.from_numpy(get_coord_emb(shape=(time_dim, fib_coord_channels), fibinit=6))
         # TODO take this out, and leave it for each encoder
         #  (as each of them might need some of this to see new things when incremental training)
         # adapt sinusoidal embeddings dimension to the desired size before the columns process the code
@@ -213,7 +374,7 @@ class OLD_Conv1DPoS(nn.Module):
             self.embeds.weight.data.copy_(torch.from_numpy(utf8codes))
 
         # Encoder
-        self.encoder = Conv1DPartOfSpeechEncoder()  # use all default values
+        self.encoder = Conv1DEncoder()  # use all default values
         self.decoder = LinearUposDeprelDecoder()
 
         self.network = GenericNet(self.embeds, self.encoder, self.decoder)
@@ -235,7 +396,7 @@ class GatedConv1DPoS(nn.Module):
             self.embeds.weight.data.copy_(torch.from_numpy(utf8codes))
 
         # Encoder
-        conv_col = Conv1DPartOfSpeechEncoder()  # use all default values
+        conv_col = Conv1DEncoder()  # use all default values
         self.encoder = GatedConv1DPartOfSpeechEncoder(conv_col, return_all_layers=False)
         self.decoder = LinearUposDeprelDecoder()
 
@@ -247,33 +408,28 @@ class GatedConv1DPoS(nn.Module):
         return ret
 
 
-class Conv1DPartOfSpeechEncoder(nn.Module):
-    def __init__(self, nchannels_in=[64, 128, 256, 512, 256],
+class Conv1DEncoder(nn.Module):
+    def __init__(self, nchannels_in=[96, 128, 256, 512, 256],
                  nchannels_out=[128, 256, 512, 256, 96],
                  kernels=[3, 3, 3, 3, 3],
-                 nlayers=[6, 6, 4, 4, 3],
+                 nlayers=[6, 5, 4, 5, 3],
                  groups=[1, 4, 8, 4, 1],  # allow more specialization of the block with most features
                  dropout=0.1,
                  activation="relu"
                  ):
-        super(Conv1DPartOfSpeechEncoder, self).__init__()
+        super(Conv1DEncoder, self).__init__()
         assert len(nchannels_in) == len(nchannels_out) == len(nlayers) == len(kernels)
         # store each block in a list so I can return each layer separately for other kind of processing
-
-        self.convs = nn.ModuleList()
+        self._blocks = nn.ModuleList()
         for inc, outc, k, l, g in zip(nchannels_in, nchannels_out, kernels, nlayers, groups):
             cnv = Conv1DBlock(c_in=inc, c_out=outc, kernel_size=k, nlayers=l,
                               dropout=dropout, groups=g, activation=activation)
-            self.convs.append(cnv)
+            self._blocks.append(cnv)
+        self.convs = nn.Sequential(*self._blocks)
 
     def forward(self, x):
-        rets = []
-        ret = x
-        for cnv in self.convs:
-            ret = cnv(ret)
-            rets.append(ret)
-
-        return rets
+        ret = self.convs(x)
+        return ret
 
 
 class GatedConv1DPartOfSpeechEncoder(nn.Module):

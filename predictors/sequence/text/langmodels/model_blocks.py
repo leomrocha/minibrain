@@ -1,9 +1,11 @@
+from types import SimpleNamespace
 import torch
 import torch.nn as nn
 from torch.nn.utils import weight_norm
 from torch.nn import functional as F
 
 from fairseq.modules.dynamic_convolution import DynamicConv1dTBC
+from fairseq.modules.transformer_layer import TransformerEncoderLayer
 
 from .utils.tools import get_activation_fn
 
@@ -11,7 +13,6 @@ from .utils.tools import get_activation_fn
 class Conv1DBlock(nn.Module):
     def __init__(self, c_in, c_out, kernel_size=3, nlayers=5, dropout=0.1, groups=8, activation="relu"):
         """
-
         :param c_in: input channels
         :param c_out: output channels
         :param kernel_size:
@@ -36,7 +37,7 @@ class Conv1DBlock(nn.Module):
                 t_c_in = c_in
             # Left padding
             # pad = nn.ConstantPad1d((kernel_size - 1) // 2, 0)
-            cnv = weight_norm(nn.Conv1d(t_c_in, c_out, kernel_size, padding=(kernel_size-1)//2, groups=groups))
+            cnv = weight_norm(nn.Conv1d(t_c_in, c_out, kernel_size, padding=(kernel_size - 1) // 2, groups=groups))
             # cnv = weight_norm(nn.Conv1d(t_c_in, c_out, kernel_size, groups=groups))
             # self.convs.append(pad)
             self.convs.append(cnv)
@@ -65,6 +66,7 @@ class GatedConv1DBlock(nn.Module):
     """
     Stack of GatedConv1DBlocks
     """
+
     def __init__(self, c_in, c_out, kernel_size, nlayers, stride=1, dropout=0.2,
                  activation="relu", gating_activation="sigmoid", use_residual=False):
         """
@@ -164,6 +166,7 @@ class GatedConv1DLayer(nn.Module):
         self.gate2 = nn.Sequential(self.conv2B, self.gatingActiv2B)
 
         self.activation = get_activation_fn(activation)
+        self._norm = nn.LayerNorm(c_out)  # nn.BatchNorm1d(c_out)
         # self.init_weights()
 
     # def init_weights(self):
@@ -207,9 +210,120 @@ class GatedConv1DLayer(nn.Module):
             out = self.activation(out2 + res)
         else:
             out = out2 + res
+        out = self._norm(out)
         # res = x if self.downsample is None else self.downsample(x)
         # print(7, out.shape)
         return out
+
+
+class ConvLinBlock(nn.Module):
+    """
+    Convolutional + Linear Layer, takes a pre-trained convolutional block as input and ouputs 2 vectors:
+    The output from the original convolutional block PLUS the output of the linear layer
+    """
+
+    def __init__(self, conv_block, in_conv_channels, lin_channels=64,
+                 in_conv_dim=1024, conv_proj_dim=128, in_lin_dim=128, linear_dims=[1024, 128, 128],
+                 dropout=0.3, activation="gelu", residual=True):
+        """
+        """
+        super(ConvLinBlock, self).__init__()
+
+        self.conv_block = conv_block  # pre-trained convolutional block
+        self.conv_adapt = nn.Conv1d(in_conv_channels, lin_channels, 1)  # adapt number of channels for linear layers
+        self.lin_adapt = nn.Linear(in_conv_dim, conv_proj_dim)  # adapt (project) number of samples for linear layers
+        lin = []
+        for ind, od in zip(([conv_proj_dim + in_lin_dim] + linear_dims)[:-1], linear_dims):
+            lin.append(nn.Linear(ind, od))
+        self.lin = nn.Sequential(*lin)
+        self.dropout = nn.Dropout(dropout)
+        self.layer_norm = nn.LayerNorm(lin_channels, linear_dims[-1])  # normalize over the last 2 dims: [channels, seq]
+        self.activation = get_activation_fn(activation)
+        self.residual = residual
+
+    def forward(self, x_conv, x_lin):
+        # x_conv = [Batches, channels, seq_len]
+        # x_lin = [Batches, channels, seq_len]
+        # apply convolutional block
+        x_conv = self.conv_block(x_conv)
+        # adapt number of channels for linear
+        x_conv = self.conv_adapt(x_conv)
+        # adapt(project) sequence length to linear input layer
+        x = self.lin_adapt(x_conv)
+        # concatenate projection from convolutional layer with previous (linear) column output
+        # over sequence length dimension (the last now)
+        x = torch.cat([x, x_lin], dim=-1).contiguous()
+        # apply linear over projection
+        x = self.linear(x)
+        x = self.activation(x)
+        # residual
+        if self.residual:
+            # TODO find out if only the residual from the linear column or should add the convolutional part too
+            x = x + x_lin
+        x = self.dropout(x)
+        x = self.layer_norm(x)
+        return x_conv, x
+
+
+class ConvAttBlock(nn.Module):
+    """
+    Convolutional + Linear Layer, takes a pre-trained convolutional block as input and ouputs 2 vectors:
+    The output from the original convolutional block PLUS the output of the linear layer
+    """
+
+    def __init__(self, conv_block, in_conv_channels, lin_channels=96,
+                 in_conv_dim=1024, conv_proj_dim=256, att_layers=2, att_dim=256,
+                 att_encoder_heads=8, att_encoder_ff_embed_dim=1024,
+                 dropout=0.1, att_dropout=0.1, activation=None, residual=True):
+        """
+        """
+        super(ConvAttBlock, self).__init__()
+
+        self.conv_block = conv_block  # pre-trained convolutional block
+        self.conv_adapt = nn.Conv1d(in_conv_channels, lin_channels, 1)  # adapt number of channels for linear layers
+        self.lin_adapt = nn.Linear(in_conv_dim, conv_proj_dim)  # adapt (project) number of samples for next
+        self.att_adapt = nn.Linear(conv_proj_dim + att_dim, att_dim)  # adapt (project) number of samples for att layers
+        args = SimpleNamespace(**{"encoder_embed_dim": att_dim,
+                                  "encoder_attention_heads": att_encoder_heads,
+                                  "attention_dropout": att_dropout,
+                                  "dropout": dropout,
+                                  "activation_fn": "gelu",
+                                  "encoder_normalize_before": True,
+                                  "encoder_ffn_embed_dim": att_encoder_ff_embed_dim,
+                                  })
+        _att = []
+        for i in range(att_layers):
+            _att.append(TransformerEncoderLayer(args))
+        # print("att layers = ", len(self._att))
+        self.att = nn.Sequential(*_att)
+        self.dropout = nn.Dropout(dropout)
+        self.activation = get_activation_fn(activation)
+        self.residual = residual
+
+    def forward(self, x_conv, x_lin):
+        # x_conv = [Batches, channels, seq_len]
+        # x_lin = [Batches, channels, seq_len]
+        # apply convolutional block
+        x_conv = self.conv_block(x_conv)
+        # adapt number of channels for linear
+        x = self.conv_adapt(x_conv)
+        # adapt(project) sequence length to linear input layer
+        x = self.lin_adapt(x)
+        # concatenate projection from convolutional layer with previous (linear) column output
+        # over sequence length dimension (the last now)
+        x = torch.cat([x, x_lin], dim=-1).contiguous()
+        # project concatenation for Attention layer (attention layers are same input and output dimension)
+        x = self.att_adapt(x)
+        # apply attention over projection
+        x = self.att(x)
+        if self.activation:
+            x = self.activation(x)
+        # residual
+        if self.residual:
+            # TODO find out if only the residual from the linear column or should add the convolutional part too
+            x = x + x_lin
+        x = self.dropout(x)
+        return x_conv, x
 
 
 class DynConvBlock(nn.Module):
@@ -229,9 +343,3 @@ class DynConvBlock(nn.Module):
         pass  # DynamicConv1dTBC
 
 
-class ConvTimeAttSpace(nn.Module):
-    """
-    Convolutional block where at the end there is an Attention Module followed by a linear layer
-    that reduces the number of channels. This is instead of using only Conv1D 1x1 to do this the network is more dynamic
-    """
-    pass

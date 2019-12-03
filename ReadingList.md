@@ -23,8 +23,7 @@ Interesting paper, although from what I'm looking for the lesson learned is that
 * [Stanford cs224](http://web.stanford.edu/class/cs224n/)
 * [Introduction to Information Retrieval](https://nlp.stanford.edu/IR-book/html/htmledition/irbook.html)
 * [Speech and Language Processing (3rd ed. draft)](https://web.stanford.edu/~jurafsky/slp3/)
-
-
+* [BLEU Score and Metrics](https://towardsdatascience.com/evaluating-text-output-in-nlp-bleu-at-your-own-risk-e8609665a213)
 
 
 ### The Measure of Intelligence
@@ -43,6 +42,16 @@ __
 * [HotspotQA](https://hotpotqa.github.io/)
 * [QAngaroo](https://qangaroo.cs.ucl.ac.uk/) 
 * [Universal Dependencies Treebanks](https://universaldependencies.org/)
+* [OSCAR](https://traces1.inria.fr/oscar/) -> used in [FastText](https://arxiv.org/pdf/1802.06893.pdf)
+* [CommonCrawl](https://commoncrawl.org/)
+* [Project Gutenberg](https://www.gutenberg.org/)
+* [Project Gutenberg (French) ](https://www.gutenberg.org/wiki/FR_Page_d%27Accueil)
+
+### Annotation Artifacts in Natural Language Inference Data
+https://arxiv.org/abs/1803.02324
+
+### Are distributional representations ready for the real world? Evaluating word vectors for grounded perceptual meaning
+
 
 ### T5 - Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer
 https://arxiv.org/pdf/1910.10683.pdf
@@ -70,6 +79,8 @@ Abstract: While masked language modeling (MLM) pre-training methods such as BERT
 Proposes another way of training with some ideas from GANs (but not gans) and changing the objective to detecting which tokens are generated and which are false.
 Seems interesting and at the same time seems more difficult to create and tune as needs to be trained , tuned and hyper-parameters found.
 
+### Learning Word Vectors for 157 Languages
+https://arxiv.org/abs/1802.06893
 
 ### Parameter-Efficient Transfer Learning for NLP
 ((Adapters: A Compact and Extensible Transfer Learning Method for NLP))

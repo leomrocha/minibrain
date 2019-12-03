@@ -166,7 +166,7 @@ class UTF8AttentionalEmbedding(UTF8Embedding):
 
 
 class UTF8Decoder(nn.Module):
-    def __init__(self, utf8codebook_shape, lin_layers=(32, 512, 512), activation="gelu",
+    def __init__(self, utf8codebook_shape, lin_layers=(512, 512), activation="gelu",
                  seg_indices=(0, 4, 256+4, 64+256+4, 2*64 + 256+4, 3*64 + 256+4), dropout=0.1):
         """
         This modules decodes a given code, if the code_dim is given (an iterable not None) then a MLP decoder is created to adapt

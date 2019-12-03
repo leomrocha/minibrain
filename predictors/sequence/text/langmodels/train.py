@@ -22,7 +22,7 @@ BASE_DATA_DIR_UD_TREEBANK = "/home/leo/projects/Datasets/text/UniversalDependenc
 # device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
-def train_test(model, checkpoint_path, base_name, test_accuracy=True, max_data=50):
+def train_test(model, checkpoint_path, base_name, test=True, test_accuracy=False, max_data=45):
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     model = model.to(device)
     data_train = np.load(dataset_train)
@@ -35,8 +35,9 @@ def train_test(model, checkpoint_path, base_name, test_accuracy=True, max_data=5
     # TODO tis is for testing purposes
     # data = data_train
     data = data_train[-1000 * batch_size:, :, :]  # just for the trials, use the last 1000 batches only
-
-    test_data = load_test_data(BASE_DATA_DIR_UD_TREEBANK)
+    test_data = None
+    if test:
+        test_data = load_test_data(BASE_DATA_DIR_UD_TREEBANK)
     epochs = chunks(data, epoch_size, dim=0)
     epoch_count = 1
     for e in epochs:
@@ -89,7 +90,7 @@ def err_ckb(err):
     print("error with the subprocess ", err)
 
 
-def train_cputest(model, checkpoint_path, base_name, test_accuracy=True, max_data=50):
+def train_cputest(model, checkpoint_path, base_name, test_accuracy=True, max_data=45):
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     pool = Pool(cpu_count() - 2)
     model = model.to(device)
