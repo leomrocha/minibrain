@@ -5,8 +5,7 @@ from torch.nn.utils import weight_norm
 from torch.nn import functional as F
 
 from fairseq.modules.dynamic_convolution import DynamicConv1dTBC
-# from fairseq.modules.transformer_layer import TransformerEncoderLayer
-from torch.nn.modules.transformer import TransformerEncoder, TransformerEncoderLayer
+from torch.nn.modules.transformer import TransformerEncoderLayer
 
 
 from .utils.tools import get_activation_fn
@@ -283,19 +282,10 @@ class ConvAttBlock(nn.Module):
 
         self.conv_block = conv_block  # pre-trained convolutional block
         self.conv_adapt = nn.Conv1d(in_conv_channels, lin_channels, 1)  # adapt number of channels for linear layers
-        self.lin_adapt = nn.Linear(in_conv_dim, conv_proj_dim)  # adapt (project) number of samples for next
-        self.att_adapt = nn.Linear(conv_proj_dim + att_dim, att_dim)  # adapt (project) number of samples for att layers
-        # args = SimpleNamespace(**{"encoder_embed_dim": att_dim,
-        #                           "encoder_attention_heads": att_encoder_heads,
-        #                           "attention_dropout": att_dropout,
-        #                           "dropout": dropout,
-        #                           "activation_fn": "gelu",
-        #                           "encoder_normalize_before": True,
-        #                           "encoder_ffn_embed_dim": att_encoder_ff_embed_dim,
-        #                           })  # this is for FairSeq module instead
+        self.lin_adapt = weight_norm(nn.Linear(in_conv_dim, conv_proj_dim))  # adapt (project) number of samples for next
+        self.att_adapt = weight_norm(nn.Linear(conv_proj_dim + att_dim, att_dim))  # adapt (project) number of samples for att layers
         _att = []
         for i in range(att_layers):
-            # _att.append(TransformerEncoderLayer(args))  # this is for FairSeq module instead
             att = TransformerEncoderLayer(att_dim, att_encoder_heads, att_encoder_ff_embed_dim, att_dropout, "gelu")
             _att.append(att)
         # print("att layers = ", len(self._att))
@@ -304,29 +294,37 @@ class ConvAttBlock(nn.Module):
         self.activation = get_activation_fn(activation)
         self.residual = residual
 
-    def forward(self, x_conv, x_lin):
+    def forward(self, x_conv, x_att):
         # x_conv = [Batches, channels, seq_len]
         # x_lin = [Batches, channels, seq_len]
         # apply convolutional block
         x_conv = self.conv_block(x_conv)
         # adapt number of channels for linear
+        # print("1 model blocks ", x_conv.shape, x_att.shape)
         x = self.conv_adapt(x_conv)
+        # print("2 model blocks ", x_conv.shape, x_att.shape, x.shape)
         # adapt(project) sequence length to linear input layer
         x = self.lin_adapt(x)
         # concatenate projection from convolutional layer with previous (linear) column output
         # over sequence length dimension (the last now)
-        x = torch.cat([x, x_lin], dim=-1).contiguous()
+        # print("3 model blocks ", x_conv.shape, x_att.shape, x.shape)
+        x = torch.cat([x, x_att], dim=-1).contiguous()
         # project concatenation for Attention layer (attention layers are same input and output dimension)
+        # print("4 model blocks ", x_conv.shape, x_att.shape, x.shape)
         x = self.att_adapt(x)
+        # print("5 model blocks ", x_conv.shape, x_att.shape, x.shape)
         # apply attention over projection
         x = self.att(x)
+        # print("6 model blocks ", x_conv.shape, x_att.shape, x.shape)
         if self.activation:
             x = self.activation(x)
         # residual
         if self.residual:
             # TODO find out if only the residual from the linear column or should add the convolutional part too
-            x = x + x_lin
+            x = x + x_att
         x = self.dropout(x)
+        # x_conv = [Batches, channels, seq_len]
+        # x_lin = [Batches, channels, seq_len]
         return x_conv, x
 
 

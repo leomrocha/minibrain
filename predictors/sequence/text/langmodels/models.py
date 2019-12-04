@@ -9,7 +9,7 @@ from .tcn import TemporalBlock, TemporalConvNet
 # good that PyTorch v1.3.0+ has Transformers already implemented
 # from torch.nn.modules.transformer import Transformer
 # from torch.nn.modules.transformer import TransformerEncoder, TransformerEncoderLayer
-# from torch.nn.modules.transformer import TransformerDecoder, TransformerDecoderLayer
+from torch.nn.modules.transformer import TransformerDecoderLayer
 import torch.nn.functional as F
 
 from deprecation import deprecated
@@ -28,6 +28,75 @@ def create_sinusoidal_embeddings(n_pos, dim, out):
     out.requires_grad = False
 
 
+class NetContainer(nn.Module):
+    """
+    Generic module for handling the entire network
+    The data flow and returned elements from
+    """
+
+    def __init__(self, utf8codes, encodernet, decodernet):
+        """
+
+        :param utf8codes: utf-8 pretrained (multi-hot) input encoder matrix (numpy)
+        :param encodernet: network that creates the latent space vector
+        :param decodernet: network that treats the latent space vector to the comparable output
+        """
+        super(NetContainer, self).__init__()
+        self.embeddings = nn.Embedding(*utf8codes.shape)
+        self.embeddings.weight.data.copy_(torch.from_numpy(utf8codes))
+        self.encodernet = encodernet
+        self.decodernet = decodernet
+
+    def forward(self, x):
+        # input as [Batch, Seq_Len, Embedding channels]
+        # print(1, x.shape)
+        x = self.embeddings(x)  # .transpose(1,2)
+        # print(2, x.shape)
+        # x still as [Batch, Seq_Len, Embedding channels]
+        x = self.encodernet(x)
+        # print(3, x.shape)
+        # output as [Batch, Seq_Len, Embedding channels]
+        x = self.decodernet(x)
+        # print(4, x.shape)
+        # output as [Batch, Seq_Len, Embedding channels]
+        return x
+
+    def save_checkpoint(self, path, base_name, cid="001"):
+        """
+        Saves each part of the model (positional embedding, channelwise linear, encoder, decoder) to different files
+        with the base_name in the path
+        :param path: path where to save the models
+        :param base_name: the base part of the name
+        :param cid: id to add to the model (for checkpointing)
+        :return: the absolute path (including file name) to the ckeckpoint file
+        """
+        # check directory exists or create it
+        if not os.path.exists(path):
+            os.makedirs(path)
+        bname = os.path.join(path, base_name)
+        name = bname + "_" + cid
+        name = name + ".state_dict.pth"
+        data = {
+            "embedding": self.embeddings.state_dict(),
+            "encoder": self.encodernet.state_dict(),
+            "decoder": self.decodernet.state_dict()
+        }
+        torch.save(data, name)
+        return name
+
+    def load_checkpoint(self, fpath):
+        """
+        Loads the model
+        :param fpath: the file with path where to load the models from
+        """
+        checkpoint = torch.load(fpath)
+        nets = [self.embeddings, self.encodernet, self.decodernet]
+        keys = ["embedding", "encoder", "decoder"]
+        # keys = ["lin_encoder", "encoder", "decoder"]
+        for k, net in zip(keys, nets):
+            net.load_state_dict(checkpoint[k])
+
+
 class AbstractColumnNet(nn.Module):
     """
     Represents one column of the adaptation, consists of an encoder adapter from the Embedding to the shape that
@@ -43,29 +112,29 @@ class AbstractColumnNet(nn.Module):
         self._encoder = None
         self._decoder = None
 
-    @property
-    def input_coder(self):
-        return self._input_encoder
-
-    @property
-    def input_coder(self, encoder):
-        self._input_encoder = encoder
-
-    @property
-    def encoder(self):
-        return self._encoder
-
-    @property
-    def encoder(self, encoder):
-        self._encoder = encoder
-
-    @property
-    def decoder(self):
-        return self._decoder
-
-    @property
-    def decoder(self, decoder):
-        self._decoder = decoder
+    # @property
+    # def input_coder(self):
+    #     return self._input_encoder
+    #
+    # @property
+    # def input_coder(self, encoder):
+    #     self._input_encoder = encoder
+    #
+    # @property
+    # def encoder(self):
+    #     return self._encoder
+    #
+    # @property
+    # def encoder(self, encoder):
+    #     self._encoder = encoder
+    #
+    # @property
+    # def decoder(self):
+    #     return self._decoder
+    #
+    # @property
+    # def decoder(self, decoder):
+    #     self._decoder = decoder
 
     def forward(self, *input, **kwargs):
         raise NotImplementedError("Must subclass and override")
@@ -85,8 +154,11 @@ class Conv1DColNet(AbstractColumnNet):
                  dropout=0.1,  # dropout of each block
                  activation="relu",  # activation of each block (end of each)
                  out_in_dim=96, out_hidd_embed_dim=768,  # decoder channel_wise dimensions
+                 transpose_output=False,
                  ):    # default conf = 2173824 trainable parameters
         super(Conv1DColNet, self).__init__()
+        self.transpose_output = transpose_output
+
         self._input_encoder = nn.Sequential(
             weight_norm(nn.Linear(in_dim, hidd_embed_dim)),
             weight_norm(nn.Linear(hidd_embed_dim, out_embed_dim)),
@@ -101,57 +173,67 @@ class Conv1DColNet(AbstractColumnNet):
 
     def forward(self, x):
         # input as [Batch, Seq_Len, Embedding channels]
+        # print(1, " encodernet ", x.shape)
         x = self._input_encoder(x)
-        x = x.transpose(1, 2)
+        # print(2, " encodernet ", x.shape)
+        x = x.transpose(1, 2).contiguous()
+        # print(3, " encodernet ", x.shape)
         # output of input encoder as [Batch, Seq_Len, Embedding channels]
         x = self._encoder(x)
+        # if self.transpose_output:
+        x = x.transpose(1, 2).contiguous()
+        # print(4, " encodernet ", x.shape, self._decoder)
         x = self._decoder(x)
+        if self.transpose_output:
+            x = x.transpose(1, 2).contiguous()
+        # print(5, " encodernet ", x.shape)
         return x
 
 
 class ConvAttColNet(AbstractColumnNet):
     def __init__(self, convcolnet,
                  in_dim=324, hidd_embed_dim=768, out_embed_dim=96,  # input Embedding adaptor channel-wise
-                 in_conv_channels=96, lin_channels=96,
-                 in_conv_dim=1024, conv_proj_dim=192,  # 256,
+                 in_seq_len=1024,
+                 in_conv_channels=[128, 256, 512, 256, 128, 96], lin_channels=96,
+                 in_conv_dim=1024, conv_proj_dim=192,  # 256,  # 192 because nvidia tensor units are [96x96]
                  att_layers=2, att_dim=192,  # 256,
                  att_encoder_heads=8, att_encoder_ff_embed_dim=1024,
                  dropout=0.1, att_dropout=0.1, activation=None, residual=True,
                  out_in_dim=96, out_hidd_embed_dim=768,  # 1024 # decoder channel_wise dimensions
                  out_seq_len=384,  # 512,  # output sequence length, maximum attention that will appear there
+                 # out_seq_len=512,  # output sequence length
+                 transpose_output=False,
                  ):  # default conf = 12838560 trainable parameters
         super(ConvAttColNet, self).__init__()
 
+        self.transpose_output = transpose_output
         self._convcolnet = convcolnet
         self._input_encoder = nn.Sequential(
             weight_norm(nn.Linear(in_dim, hidd_embed_dim)),
             weight_norm(nn.Linear(hidd_embed_dim, out_embed_dim)),
         )
         # to merge both linear embedding inputs into a single network
-        self._embed_project = weight_norm(nn.Linear(in_conv_channels + out_embed_dim, out_embed_dim, False))  # no bias
+        # FIXME the 2*out_embed_dim works for this parametrization but might (will) brake for other configurations
+        # self._embed_chann_project = weight_norm(nn.Linear(2*out_embed_dim, out_embed_dim, False))  # no bias
+        self._embed_chann_project = weight_norm(nn.Conv1d(2*out_embed_dim, out_embed_dim, 1))  # Conv1x1 projection
+        self._embed_seq_project = weight_norm(nn.Linear(in_seq_len, conv_proj_dim, False))  # no bias
 
-        # get the blocks from the convcolnet
-        self._convattblocks = nn.ModuleList()
-
-        for convb in self._convcolnet._encoder._blocks:
-            att = ConvAttBlock(convb, in_conv_channels, lin_channels, in_conv_dim, conv_proj_dim, att_layers, att_dim,
+        self._blocks = nn.ModuleList()
+        # get the blocks from the convcolnet to give as input to the ConvAttBlock
+        # TODO fix this access because is UGLY and not good encapsulated way
+        conv1dcol_blocks = self._convcolnet._encoder._blocks
+        assert len(in_conv_channels) == len(conv1dcol_blocks)
+        for convb, in_conv_chann in zip(conv1dcol_blocks, in_conv_channels):
+            att = ConvAttBlock(convb, in_conv_chann, lin_channels, in_conv_dim, conv_proj_dim, att_layers, att_dim,
                                att_encoder_heads, att_encoder_ff_embed_dim, dropout, att_dropout, activation, residual)
-            self._convattblocks.append(att)
+            self._blocks.append(att)
 
-        # TODO fix this ... somehow nicely
+        # TODO fix this ... somehow nicely, sequential does not deal with multiple inputs and outputs
         # self._encoder = nn.Sequential(self._convattblocks)
         # linear adaptor for final output receives the output of convolutional layer passed by maxpool1d
-        self._out_lin_adapt = nn.Linear(in_conv_dim // 2, out_seq_len)
-        # args = SimpleNamespace(**{"encoder_embed_dim": out_seq_len,
-        #                           "encoder_attention_heads": att_encoder_heads,
-        #                           "attention_dropout": att_dropout,
-        #                           "dropout": dropout,
-        #                           "activation_fn": "gelu",
-        #                           "encoder_normalize_before": True,
-        #                           "encoder_ffn_embed_dim": out_seq_len*4,
-        #                           })  # this is for FairSeq module instead
-
-        # self._out_att = TransformerEncoderLayer(args)  # this is for FairSeq module
+        self._out_lin_adapt = nn.Linear(in_conv_dim // 2, conv_proj_dim)
+        # TODO TransformerDecoderLayer asks for memory parameter -> this is another thing ..
+        # self._out_att = TransformerDecoderLayer(out_seq_len, att_encoder_heads, out_seq_len*4, att_dropout, "gelu")
         self._out_att = TransformerEncoderLayer(out_seq_len, att_encoder_heads, out_seq_len*4, att_dropout, "gelu")
 
         # channel-wise decoder
@@ -161,30 +243,51 @@ class ConvAttColNet(AbstractColumnNet):
         )
 
     def forward(self, x):
+        # print("1 ConvAttColNet ", x.shape)
         # input as [Batch, Seq_Len, Embedding channels]
         # input for the convolutional block
-        x_conv = self._convcolnet.input_coder(x)
+        x_conv = self._convcolnet._input_encoder(x)
         x_att = self._input_encoder(x)
+        # print("2 ConvAttColNet ", x_conv.shape, x_att.shape, x.shape)
         # take advantage of the pre-trained network and add a new set of elements
         x_att = torch.cat([x_conv, x_att], dim=-1)
         # project input for the rest of the network to work in the defined shape and transpose to work on time
-        x_att = self._embed_project(x_att).transpose(1, 2)
-        x_conv = x_conv.transpose(1, 2)
-        # output of input encoder as [Batch, Embedding, Seq_Len]
-        for block in self._encoder:
+        # print("3 ConvAttColNet ", x_conv.shape, x_att.shape, x.shape)
+        x_att = x_att.transpose(1, 2).contiguous()
+        x_conv = x_conv.transpose(1, 2).contiguous()
+        # print("4 ConvAttColNet ", x_conv.shape, x_att.shape, x.shape)
+        x_att = self._embed_chann_project(x_att)
+        # print("5 ConvAttColNet ", x_conv.shape, x_att.shape, x.shape)
+        # project sequence length for processing later
+        x_att = self._embed_seq_project(x_att)
+        # print("6 ConvAttColNet ", x_conv.shape, x_att.shape, x.shape)
+        # x_conv and x_att -> [Batch, Embedding, Seq_Len]
+        for block in self._blocks:
             # convolutions stay untouched by the new attention column, but gives input to each Attention block
             x_conv, x_att = block(x_conv, x_att)
-        x_conv = F.max_pool1d(x_conv)  # reduce dimension by 2 ... reduces computation
+        # print("7 ConvAttColNet ", x_conv.shape, x_att.shape, x.shape)
+        x_conv = F.max_pool1d(x_conv, kernel_size=2)  # reduce dimension by 2 ... reduces computation
+        # print("8 ConvAttColNet ", x_conv.shape, x_att.shape, x.shape)
         # concatenate over "time" to make the last decisions, attention might have more importance than the conv part?
-        ret = torch.cat([x_conv, x_att], dim=-1)
+        x_conv = self._out_lin_adapt(x_conv)
+        # print("9 ConvAttColNet ", x_conv.shape, x_att.shape, x.shape)
+        ret = torch.cat([x_conv, x_att], dim=-1).contiguous()
         # now ... what should I do? a big linear network with a final attention one? here is where things get tricky
         # I'll then assume that I will only check the last N elements, where N is arbitrary by conf
-        ret = self._out_lin_adapt(ret)
-        ret = self.out_att(ret)
+        # print("10 ConvAttColNet ", x_conv.shape, x_att.shape, x.shape, ret.shape)
+        ret = self._out_att(ret)
+        # print("11 ConvAttColNet ", x_conv.shape, x_att.shape, x.shape, ret.shape)
         # now transpose
-        ret = ret.transpose(1, 2)
+        # if self.transpose_output:
+        ret = ret.transpose(1, 2).contiguous()  # need for the channel-wise decoder
+        # print("12 ConvAttColNet ", x_conv.shape, x_att.shape, x.shape, ret.shape)
         # output as [Batch, Seq_Len, Embedding channels]
         ret = self._decoder(ret)
+        # print("13 ConvAttColNet ", x_conv.shape, x_att.shape, x.shape, ret.shape)
+        if self.transpose_output:
+            ret = ret.transpose(1, 2).contiguous()
+            # output as [Batch, Embedding channels, Seq_Len]
+        # print("14 ConvAttColNet ", x_conv.shape, x_att.shape, x.shape, ret.shape)
         return ret
 
 
@@ -512,12 +615,13 @@ class LinearUposDeprelDecoder(nn.Module):
     Tasks later
     """
 
-    def __init__(self, lin_in_dim=96, lin_hidd_dim=768,
+    def __init__(self, lin_in_dim=96, lin_hidd_dim=960,
                  upos_dim=18, deprel_dim=278,  # the number of features of UPOS and DEPREL in Conllu files
-                 ):
+                 transpose_input=False):
         super(LinearUposDeprelDecoder, self).__init__()
         self.upos_dim = upos_dim
         self.deprel_dim = deprel_dim
+        self.transpose_input = transpose_input
         lin_out = upos_dim + deprel_dim  # commented while I make it work, TODO add it back
         # lin_out = upos_dim
 
@@ -528,10 +632,11 @@ class LinearUposDeprelDecoder(nn.Module):
         )
 
     def forward(self, x):
-        # (batch size, embedding, sequence length)
+        # (batch size, sequence length, embedding)
         ret = x
         # transpose to work channel-wise for the last decoding part
-        ret = ret.transpose(1, 2).contiguous()
+        if self.transpose_input:
+            ret = ret.transpose(1, 2).contiguous()
         # (batch size, sequence length, embedding)
         ret = self.linears(ret)
         # apply Softmax per PoS characteristic

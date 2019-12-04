@@ -41,7 +41,7 @@ def pos_loss_function(upos, deprel, target_upos, target_deprel):
 writer = SummaryWriter()
 
 
-def train(model, optimizer, loss_function, batches, epoch, ndatapoints, device):
+def train(model, optimizer, loss_function, batches, epoch, ndatapoints, device, max_seq_len=-1):
     torch.cuda.empty_cache()
     model.train()
     train_loss = 0
@@ -49,16 +49,23 @@ def train(model, optimizer, loss_function, batches, epoch, ndatapoints, device):
     batch_idx = 1
     for b_data in batches:
         b_train = torch.from_numpy(b_data[:, 0, :].astype("int32")).squeeze().to(device).long()
-        b_upos = torch.from_numpy(b_data[:, 1, :].astype("int32")).squeeze().to(device).long()
-        b_deprel = torch.from_numpy(b_data[:, 2, :].astype("int32")).squeeze().to(device).long()
+        # max_seq_len means I'll take care only of a part of the input to compare output. This is to save computation
+        # only and not because of any other reason
+        if max_seq_len > 0:
+            b_upos = torch.from_numpy(b_data[:, 1, :max_seq_len].astype("int32")).squeeze().to(device).long()
+            b_deprel = torch.from_numpy(b_data[:, 2, :max_seq_len].astype("int32")).squeeze().to(device).long()
+        else:
+            b_upos = torch.from_numpy(b_data[:, 1, :].astype("int32")).squeeze().to(device).long()
+            b_deprel = torch.from_numpy(b_data[:, 2, :].astype("int32")).squeeze().to(device).long()
         #
         optimizer.zero_grad()
-        txtcode, positions, latent, dec = model(b_train)
+        dec = model(b_train)
         # last_latent = latent[-1]
         upos, deprel = dec
         # print(emb.shape,emb.dtype, res.shape, res.dtype)
         # print(upos.shape, b_upos.shape)
         # loss = loss_function(upos, deprel, upos_emb(b_upos), deprel_emb(b_deprel))
+        # print("train tensor shapes: ", b_train.shape, upos.shape, b_upos.shape, deprel.shape, b_deprel.shape)
         loss, upos_loss, deprel_loss = loss_function(upos.view([-1, 18]), deprel.view([-1, 278]), b_upos.view([-1]), b_deprel.view([-1]))
 
         loss.backward()
@@ -77,7 +84,7 @@ def train(model, optimizer, loss_function, batches, epoch, ndatapoints, device):
     return train_loss
 
 
-def test(model, loss_function, test_data, epoch, device, max_data=50):
+def test(model, loss_function, test_data, epoch, device, max_data=40, max_seq_len=-1):
     """
 
     :param model:
@@ -93,13 +100,15 @@ def test(model, loss_function, test_data, epoch, device, max_data=50):
     for lang, d in test_data:
         torch.cuda.empty_cache()  # make sure the cache is emptied to begin the nexxt batch
         b_test = torch.from_numpy(d[:max_data, 0, :].astype("int32")).squeeze().to(device).long()
-        # TODO move the testing part to CPU so it takes less memory in the GPU and can keep training while testing
-        b_upos = torch.from_numpy(d[:max_data, 1, :].astype("int32")).squeeze().to(device).int()  # .long()
-        b_deprel = torch.from_numpy(d[:max_data, 2, :].astype("int32")).squeeze().to(device).int()  # .long()
-        _, _, _, dec = model(b_test)
-#         last_latent = latent[-1]
-        upos, deprel = dec
+        if max_seq_len > 0:
+            b_upos = torch.from_numpy(d[:max_data, 1, :max_seq_len].astype("int32")).squeeze().to(device).int()  # .long()
+            b_deprel = torch.from_numpy(d[:max_data, 2, :max_seq_len].astype("int32")).squeeze().to(device).int()  # .long()
+        else:
+            b_upos = torch.from_numpy(d[:max_data, 1, :].astype("int32")).squeeze().to(device).int()  # .long()
+            b_deprel = torch.from_numpy(d[:max_data, 2, :].astype("int32")).squeeze().to(device).int()  # .long()
+        upos, deprel = model(b_test)
         # loss = loss_function(upos.view([-1, 18]), b_upos.view([-1]))
+        # print("test tensor shapes: ", b_test.shape, upos.shape, b_upos.shape, deprel.shape, b_deprel.shape)
         loss, upos_loss, deprel_loss = loss_function(upos.view([-1, 18]), deprel.view([-1, 278]), b_upos.view([-1]), b_deprel.view([-1]))
         test_loss += loss.data.item()
         writer.add_scalar("LangLoss/test/"+lang, loss.data.item(), global_step=epoch)
@@ -166,9 +175,10 @@ def test_accuracy(model, test_data, epoch, device, max_data=50):
     pass
 
 
-def load_test_data(base_dir):
+def load_test_data(base_dir, max_samples=-1, max_seq_len=-1):
     """finds all ud-treebank data that was pre-processed and saved in numpy and loads it.
     Each file is loaded and kept in a tuple (lang, dataset) and returns a list of those values
+    if max_samples or max_seq_len are set to a nunmber greater than zero these will limit the data returned
     """
     # load testing data ALL the training data
 
@@ -179,6 +189,12 @@ def load_test_data(base_dir):
     test_data = []
     for f in fnames:
         data = np.load(f)
+        # data is shape: [total samples, data channels (3), 1024]
+        # print("data loading shape: ", data.shape)
+        if max_seq_len > 0:
+            data = data[:, :, :max_seq_len]
+        if max_samples > 0:
+            data = data[:max_samples, :, :]
         lang_name = path_leaf(f).split("-ud")[0]
         test_data.append((lang_name, data))
     return test_data
