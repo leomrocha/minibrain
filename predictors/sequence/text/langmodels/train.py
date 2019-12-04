@@ -20,11 +20,15 @@ utf8codematrix = "/home/leo/projects/minibrain/predictors/sequence/text/utf8-cod
 dataset_train = "/home/leo/projects/Datasets/text/UniversalDependencies/ud-treebanks-v2.4/traindev_np_batches_779000x3x1024_uint16.npy"
 BASE_DATA_DIR_UD_TREEBANK = "/home/leo/projects/Datasets/text/UniversalDependencies/ud-treebanks-v2.4"
 
+# cuda seems to reverse the GPU ids with CUDA id so ... mess
+# Cuda maps cuda:0 to my RTX 2080ti (GPU#1) and
+# Cuda maps cuda:1 to my GTX 1080 (GPU#0)
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+# device = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
 
 
 def train_test(model, checkpoint_path, base_name, max_seq_len=384, test_loss=True, test_accuracy=False, max_data=45):
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
     model = model.to(device)
     data_train = np.load(dataset_train)
     # optimizer = torch.optim.AdamW(model.parameters(), lr=1e-4, weight_decay=1e-4)
@@ -94,7 +98,6 @@ def err_ckb(err):
 
 # Note this is TOO slow, GPU test is 30-50 times faster than in CPU, so CPU not useful for practical purposes
 def train_cputest(model, checkpoint_path, base_name, test_accuracy=True, max_data=45):
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     pool = Pool(cpu_count() - 2)
     model = model.to(device)
     data_train = np.load(dataset_train)
@@ -170,16 +173,17 @@ def main_convattnet(conv1d_pretrain_file=CONV1D_PRETRAIN_FILE):
     utf8codes = np.load(utf8codematrix)
     # utf8codes = utf8codes.reshape(1987, 324)
     # the convolutional encoder must NOT be retrained (that is what I'm trying to test)
-    with torch.no_grad():
-        conv1d_encoder = Conv1DColNet(transpose_output=False)  # use default parameters
-        conv1d_decoder = LinearUposDeprelDecoder(transpose_input=False)
-        conv1d_model = NetContainer(utf8codes, conv1d_encoder, conv1d_decoder)
-        # load pre-trained conv1dcolnet
-        conv1d_model.load_checkpoint(conv1d_pretrain_file)
-        # cleanup things that we'll not use, we just need the encoder
-        del conv1d_model
-        del conv1d_decoder
-        torch.cuda.empty_cache()
+    # with torch.no_grad():
+    #     conv1d_encoder = Conv1DColNet(transpose_output=False)  # use default parameters
+    #     conv1d_decoder = LinearUposDeprelDecoder(transpose_input=False)
+    #     conv1d_model = NetContainer(utf8codes, conv1d_encoder, conv1d_decoder)
+    #     # load pre-trained conv1dcolnet
+    #     # conv1d_model.load_checkpoint(conv1d_pretrain_file)
+    #     # cleanup things that we'll not use, we just need the encoder
+    #     del conv1d_model
+    #     del conv1d_decoder
+    #     torch.cuda.empty_cache()
+    conv1d_encoder = Conv1DColNet(transpose_output=False)  # use default parameters
     encoder = ConvAttColNet(conv1d_encoder, transpose_output=False)
     decoder = LinearUposDeprelDecoder(transpose_input=False)
     model = NetContainer(utf8codes, encoder, decoder)
@@ -195,4 +199,4 @@ def main_convattnet(conv1d_pretrain_file=CONV1D_PRETRAIN_FILE):
           format(count_parameters(model), count_parameters(model)))
     path = "./trained_models/ConvAttNet"
     base_name = "ConvAttNet_nll-loss"
-    train_test(model, path, base_name, test_loss=False, max_seq_len=384)
+    train_test(model, path, base_name, max_seq_len=384, max_data=60)
