@@ -173,17 +173,17 @@ def main_convattnet(conv1d_pretrain_file=CONV1D_PRETRAIN_FILE):
     utf8codes = np.load(utf8codematrix)
     # utf8codes = utf8codes.reshape(1987, 324)
     # the convolutional encoder must NOT be retrained (that is what I'm trying to test)
-    # with torch.no_grad():
-    #     conv1d_encoder = Conv1DColNet(transpose_output=False)  # use default parameters
-    #     conv1d_decoder = LinearUposDeprelDecoder(transpose_input=False)
-    #     conv1d_model = NetContainer(utf8codes, conv1d_encoder, conv1d_decoder)
-    #     # load pre-trained conv1dcolnet
-    #     # conv1d_model.load_checkpoint(conv1d_pretrain_file)
-    #     # cleanup things that we'll not use, we just need the encoder
-    #     del conv1d_model
-    #     del conv1d_decoder
-    #     torch.cuda.empty_cache()
-    conv1d_encoder = Conv1DColNet(transpose_output=False)  # use default parameters
+    with torch.no_grad():
+        conv1d_encoder = Conv1DColNet(transpose_output=False)  # use default parameters
+        conv1d_decoder = LinearUposDeprelDecoder(transpose_input=False)
+        conv1d_model = NetContainer(utf8codes, conv1d_encoder, conv1d_decoder)
+        # load pre-trained conv1dcolnet
+        # conv1d_model.load_checkpoint(conv1d_pretrain_file)
+        # cleanup things that we'll not use, we just need the encoder
+        del conv1d_model
+        del conv1d_decoder
+        torch.cuda.empty_cache()
+    # conv1d_encoder = Conv1DColNet(transpose_output=False)  # use default parameters
     encoder = ConvAttColNet(conv1d_encoder, transpose_output=False)
     decoder = LinearUposDeprelDecoder(transpose_input=False)
     model = NetContainer(utf8codes, encoder, decoder)

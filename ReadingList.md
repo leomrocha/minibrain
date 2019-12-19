@@ -26,6 +26,11 @@ Interesting paper, although from what I'm looking for the lesson learned is that
 * [BLEU Score and Metrics](https://towardsdatascience.com/evaluating-text-output-in-nlp-bleu-at-your-own-risk-e8609665a213)
 
 
+### On the Use of ArXiv as a Dataset
+* [arXiv](https://arxiv.org/abs/1905.00075)
+* [Associated Code in Github](https://github.com/mattbierbaum/arxiv-public-datasets) 
+
+
 ### The Measure of Intelligence
 Francois Chollet Google, Inc. November 6, 2019
 https://arxiv.org/pdf/1911.01547.pdf
@@ -33,6 +38,67 @@ https://arxiv.org/pdf/1911.01547.pdf
 ### Sparse Networks from Scratch: Faster Training without Losing Performance
 https://arxiv.org/abs/1907.04840
 Trying to get better things from the resources we have, faster training
+
+### DEEP DOUBLE DESCENT: WHERE BIGGER MODELS AND MORE DATA HURT
+OpenAI
+  * https://mltheory.org/deep.pdf
+  * https://openai.com/blog/deep-double-descent/
+
+Interesting and need to read to understand better the complexity of number of samples and model size on the model performance
+TODO study it better  
+
+*In general, the peak of test error appears systematically when models are just barely able to fit the train set.*
+
+### Meta Learning
+
+
+### Differentiable plasticity: training plastic neural networks with backpropagation
+Thomas Miconi, Jeff Clune, Kenneth O. Stanley
+(Submitted on 6 Apr 2018 (v1), last revised 19 Jun 2018 (this version, v2))
+* https://arxiv.org/pdf/1804.02464.pdf
+* https://github.com/uber-research/differentiable-plasticity
+
+Incredible paper with a great plasticity method that is easy to implement.
+Number of trainable parameters duplicates, plus there is a hebbian trace to keep track of.
+Mermory usage is 3 times the one of a normal network but the power of the networs seems much higher.
+
+
+### BACKPROPAMINE: TRAINING SELF-MODIFYING NEURAL NETWORKS WITH DIFFERENTIABLE NEUROMODULATED PLASTICITY
+* https://openreview.net/pdf?id=r1lrAiA5Ym
+* https://github.com/leomrocha/backpropamine
+
+THIS Paper
+
+### Paired Open-Ended Trailblazer (POET): Endlessly Generating Increasingly Complex and Diverse Learning Environments and Their Solutions
+* https://arxiv.org/abs/1901.01753
+
+### One-Shot Neural Architecture Search via Compressive Sensing
+* https://arxiv.org/abs/1906.02869
+
+### Meta-Learning of Neural Architectures for Few-Shot Learning
+* https://arxiv.org/abs/1911.11090
+
+### Learn to Grow: A Continual Structure Learning Framework for Overcoming Catastrophic Forgetting
+* https://arxiv.org/abs/1904.00310
+
+### Online Meta-Learning
+* https://arxiv.org/abs/1902.08438
+
+### Meta-Learning Representations for Continual Learning
+* https://arxiv.org/abs/1905.12588
+
+### http://www.nld.ds.mpg.de/~michael/CNS_course_2005/papers/Woergoetter/doya02.pdf
+( Old paper  from 2005?)
+http://www.nld.ds.mpg.de/~michael/CNS_course_2005/papers/Woergoetter/doya02.pdf
+
+
+### AI-GAs: AI-generating algorithms, an alternate paradigm for producing general artificial intelligence
+* https://arxiv.org/pdf/1905.10985.pdf
+
+
+### RECURRENT INDEPENDENT MECHANISMS
+* https://arxiv.org/pdf/1909.10893.pdf
+
 
 ## For NLP
 
@@ -50,8 +116,20 @@ __
 ### Annotation Artifacts in Natural Language Inference Data
 https://arxiv.org/abs/1803.02324
 
+### BART: Denoising Sequence-to-Sequence Pre-training for Natural Language Generation, Translation, and Comprehension
+* https://arxiv.org/pdf/1910.13461.pdf
+* This paper shows a sequence to sequence autoencoder denoising objective
+
+ 
 ### Are distributional representations ready for the real world? Evaluating word vectors for grounded perceptual meaning
 
+
+### Unsupervised Cross-lingual Representation Learning at Scale
+https://arxiv.org/abs/1911.02116
+
+Facebook Research, SoTA on multilingual models by far.
+
+Studies how and what to train to improve as much as possible low resource languages while maintaining strong performance in high resource language datasets.
 
 ### T5 - Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer
 https://arxiv.org/pdf/1910.10683.pdf
@@ -600,15 +678,6 @@ Sara Sabour, Nicholas Frosst, Geoffrey E Hinton
 
 Continuation of Transforming Auto-encoders introducing the novel concept of routing between capsules that allows it to predict what the higher layers will need making this a recursive algorithm. This concept is validated by "Towards deep learning with segregated dendrites" Guerguiev et al.
 
-
-### Differentiable plasticity: training plastic neural networks with backpropagation
-Thomas Miconi, Jeff Clune, Kenneth O. Stanley
-(Submitted on 6 Apr 2018 (v1), last revised 19 Jun 2018 (this version, v2))
-https://github.com/uber-research/differentiable-plasticity
-
-Incredible paper with a great plasticity method that is easy to implement.
-Numebr of trainable parameters duplicates, plus there is a hebbian trace to keep track of.
-Mermory usage is 3 times the one of a normal network but the power of the networs seems much higher.
 
 # Papers yet to read for Few-Shot-Music-Generation ....
 

@@ -6,8 +6,7 @@ from torch.nn import functional as F
 
 from fairseq.modules.dynamic_convolution import DynamicConv1dTBC
 from torch.nn.modules.transformer import TransformerEncoderLayer
-
-
+from fb_dynamicconv.dynamic_convolution import DynamicConv
 from .utils.tools import get_activation_fn
 
 
@@ -342,6 +341,7 @@ class DynConvBlock(nn.Module):
         :param activation: activation function to use at the end of the convolutional block
         """
         super(DynConvBlock, self).__init__()
-        pass  # DynamicConv1dTBC
+
+        pass
 
 
