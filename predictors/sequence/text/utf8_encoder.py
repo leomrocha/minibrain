@@ -229,7 +229,7 @@ def create_tables(segments=4):
     return code_matrix, txt2code, code2txt, txt2num, num2txt
 
 
-def add_mappings(codebook, mappings={"<start>": 0x02, "<end>": 0x03, "<unk>": 0x0f}):
+def add_mappings(codebook, mappings={"<start>": 0x02, "<end>": 0x03, "<unk>": 0x15}):
     """
     :param codebook: input codebook to which to add special codes, it consists of a 5-tuple
     (code_matrix, txt2code, code2txt, txt2num, num2txt)

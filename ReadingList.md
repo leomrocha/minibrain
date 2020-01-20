@@ -49,8 +49,36 @@ TODO study it better
 
 *In general, the peak of test error appears systematically when models are just barely able to fit the train set.*
 
+### LEARNING A NATURAL LANGUAGE INTERFACE WITH NEURAL PROGRAMMER 
+https://openreview.net/pdf?id=ry2YOrcge
+
+Neural network augmented with external discrete operations (database operations)
+ 
+### ERNIE 2.0: A Continual Pre-Training Framework for Language Understanding
+This is the current SoTA paper on NLP
+* [ArXiv](https://arxiv.org/abs/1907.12412)
+* [Source Code](https://github.com/PaddlePaddle/ERNIE)
+ 
+### Augmented RNNs
+[blog post on the subject (2017)](https://distill.pub/2016/augmented-rnns/)
+
 ### Meta Learning
 
+### Meta-Learning a Dynamical Language Model
+Thomas Wolf, Julien Chaumond, Clement Delangue
+* https://arxiv.org/abs/1803.10631
+* https://medium.com/huggingface/from-zero-to-research-an-introduction-to-meta-learning-8e16e677f78a
+
+This paper seems interesting for NLP applications (check it out and the blog post too)
+
+    """
+    As a consequence, we would like our model to store information in a multi-scale hierarchical way
+    where
+    1. short time-scale representations can be encoded in neural activations (hidden state),
+    2. medium time-scale representations can be encoded in the dynamic of the activations by
+    using dynamic weights, and
+    3. long time-scale memory can be encoded in a static set of weights of the network
+    """
 
 ### Differentiable plasticity: training plastic neural networks with backpropagation
 Thomas Miconi, Jeff Clune, Kenneth O. Stanley
@@ -60,17 +88,20 @@ Thomas Miconi, Jeff Clune, Kenneth O. Stanley
 
 Incredible paper with a great plasticity method that is easy to implement.
 Number of trainable parameters duplicates, plus there is a hebbian trace to keep track of.
-Mermory usage is 3 times the one of a normal network but the power of the networs seems much higher.
+Memory usage is 3 times the one of a normal network but the power of the networs seems much higher.
 
 
 ### BACKPROPAMINE: TRAINING SELF-MODIFYING NEURAL NETWORKS WITH DIFFERENTIABLE NEUROMODULATED PLASTICITY
 * https://openreview.net/pdf?id=r1lrAiA5Ym
 * https://github.com/leomrocha/backpropamine
 
-THIS Paper
+THIS Paper -> I need to implement everything from the Differential plasticity plus this one ( relatively small changes )
 
 ### Paired Open-Ended Trailblazer (POET): Endlessly Generating Increasingly Complex and Diverse Learning Environments and Their Solutions
 * https://arxiv.org/abs/1901.01753
+
+This paper too might be interesting for generating the training elements
+
 
 ### One-Shot Neural Architecture Search via Compressive Sensing
 * https://arxiv.org/abs/1906.02869
@@ -95,9 +126,28 @@ http://www.nld.ds.mpg.de/~michael/CNS_course_2005/papers/Woergoetter/doya02.pdf
 ### AI-GAs: AI-generating algorithms, an alternate paradigm for producing general artificial intelligence
 * https://arxiv.org/pdf/1905.10985.pdf
 
+### Relational recurrent neural networks
+* https://arxiv.org/abs/1806.01822
 
 ### RECURRENT INDEPENDENT MECHANISMS
 * https://arxiv.org/pdf/1909.10893.pdf
+
+### Metalearning and Neuromodulation 
+[Kenji Doya 2002](http://www.nld.ds.mpg.de/~michael/CNS_course_2005/papers/Woergoetter/doya02.pdf)
+
+Interesting points:
+* Dopamine -> Regulation of Error in reward prediction
+* Serotonine -> Time scale of neural prediction
+* Noradrenaline -> Randomness in action selection
+* Acetylcholine -> Speed of memory update
+
+Long and tough paper, need to read it through more in deep
+
+### Training Deep Nets with Sublinear Memory Cost
+* https://arxiv.org/pdf/1604.06174.pdf
+* https://qywu.github.io/2019/05/22/explore-gradient-checkpointing.html
+* https://pytorch.org/docs/stable/checkpoint.html
+Gradient checkpointing (memory at the expense of time) for DNNs from OpenAI, makes things feasible 10x larger networks feasible
 
 
 ## For NLP
@@ -248,6 +298,33 @@ https://arxiv.org/pdf/1909.09436.pdf
 ### R3: Reinforced Ranker-Reader for Open-Domain Question Answering
 https://arxiv.org/pdf/1709.00023.pdf
 
+### Generalization through Memorization: Nearest Neighbor Language Models
+* https://arxiv.org/abs/1911.00172v1
+
+### https://openreview.net/forum?id=SylKikSYDH
+THIS PAPER for long term dependencies!!! Has some nice things on the axis of some ideas I want to implement later.
+
+* https://openreview.net/forum?id=SylKikSYDH
+
+    """We present the Compressive Transformer, an attentive sequence model which 
+    compresses past memories for long-range sequence learning. We find the 
+    Compressive Transformer obtains state-of-the-art language modelling results 
+    in the WikiText-103 and Enwik8 benchmarks, achieving 17.1 ppl and 0.97bpc 
+    respectively. We also find it can model high-frequency speech effectively 
+    and can be used as a memory mechanism for RL, demonstrated on an object 
+    matching task. To promote the domain of long-range sequence learning, we 
+    propose a new open-vocabulary language modelling benchmark derived from books,
+    PG-19. """
+
+
+
+  "We show this can be built with simple dense linear-algebra components, such as convolutions, and can reduce both the space and compute cost
+of our models ... "
+  
+
+### Deep Equilibrium Models
+
+* https://arxiv.org/abs/1909.01377v2
 __
 ### A Comprehensive Survey on Graph Neural Networks
 https://arxiv.org/abs/1901.00596
@@ -313,6 +390,14 @@ https://arxiv.org/abs/1611.09326
 
 
 ## Other papers
+
+### A distributional code for value in dopamine-based reinforcement learning
+Will Dabney 1,5 *, Zeb Kurth-Nelson 1,2,5 , Naoshige Uchida 3 , Clara Kwon Starkweather 3 ,
+Demis Hassabis 1 , Rémi Munos 1 & Matthew Botvinick 1
+https://doi.org/10.1038/s41586-019-1924-6
+DeepMind
+
+THIS PAPER IS AMAZING!!!, if solely can be mixed with the ones from UberAILabs
 
 ### Deep Equilibrium Models
 https://arxiv.org/pdf/1909.01377.pdf
