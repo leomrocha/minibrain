@@ -30,6 +30,18 @@ Interesting paper, although from what I'm looking for the lesson learned is that
 * [arXiv](https://arxiv.org/abs/1905.00075)
 * [Associated Code in Github](https://github.com/mattbierbaum/arxiv-public-datasets) 
 
+### MUSE: Multilingual Unsupervised and Supervised Embeddings
+* https://github.com/facebookresearch/MUSE
+
+### WikiMatrix: Mining 135M Parallel Sentences in 1620 Language Pairs from Wikipedia
+* https://arxiv.org/abs/1907.05791
+* https://github.com/facebookresearch/LASER/tree/master/tasks/WikiMatrix
+
+### Bilingual Lexicon Induction with Semi-supervision in Non-Isometric Embedding Spaces
+* https://arxiv.org/abs/1908.06625
+
+Barun Patra, Joel Ruben Antony Moniz, Sarthak Garg, Matthew R. Gormley, Graham Neubig
+
 
 ### The Measure of Intelligence
 Francois Chollet Google, Inc. November 6, 2019
@@ -162,6 +174,29 @@ __
 * [CommonCrawl](https://commoncrawl.org/)
 * [Project Gutenberg](https://www.gutenberg.org/)
 * [Project Gutenberg (French) ](https://www.gutenberg.org/wiki/FR_Page_d%27Accueil)
+* [Kiwix - offline copies of free information](https://www.kiwix.org/en/downloads/kiwix-content-packages/)
+* [ArXiv Complete Dataset](https://arxiv.org/help/bulk_data_s3)
+
+
+### A Hierarchical Multi-task Approach for Learning Embeddings from Semantic Tasks
+* https://arxiv.org/abs/1811.06031
+Victor Sanh, Thomas Wolf, Sebastian Ruder
+
+
+### Sebastian RUDER
+* [10 ML & NLP Research Highlights of 2019](https://ruder.io/research-highlights-2019/)
+* [Unsupervised Cross-lingual Representation Learning](https://ruder.io/unsupervised-cross-lingual-learning/#unsupervised-deep-models)
+
+### Cross-lingual Language Model Pretraining
+Guillaume Lample, Alexis Conneau
+* https://arxiv.org/abs/1901.07291
+* [source code](https://github.com/facebookresearch/XLM)
+
+
+### Swag: A Large-Scale Adversarial Dataset for Grounded Commonsense Inference 
+* https://arxiv.org/pdf/1808.05326.pdf
+SWAG Dataset
+
 
 ### Annotation Artifacts in Natural Language Inference Data
 https://arxiv.org/abs/1803.02324
@@ -172,7 +207,7 @@ https://arxiv.org/abs/1803.02324
 
  
 ### Are distributional representations ready for the real world? Evaluating word vectors for grounded perceptual meaning
-
+* https://arxiv.org/abs/1705.11168
 
 ### Unsupervised Cross-lingual Representation Learning at Scale
 https://arxiv.org/abs/1911.02116
