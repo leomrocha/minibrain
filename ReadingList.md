@@ -188,16 +188,42 @@ I need a more in deep reading and study of this paper to set the parameters ... 
 * Multilingual BART (mBART)
 * https://arxiv.org/abs/2001.08210
 
+### How Multilingual is Multilingual BERT?
+* Telmo Pires, Eva Schlinger, Dan Garrette
+* https://www.aclweb.org/anthology/P19-1493/
+Bert is nice but has some issues
+
+### Beto, Bentz, Becas: The Surprising Cross-Lingual Effectiveness of BERT
+* Shijie Wu, Mark Dredze
+* https://www.aclweb.org/anthology/D19-1077/
+
+### XQA: A Cross-lingual Open-domain Question Answering Dataset
+* Jiahua Liu, Yankai Lin, Zhiyuan Liu, Maosong Sun
+* https://www.aclweb.org/anthology/P19-1227/
+
+### MLQA: Evaluating Cross-lingual Extractive Question Answering
+* Patrick Lewis, Barlas Oğuz, Ruty Rinott, Sebastian Riedel, Holger Schwenk
+* https://arxiv.org/abs/1910.07475
 
 ### Learning bilingual word embeddings with (almost) no bilingual data
 Mikel Artetxe, Gorka Labaka, Eneko Agirre
 * https://www.aclweb.org/anthology/P17-1042.pdf
+
+### MultiFiT: Efficient Multi-lingual Language Model Fine-tuning
+* Julian Eisenschlos, Sebastian Ruder, Piotr Czapla, Marcin Kadras, Sylvain Gugger, Jeremy Howard
+* https://www.aclweb.org/anthology/D19-1572/
 
 ### Deep Learning for Symbolic Mathematics
 * https://arxiv.org/abs/1912.01412
 * Guillaume Lample, François Charton
 
 Interesting, need a dataset and source code though
+
+### Reformer: The Efficient Transformer - Google
+* https://ai.googleblog.com/2020/01/reformer-efficient-transformer.html
+* https://github.com/google/trax/tree/master/trax/models/reformer
+* https://arxiv.org/abs/2001.04451
+
 
 
 ### A Hierarchical Multi-task Approach for Learning Embeddings from Semantic Tasks
@@ -208,11 +234,28 @@ Victor Sanh, Thomas Wolf, Sebastian Ruder
 ### Sebastian RUDER
 * [10 ML & NLP Research Highlights of 2019](https://ruder.io/research-highlights-2019/)
 * [Unsupervised Cross-lingual Representation Learning](https://ruder.io/unsupervised-cross-lingual-learning/#unsupervised-deep-models)
+@inproceedings{ruder2019unsupervised,
+  title={Unsupervised Cross-Lingual Representation Learning},
+  author={Ruder, Sebastian and S{\o}gaard, Anders and Vuli{\'c}, Ivan}, 
+  booktitle={Proceedings of ACL 2019, Tutorial Abstracts},
+  pages={31--38},
+  year={2019}
+}
+
+### Depthwise Separable Convolutions for Neural Machine Translation
+* Lukasz Kaiser, Aidan N. Gomez, Francois Chollet
+* https://arxiv.org/abs/1706.03059
+
 
 ### Cross-lingual Language Model Pretraining
 Guillaume Lample, Alexis Conneau
 * https://arxiv.org/abs/1901.07291
 * [source code](https://github.com/facebookresearch/XLM)
+
+
+###Discrete Autoencoders for Sequence Models
+* Łukasz Kaiser, Samy Bengio
+* https://arxiv.org/abs/1801.09797
 
 
 ### Swag: A Large-Scale Adversarial Dataset for Grounded Commonsense Inference 
@@ -472,8 +515,6 @@ This idea is great for NLP too in 1D convolutions
 
 ### Semantic Image Synthesis with Spatially-Adaptive Normalization (SPADE)
 
-
-### MultiFiT: Efficient Multi-lingual Language Model Fine-tuning
 
 ### Universal Language Model Fine-tuning for Text Classification
 
