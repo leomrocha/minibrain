@@ -224,12 +224,65 @@ Interesting, need a dataset and source code though
 * https://github.com/google/trax/tree/master/trax/models/reformer
 * https://arxiv.org/abs/2001.04451
 
+### Compressive Transformers for Long-Range Sequence Modelling ￼
+* Jack W. Rae, Anna Potapenko, Siddhant M. Jayakumar, Chloe Hillier, Timothy P. Lillicrap
+* 25 Sep 2019 (modified: 24 Dec 2019)
+* https://openreview.net/forum?id=SylKikSYDH
+THIS PAPER for long term dependencies!!! Has some nice things on the axis of some ideas I want to implement later.
 
+* https://openreview.net/forum?id=SylKikSYDH
+
+    """We present the Compressive Transformer, an attentive sequence model which 
+    compresses past memories for long-range sequence learning. We find the 
+    Compressive Transformer obtains state-of-the-art language modelling results 
+    in the WikiText-103 and Enwik8 benchmarks, achieving 17.1 ppl and 0.97bpc 
+    respectively. We also find it can model high-frequency speech effectively 
+    and can be used as a memory mechanism for RL, demonstrated on an object 
+    matching task. To promote the domain of long-range sequence learning, we 
+    propose a new open-vocabulary language modelling benchmark derived from books,
+    PG-19. """
+
+  "We show this can be built with simple dense linear-algebra components, such as convolutions, and can reduce both the space and compute cost
+of our models ... "
+
+### BERT-AL: BERT for Arbitrarily Long Document Understanding ￼
+* Ruixuan Zhang, Zhuoyu Wei, Yu Shi, Yining Chen
+* 25 Sep 2019 (modified: 24 Dec 2019)ICLR 2020 Conference Blind Submission
+* https://openreview.net/forum?id=SklnVAEFDB
+
+Uses Transformer + LSTM between transformer layers for the long term range dependency
+Is something like what I want to do, except that I want to focus the LSTM [NTM|DNC|...] somewhere between the encoder and decoder while the encoder only deals with short term dependencies
 
 ### A Hierarchical Multi-task Approach for Learning Embeddings from Semantic Tasks
 * https://arxiv.org/abs/1811.06031
 Victor Sanh, Thomas Wolf, Sebastian Ruder
 
+
+### Scaling Memory-Augmented Neural Networks with Sparse Reads and Writes
+* Jack W Rae, Jonathan J Hunt, Tim Harley, Ivo Danihelka, Andrew Senior, Greg Wayne, Alex Graves, Timothy P Lillicrap
+* (Submitted on 27 Oct 2016)
+* https://arxiv.org/abs/1610.09027
+
+Neural networks augmented with external memory - Sparse Access Memory (SAM)
+
+It seems that they have exactly what I was looking for in external memory management for the working memory (not the long term memory access and saving)
+
+    In this paper, we present a MANN named SAM (sparse access memory). 
+    By thresholding memory modifications to a sparse subset, and using 
+    efficient data structures for content-based read operations, 
+    our model is optimal in space and time with respect to memory size,
+    while retaining end-to-end gradient based optimization. 
+
+They also apply this to the DNC (Differentiable Neural Computer)
+
+Maybe mixing this with LSH (Locality Sensitive Hashing) 
+something good will come -> this is named in the paper as future work and 
+goes well with latest Reformer Paper from Google
+
+Also notice that the paper from Facebook on Large Memories with Product Keys does sparse read/write too 
+during training (although is not the same kind of mechanism, is not a working memory) 
+
+The tough part will be to get the datasets and tasks to train it.
 
 ### Sebastian RUDER
 * [10 ML & NLP Research Highlights of 2019](https://ruder.io/research-highlights-2019/)
@@ -276,7 +329,6 @@ https://arxiv.org/abs/1803.02324
 
 ### Unsupervised Cross-lingual Representation Learning at Scale
 https://arxiv.org/abs/1911.02116
-
 Facebook Research, SoTA on multilingual models by far.
 
 Studies how and what to train to improve as much as possible low resource languages while maintaining strong performance in high resource language datasets.
@@ -319,7 +371,6 @@ The Adapter Modules are trained (and grow ?) for each new Task, these are then f
 
 ### BERT and PALs: Projected Attention Layers for Efficient Adaptation in Multi-Task Learning
 https://arxiv.org/abs/1902.02671
-
 This paper shows a way of using something n the style of Adapter Modules, but instead of adding it inside the transformer layer it adds it in parallel with a smaller attention, it also evaluates a serial element instead of a parallel one.
  
 
@@ -401,26 +452,26 @@ https://arxiv.org/pdf/1709.00023.pdf
 ### Generalization through Memorization: Nearest Neighbor Language Models
 * https://arxiv.org/abs/1911.00172v1
 
-### https://openreview.net/forum?id=SylKikSYDH
-THIS PAPER for long term dependencies!!! Has some nice things on the axis of some ideas I want to implement later.
-
-* https://openreview.net/forum?id=SylKikSYDH
-
-    """We present the Compressive Transformer, an attentive sequence model which 
-    compresses past memories for long-range sequence learning. We find the 
-    Compressive Transformer obtains state-of-the-art language modelling results 
-    in the WikiText-103 and Enwik8 benchmarks, achieving 17.1 ppl and 0.97bpc 
-    respectively. We also find it can model high-frequency speech effectively 
-    and can be used as a memory mechanism for RL, demonstrated on an object 
-    matching task. To promote the domain of long-range sequence learning, we 
-    propose a new open-vocabulary language modelling benchmark derived from books,
-    PG-19. """
-
-
-
-  "We show this can be built with simple dense linear-algebra components, such as convolutions, and can reduce both the space and compute cost
-of our models ... "
   
+### Scene Memory Transformer for Embodied Agents in Long-Horizon Tasks
+* Kuan Fang, Alexander Toshev, Li Fei-Fei, Silvio Savarese
+* (Submitted on 9 Mar 2019)
+* https://arxiv.org/abs/1903.03878
+* https://arxiv.org/pdf/1903.03878.pdf
+
+This paper is interesting in the memory management, defines the Scene Memory Transformer (SMT) for robotics, but maybe is something similar to what I need to do in my work 
+
+    Although the scene memory grows linearly with the
+    length of the episode, it stores only an embedding vector at
+    each steps. Therefore, we can easily store hundreds of observations without any burden in the device memory. This
+    overhead is justified as it gives us higher performance compared to established policies with more compact memories.
+    Further, as the computational complexity of the original model grows quadratically with the size of the scene
+    memory, we introduce a memory factorization procedure as
+    part of SMT. This reduces the computational complexity to
+    linear. The procedure is applied when the number of the
+    stored observations is high. In this way, we can leverage
+    a large memory capacity without the taxing computational
+    overhead of the original model.
 
 ### Deep Equilibrium Models
 
@@ -490,6 +541,13 @@ https://arxiv.org/abs/1611.09326
 
 
 ## Other papers
+
+### Hierarchical Attention Networks for Document Classification
+* Zichao Yang, Diyi Yang, Chris Dyer, Xiaodong He, Alex Smola, Eduard Hovy
+* https://www.cs.cmu.edu/~./hovy/papers/16HLT-hierarchical-attention-networks.pdf
+* https://www.aclweb.org/anthology/N16-1174/
+
+Interesting concept but still has the problems I want to solve, dynamic input lengths, more flexibility ...
 
 ### A distributional code for value in dopamine-based reinforcement learning
 Will Dabney 1,5 *, Zeb Kurth-Nelson 1,2,5 , Naoshige Uchida 3 , Clara Kwon Starkweather 3 ,
@@ -967,10 +1025,6 @@ Jie Chen, Tengfei Ma, Cao Xiao
 Convolutional Sequence to Sequence Learning
 Jonas Gehring, Michael Auli, David Grangier, Denis Yarats, Yann N. Dauphin
 (Submitted on 8 May 2017 (v1), last revised 25 Jul 2017 (this version, v3))
-
-Scaling Memory-Augmented Neural Networks with Sparse Reads and Writes
-Jack W Rae, Jonathan J Hunt, Tim Harley, Ivo Danihelka, Andrew Senior, Greg Wayne, Alex Graves, Timothy P Lillicrap
-(Submitted on 27 Oct 2016)
 
 
 Rotational Unit of Memory
