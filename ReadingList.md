@@ -177,6 +177,28 @@ __
 * [Kiwix - offline copies of free information](https://www.kiwix.org/en/downloads/kiwix-content-packages/)
 * [ArXiv Complete Dataset](https://arxiv.org/help/bulk_data_s3)
 
+### Scaling Laws for Neural Language Models
+* https://arxiv.org/abs/2001.08361
+
+WOOOOW this study is amazing and to take into account for any and avery work on NLP.
+I need a more in deep reading and study of this paper to set the parameters ... But from the overview I did it's a great job.
+
+### Multilingual Denoising Pre-training for Neural Machine Translation
+* Yinhan Liu, Jiatao Gu, Naman Goyal, Xian Li, Sergey Edunov, Marjan Ghazvininejad, Mike Lewis, Luke Zettlemoyer
+* Multilingual BART (mBART)
+* https://arxiv.org/abs/2001.08210
+
+
+### Learning bilingual word embeddings with (almost) no bilingual data
+Mikel Artetxe, Gorka Labaka, Eneko Agirre
+* https://www.aclweb.org/anthology/P17-1042.pdf
+
+### Deep Learning for Symbolic Mathematics
+* https://arxiv.org/abs/1912.01412
+* Guillaume Lample, François Charton
+
+Interesting, need a dataset and source code though
+
 
 ### A Hierarchical Multi-task Approach for Learning Embeddings from Semantic Tasks
 * https://arxiv.org/abs/1811.06031
