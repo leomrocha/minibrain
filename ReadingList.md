@@ -10,6 +10,8 @@ The paper is analyzed in images, the issue with text is that most studies are do
  No study shows the difference between small and big batches, but due to n# of parameters in current NLP tasks and 
  the variability in input and output tasks I would think that big batches might be needed. 
 
+This study is in the images and CNN context, when dealing with NLP tasks there are other studies that show bigger batches are better ([Scaling Laws for Neural Language Models](https://arxiv.org/abs/2001.08361)). 
+
 ### Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer
 https://www.cs.toronto.edu/~hinton/absps/Outrageously.pdf
 https://arxiv.org/abs/1701.06538
@@ -63,8 +65,9 @@ TODO study it better
 
 ### LEARNING A NATURAL LANGUAGE INTERFACE WITH NEURAL PROGRAMMER 
 https://openreview.net/pdf?id=ry2YOrcge
-
 Neural network augmented with external discrete operations (database operations)
+
+This paper is interesting
  
 ### ERNIE 2.0: A Continual Pre-Training Framework for Language Understanding
 This is the current SoTA paper on NLP
