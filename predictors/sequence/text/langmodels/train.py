@@ -17,8 +17,8 @@ from .models import *
 # TODO put this in a config file
 fcodebook = "/home/leo/projects/minibrain/predictors/sequence/text/utf8-codes/utf8_codebook_overfit_matrix_2seg_dim64.npy"
 utf8codematrix = "/home/leo/projects/minibrain/predictors/sequence/text/utf8-codes/utf8_code_matrix_2seg.npy"
-dataset_train = "/home/leo/projects/Datasets/text/UniversalDependencies/ud-treebanks-v2.4/traindev_np_batches_779000x3x1024_uint16.npy"
-BASE_DATA_DIR_UD_TREEBANK = "/home/leo/projects/Datasets/text/UniversalDependencies/ud-treebanks-v2.4"
+dataset_train = "/home/leo/projects/Datasets/text/UniversalDependencies/ud-treebanks-v2.5/traindev_np_batches_779000x3x1024_uint16.npy"
+BASE_DATA_DIR_UD_TREEBANK = "/home/leo/projects/Datasets/text/UniversalDependencies/ud-treebanks-v2.5"
 
 # cuda seems to reverse the GPU ids with CUDA id so ... mess
 # Cuda maps cuda:0 to my RTX 2080ti (GPU#1) and

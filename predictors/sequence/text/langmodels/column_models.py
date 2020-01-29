@@ -350,12 +350,12 @@ class ConvColumn(nn.Module):
 
         # Convolutional blocks
         self.conv_blocks = nn.ModuleList()
-        self.maxpool_blocks = nn.ModuleList()
+        # self.maxpool_blocks = nn.ModuleList()
         for cin, cout, lays in zip(c_in[1:], c_out[1:], b_layers):
             cnv = Conv1DBlock(cin, cout, kernel_size, lays, dropout, groups)
-            mp = nn.MaxPool1d(2, stride=2)
+            # mp = nn.MaxPool1d(2, stride=2)
             self.conv_blocks.append(cnv)
-            self.conv_blocks.append(mp)
+            # self.maxpool_blocks.append(mp)
         self.convolutions = nn.Sequential(*self.conv_blocks)
         #
         self.dropout = nn.Dropout(dropout)

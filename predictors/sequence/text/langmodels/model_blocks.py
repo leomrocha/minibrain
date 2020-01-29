@@ -59,7 +59,9 @@ class Conv1DBlock(nn.Module):
         # print("3 conv1b", out.shape)
         out = self.dropout(out)
         # print("4 conv1b", out.shape)
-        return self.activation(out + res)
+        out = self.activation(out + res)
+        # out = F.layer_norm(out)
+        return out
 
 
 class GatedConv1DBlock(nn.Module):

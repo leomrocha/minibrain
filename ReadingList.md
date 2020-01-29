@@ -32,6 +32,40 @@ Interesting paper, although from what I'm looking for the lesson learned is that
 * [arXiv](https://arxiv.org/abs/1905.00075)
 * [Associated Code in Github](https://github.com/mattbierbaum/arxiv-public-datasets) 
 
+### A Neural Conversational Model
+* Oriol Vinyals, Quoc Le
+* (Submitted on 19 Jun 2015 (v1), last revised 22 Jul 2015 (this version, v3))
+* https://arxiv.org/abs/1506.05869
+
+Old paper to read
+
+### Towards a Human-like Open-Domain Chatbot
+* Daniel Adiwardana, Minh-Thang Luong, David R. So, Jamie Hall, Noah Fiedel, Romal Thoppilan, Zi Yang, Apoorv Kulshreshtha, Gaurav Nemade, Yifeng Lu, Quoc V. Le
+* (Submitted on 27 Jan 2020)
+* https://arxiv.org/abs/2001.09977
+* https://ai.googleblog.com/2020/01/towards-conversational-agent-that-can.html
+* Works based on the [Evolved Transformer Architecture](https://ai.googleblog.com/2019/06/applying-automl-to-transformer.html); [Source Code](https://github.com/tensorflow/tensor2tensor/blob/master/tensor2tensor/models/evolved_transformer.py)
+THIS PAPER!!
+
+### The Evolved Transformer
+* David R. So, Chen Liang, Quoc V. Le
+* (Submitted on 30 Jan 2019 (v1), last revised 17 May 2019 (this version, v4))
+* https://arxiv.org/abs/1901.11117
+* [Evolved Transformer Architecture](https://ai.googleblog.com/2019/06/applying-automl-to-transformer.html) 
+* [Source Code](https://github.com/tensorflow/tensor2tensor/blob/master/tensor2tensor/models/evolved_transformer.py)
+
+Nice results, maybe should implement the evolved transformer in pytorch
+
+### Wizard of Wikipedia: Knowledge-Powered Conversational agents
+* Emily Dinan, Stephen Roller, Kurt Shuster, Angela Fan, Michael Auli, Jason Weston
+* (Submitted on 3 Nov 2018 (v1), last revised 21 Feb 2019 (this version, v2))
+* https://arxiv.org/abs/1811.01241
+
+### Personalizing Dialogue Agents: I have a dog, do you have pets too?
+* Saizheng Zhang, Emily Dinan, Jack Urbanek, Arthur Szlam, Douwe Kiela, Jason Weston
+* (Submitted on 22 Jan 2018 (v1), last revised 25 Sep 2018 (this version, v5))
+* https://arxiv.org/abs/1801.07243
+
 ### MUSE: Multilingual Unsupervised and Supervised Embeddings
 * https://github.com/facebookresearch/MUSE
 
@@ -879,6 +913,25 @@ Yee Whye Teh, Victor Bapst, Wojciech Marian Czarnecki, John Quan, James Kirkpatr
 
 Tries to tackle the issues that arise when doing multi-task learning, although I did not dig too much on it.
 
+### Go-Explore: a New Approach for Hard-Exploration Problems
+* Adrien Ecoffet, Joost Huizinga, Joel Lehman, Kenneth O. Stanley, Jeff Clune
+* (Submitted on 30 Jan 2019 (v1), last revised 23 May 2019 (this version, v2))
+* https://github.com/uber-research/go-explore
+* https://arxiv.org/abs/1901.10995
+
+### Improving Policies via Search in Cooperative Partially Observable Games
+* Adam Lerer, Hengyuan Hu, Jakob Foerster, Noam Brown
+* (Submitted on 5 Dec 2019)
+* https://arxiv.org/abs/1912.02318
+* https://github.com/facebookresearch/Hanabi_SPARTA
+* https://ai.facebook.com/blog/building-ai-that-can-master-complex-cooperative-games-with-hidden-information/?utm_source=social-facebook&utm_medium=fb4d&utm_campaign=organic&utm_content=post-url&utm_offering=artificial-intelligence&utm_product=ai-complex-cooperative-games-hidden-information_122719&eventSource=OrganicSocialFB4D&fbclid=IwAR2ZOjM5Foih0lFuS0rl3MuA1hjsoScv3MnAlNTbuMLGBVDHREwCMwIPP2k
+
+### The Hanabi Challenge: A New Frontier for AI Research
+* Nolan Bard, Jakob N. Foerster, Sarath Chandar, Neil Burch, Marc Lanctot, H. Francis Song, Emilio Parisotto, Vincent Dumoulin, Subhodeep Moitra, Edward Hughes, Iain Dunning, Shibl Mourad, Hugo Larochelle, Marc G. Bellemare, Michael Bowling
+* (Submitted on 1 Feb 2019 (v1), last revised 6 Dec 2019 (this version, v2))
+* https://arxiv.org/abs/1902.00506
+
+
 ### Understanding deep learning requires rethinking generalization
 Chiyuan Zhang, Samy Bengio, Moritz Hardt, Benjamin Recht, Oriol Vinyals
 (Submitted on 10 Nov 2016 (v1), last revised 26 Feb 2017 (this version, v2))
@@ -961,8 +1014,6 @@ Differentiable plasticity: training plastic neural networks with backpropagation
 Thomas Miconi, Jeff Clune, Kenneth O. Stanley
 (Submitted on 6 Apr 2018 (v1), last revised 19 Jun 2018 (this version, v2))
 https://github.com/uber-research/differentiable-plasticity
-
-# Papers yet to read ....
 
 
 Deep Learning: A Critical Appraisal
