@@ -1,6 +1,6 @@
 
 # from .fb_models import TransformerSeqLayer
-from fairseq.modules.transformer_layer import MultiheadAttention, TransformerDecoderLayer, TransformerEncoderLayer
+from fairseq.t.transformer_layer import MultiheadAttention, TransformerDecoderLayer, TransformerEncoderLayer
 from .utils.tools import *
 from .decanlp_common import *
 

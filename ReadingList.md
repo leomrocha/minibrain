@@ -19,6 +19,78 @@ https://openreview.net/forum?id=B1ckMDqlg
 
 Interesting paper, although from what I'm looking for the lesson learned is that conditional execution makes a good choice and specialist/expert parts for each different task and choosing them with an expert chooser that is also trained there.
 
+### ZeRO: Memory Optimization Towards Training A Trillion Parameter Models
+* Samyam Rajbhandari, Jeff Rasley, Olatunji Ruwase, Yuxiong He
+* (Submitted on 4 Oct 2019 (v1), last revised 7 Oct 2019 (this version, v2))
+* https://arxiv.org/abs/1910.02054
+* https://github.com/microsoft/DeepSpeed
+* https://www.microsoft.com/en-us/research/blog/zero-deepspeed-new-system-optimizations-enable-training-models-with-over-100-billion-parameters/
+* https://www.microsoft.com/en-us/research/blog/turing-nlg-a-17-billion-parameter-language-model-by-microsoft/
+
+### Adaptive Noise Injection: A Structure-Expanding Regularization for RNN
+* Rui Li, Kai Shuang, Mengyu Gu, Sen Su
+* (Submitted on 25 Jul 2019)
+* https://arxiv.org/abs/1907.10885
+
+### A fast and simple algorithm for training neural probabilistic language models
+* https://www.cs.toronto.edu/~amnih/papers/ncelm.pdf
+* Andriy Mnih, Yee Whye Teh
+
+
+### The Next Decade in AI: Four Steps Towards Robust Artificial Intelligence
+* Gary Marcus
+* (Submitted on 14 Feb 2020 (v1), last revised 17 Feb 2020 (this version, v2))
+* https://arxiv.org/abs/2002.06177
+* https://arxiv.org/pdf/2002.06177.pdf
+
+Really interesting paper on the creation of hybrid approaches to intelligence
+
+I really like this approach
+
+### The Neuro-Symbolic Concept Learner: Interpreting Scenes, Words, and Sentences From Natural Supervision
+* Jiayuan Mao, Chuang Gan, Pushmeet Kohli, Joshua B. Tenenbaum, Jiajun Wu
+* (Submitted on 26 Apr 2019)
+* https://arxiv.org/abs/1904.12584
+
+Check this paper!!
+
+### Enhancing the Transformer with Explicit Relational Encoding for Math Problem Solving
+* Imanol Schlag, Paul Smolensky, Roland Fernandez, Nebojsa Jojic, Jürgen Schmidhuber, Jianfeng Gao
+* (Submitted on 15 Oct 2019)
+* https://arxiv.org/abs/1910.06611
+
+And THIS ONE
+
+
+### A Learning Algorithm for Relational Logistic Regression: Preliminary Results
+* Bahare Fatemi, Seyed Mehran Kazemi, David Poole
+* (Submitted on 28 Jun 2016)
+* https://arxiv.org/abs/1606.08531
+
+And this one!!
+
+### Neural Theorem Provers Do Not Learn Rules Without Exploration
+*Michiel de Jong, Fei Sha
+*(Submitted on 17 Jun 2019)
+*https://arxiv.org/abs/1906.06805
+
+### Scalable Neural Theorem Proving on Knowledge Bases and Natural Language 
+* Pasquale Minervini, Matko Bosnjak, Tim Rocktäschel, Edward Grefenstette, Sebastian Riedel
+* 28 Sep 2018 (modified: 21 Dec 2018)IC
+* https://openreview.net/forum?id=BJzmzn0ctX
+
+
+### Towards Neural Theorem Proving at Scale
+* Pasquale Minervini, Matko Bosnjak, Tim Rocktäschel, Sebastian Riedel
+* (Submitted on 21 Jul 2018)
+* https://arxiv.org/abs/1807.08204
+
+### Climbing towards NLU: On Meaning, Form, and Understanding in the Age of Data ￼
+* Anonymous
+* 26 Jan 2020 (modified: 26 Jan 2020)OpenReview Anonymous Preprint Blind Submission
+* https://openreview.net/forum?id=GKTvAcb12b
+
+
 
 ### Books and Lectures online for NLP
 
@@ -31,6 +103,44 @@ Interesting paper, although from what I'm looking for the lesson learned is that
 ### On the Use of ArXiv as a Dataset
 * [arXiv](https://arxiv.org/abs/1905.00075)
 * [Associated Code in Github](https://github.com/mattbierbaum/arxiv-public-datasets) 
+
+### MEMO: A Deep Network for Flexible Combination of Episodic Memories
+* Andrea Banino, Adrià Puigdomènech Badia, Raphael Köster, Martin J. Chadwick, Vinicius Zambaldi, Demis Hassabis, Caswell Barry, Matthew Botvinick, Dharshan Kumaran, Charles Blundell
+* (Submitted on 29 Jan 2020)
+* https://arxiv.org/pdf/2001.10913.pdf
+* https://arxiv.org/abs/2001.10913
+THIS FRIKIN PAPER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+THIS ONE!!!!!!!!!!!!!!!
+Amazing paper
+
+Introduces not only great memory mechanisms but also a new dataset: called Paired Associative Inference (PAI)
+
+### Generalization Through the Recurrent Interaction of Episodic Memories: A Model of the Hippocampal System
+* https://psycnet.apa.org/fulltext/2012-17473-004.html
+* Kumaran, D., & McClelland, J. L. (2012). Generalization through the recurrent interaction of episodic memories: A model of the hippocampal system. Psychological Review, 119(3), 573-616. doi:10.1037/a0028681
+* https://www.ncbi.nlm.nih.gov/pubmed/22775499
+
+### Universal Transformers
+* Mostafa Dehghani, Stephan Gouws, Oriol Vinyals, Jakob Uszkoreit, Łukasz Kaiser
+* (Submitted on 10 Jul 2018 (v1), last revised 5 Mar 2019 (this version, v3))
+* https://arxiv.org/abs/1807.03819
+* https://github.com/andreamad8/Universal-Transformer-Pytorch
+
+THIS PAPER TOO!!
+
+### Constructive Type-Logical Supertagging with Self-Attention Networks
+* Konstantinos Kogkalidis, Michael Moortgat, Tejaswini Deoskar
+* (Submitted on 31 May 2019)
+* https://arxiv.org/abs/1905.13418
+* https://github.com/konstantinosKokos/Lassy-TLG-Supertagging
+* https://github.com/konstantinosKokos/Transformers
+
+### R-Transformer: Recurrent Neural Network Enhanced Transformer
+* Zhiwei Wang, Yao Ma, Zitao Liu, Jiliang Tang
+* (Submitted on 12 Jul 2019)
+* https://arxiv.org/abs/1907.05572
+* https://github.com/konstantinosKokos/Lassy-TLG-Supertagging
+
 
 ### A Neural Conversational Model
 * Oriol Vinyals, Quoc Le
