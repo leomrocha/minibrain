@@ -43,16 +43,30 @@ Interesting paper, although from what I'm looking for the lesson learned is that
 * https://arxiv.org/abs/2002.06177
 * https://arxiv.org/pdf/2002.06177.pdf
 
-Really interesting paper on the creation of hybrid approaches to intelligence
+Really interesting paper on the path to creation of hybrid approaches to intelligence
 
-I really like this approach
+I really like this approach and what it says, what it proposes and the sources it shows.
 
 ### The Neuro-Symbolic Concept Learner: Interpreting Scenes, Words, and Sentences From Natural Supervision
 * Jiayuan Mao, Chuang Gan, Pushmeet Kohli, Joshua B. Tenenbaum, Jiajun Wu
 * (Submitted on 26 Apr 2019)
 * https://arxiv.org/abs/1904.12584
+* https://openreview.net/forum?id=rJgMlhRctm
+* https://github.com/vacancy/NSCL-PyTorch-Release
 
 Check this paper!!
+http://jiayuanm.com/
+
+
+### Visually Grounded Neural Syntax Acquisition
+* Haoyue Shi, Jiayuan Mao, Kevin Gimpel, Karen Livescu
+* (Submitted on 7 Jun 2019 (v1), last revised 24 Sep 2019 (this version, v2))
+* https://arxiv.org/abs/1906.02890
+* https://vimeo.com/384515583
+* https://github.com/ExplorerFreda/VGNSL
+
+AND THIS ONE!!!
+http://jiayuanm.com/
 
 ### Enhancing the Transformer with Explicit Relational Encoding for Math Problem Solving
 * Imanol Schlag, Paul Smolensky, Roland Fernandez, Nebojsa Jojic, Jürgen Schmidhuber, Jianfeng Gao
@@ -62,12 +76,28 @@ Check this paper!!
 And THIS ONE
 
 
+### Neural Logic Machines
+* Honghua Dong, Jiayuan Mao, Tian Lin, Chong Wang, Lihong Li, Denny Zhou
+* (Submitted on 26 Apr 2019)
+* https://github.com/google/neural-logic-machines
+* https://arxiv.org/abs/1904.11694
+* https://sites.google.com/view/neural-logic-machines
+
+AND THIS ONE!!
+http://jiayuanm.com/
+
+
 ### A Learning Algorithm for Relational Logistic Regression: Preliminary Results
 * Bahare Fatemi, Seyed Mehran Kazemi, David Poole
 * (Submitted on 28 Jun 2016)
 * https://arxiv.org/abs/1606.08531
 
 And this one!!
+
+### Universal Agent for Disentangling Environments and Tasks ￼
+* Jiayuan Mao, Honghua Dong, Joseph J. Lim
+* 15 Feb 2018 (modified: 03 Mar 2018)ICLR 2018 Conference Blind Submission
+* https://openreview.net/forum?id=B1mvVm-C-
 
 ### Neural Theorem Provers Do Not Learn Rules Without Exploration
 *Michiel de Jong, Fei Sha
