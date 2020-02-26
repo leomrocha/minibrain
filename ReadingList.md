@@ -66,7 +66,7 @@ http://jiayuanm.com/
 * https://github.com/ExplorerFreda/VGNSL
 
 AND THIS ONE!!!
-http://jiayuanm.com/
+http://jiayuanm.com/    
 
 ### Enhancing the Transformer with Explicit Relational Encoding for Math Problem Solving
 * Imanol Schlag, Paul Smolensky, Roland Fernandez, Nebojsa Jojic, Jürgen Schmidhuber, Jianfeng Gao
@@ -120,6 +120,18 @@ And this one!!
 * 26 Jan 2020 (modified: 26 Jan 2020)OpenReview Anonymous Preprint Blind Submission
 * https://openreview.net/forum?id=GKTvAcb12b
 
+### Universal Conceptual Cognitive Annotation (UCCA)
+* https://github.com/UniversalConceptualCognitiveAnnotation
+* https://universalconceptualcognitiveannotation.github.io/
+* https://www.aclweb.org/anthology/P13-1023.pdf
+* http://nlpprogress.com/english/semantic_parsing.html
+
+* https://nlp.stanford.edu/software/sempre/
+
+### A Survey on Semantic Parsing
+* Aishwarya Kamath aishwarya.kamath@oracle.com Oracle Labs
+* Rajarshi Das rajarshi@cs.umass.edu University of Massachusetts, Amherst
+* https://openreview.net/pdf?id=HylaEWcTT7
 
 
 ### Books and Lectures online for NLP
@@ -824,6 +836,116 @@ Interesting starter idea, but there is stil the question on what to do as a toy 
 Graves 2017
 
 *Read -> re-read to understand it better
+
+## Legal Law Related
+* https://research.iclr.co.uk/blackstone
+* https://github.com/leomrocha/anonymisation
+* https://www.lefebvre-sarrut.eu/en/homepage/
+* https://towardsdatascience.com/@pommedeterre33
+* https://towardsdatascience.com/why-we-switched-from-spacy-to-flair-to-anonymize-french-legal-cases-e7588566825f
+* https://towardsdatascience.com/benchmark-ner-algorithm-d4ab01b2d4c3
+* https://www.economie.gouv.fr/republique-numerique#
+* https://www.economie.gouv.fr/republique-numerique/15-points-cles
+* https://www.dalloz-actualite.fr/flash/distinction-entre-l-open-data-et-l-acces-aux-decisions-de-justice#.XlWGi3X0lhE
+* https://www.linkedin.com/in/mbenesty/
+
+###May I Check Again? -- A simple but efficient way to generate and use contextual dictionaries for Named Entity Recognition. Application to French Legal Texts
+* Valentin Barriere, Amaury Fouret
+* (Submitted on 8 Sep 2019)
+* https://arxiv.org/abs/1909.03453
+* https://arxiv.org/pdf/1909.03453.pdf
+
+
+
+## AGI related
+
+### Learning to Continually Learn
+* Shawn Beaulieu, Lapo Frati, Thomas Miconi, Joel Lehman, Kenneth O. Stanley, Jeff Clune, Nick Cheney
+* (Submitted on 21 Feb 2020)
+* https://arxiv.org/abs/2002.09571
+
+### Data as Prior/Innate knowledge for Deep Learning models
+* https://medium.com/@xamat/data-as-prior-innate-knowledge-for-deep-learning-models-23898363a71a
+* https://www.quora.com/Is-there-a-way-to-encode-prior-knowledge-in-deep-neural-networks
+
+### Learning From the Experience of Others: Approximate Empirical Bayes in Neural Networks ￼
+* Han Zhao, Yao-Hung Hubert Tsai, Ruslan Salakhutdinov, Geoff Gordon
+* 28 Sep 2018 (modified: 21 Dec 2018)ICLR 2019 Conference Blind Submission
+* https://openreview.net/forum?id=r1E0OsA9tX
+
+### Innateness, AlphaZero, and Artificial Intelligence
+* Gary Marcus
+* (Submitted on 17 Jan 2018)
+* https://arxiv.org/abs/1801.05667
+
+### Extending Universal Intelligence Models with Formal Notion of Representation
+* Alexey Potapov, Sergey Rodionov
+* (Submitted on 6 Jun 2013)
+* https://arxiv.org/abs/1306.1557
+
+### UNIVERSAL ALGORITHMIC INTELLIGENCE [AIXI]
+* A mathematical top→down approach
+* Marcus Hutter
+* http://www.hutter1.net/ai/aixigentle.pdf
+* http://www.hutter1.net/ai/aixigentle.htm
+* http://www.hutter1.net/ai/uaibook.htm
+* http://www.hutter1.net/
+
+### Compression is Comprehension, and the Unreasonable Effectiveness of Digital Computation in the Natural World
+* Hector Zenil
+* (Submitted on 23 Apr 2019 (v1), last revised 3 Sep 2019 (this version, v2))
+* https://arxiv.org/abs/1904.10258
+
+
+### Universal Artificial Intelligence: Sequential Decisions Based on Algorithmic Probability (Texts in Theoretical Computer Science. An EATCS Series) 
+* Marcus Hutter  (Auteur)
+https://www.amazon.fr/Universal-Artificial-Intelligence-Algorithmic-Probability-ebook/dp/B00FC2DNQ4/ref=sr_1_1?__mk_fr_FR=%C3%85M%C3%85%C5%BD%C3%95%C3%91&keywords=Universal+Artificial+Intelligence%3A+Sequential+Decisions+Based+on+Algorithmic+Probability&qid=1582493496&sr=8-1
+
+
+### A Standard Model of the Mind: Toward a Common Computational Framework across Artificial Intelligence, Cognitive Science, Neuroscience, and Robotics
+#### Abbreviated Title: A Standard Model of the Mind
+* John E. Laird (University of Michigan), Christian Lebiere (Carnegie Mellon University), and Paul S. Rosenbloom (University of Southern California)
+* https://www.aaai.org/ojs/index.php/aimagazine/article/view/2744
+
+### The Sigma Cognitive Architecture and System: Towards Functionally Elegant Grand Unification
+Paul S. Rosenbloom ROSENBLOOM@USC.EDU
+Abram Demski
+Institute for Creative Technologies and
+Department of Computer Science
+12015 Waterfront Dr.
+Playa Vista, CA 90094, USA
+ADEMSKI@ICT.USC.EDU
+Volkan Ustun
+* https://www.degruyter.com/downloadpdf/j/jagi.2016.7.issue-1/jagi-2016-0001/jagi-2016-0001.pdf
+
+
+### Why the Common Model of the mind needs holographic a-priori categories
+* Nipun Arora, Robert West, Andrew Brook, and Matthew Kelly
+* https://reader.elsevier.com/reader/sd/pii/S1877050918323469?token=DD2C0F1AA4E019B87928804845D78AC8B9B95FA072E0CD71589F28C2342FF3B3BAF6B8BB787B99517F2F4C5174FBBE21
+* https://www.sciencedirect.com/science/article/pii/S1877050918323469
+* https://doi.org/10.1016/j.procs.2018.11.060
+
+### Designing Artificial Cognitive Architectures: Brain Inspired or Biologically Inspired?
+* EmanuelDiamant
+* https://doi.org/10.1016/j.procs.2018.11.023
+* https://www.sciencedirect.com/science/article/pii/S1877050918323081
+
+###  CogArch-ADL: Toward a Formal Description of a Reference Architecture for the Common Model of Cognition
+* Oscar J.Romero
+* https://doi.org/10.1016/j.procs.2018.11.029
+* https://www.sciencedirect.com/science/article/pii/S1877050918323159
+
+###  Modeling Individual Strategies in Dynamic Decision-making with ACT-R: A Task Toward Decision-making Assistance in HCI
+Author links open overlay panelZiyingZhangaNeleRusswinkelaSabinePrezenskia
+￼Show more
+https://doi.org/10.1016/j.procs.2018.11.064
+https://www.sciencedirect.com/science/article/pii/S1877050918323500
+
+
+### ACT-R Reference Manual
+* http://act-r.psy.cmu.edu/actr7.x/reference-manual.pdf
+* http://act-r.psy.cmu.edu/about/
+
 
 
 ### CommAI: Evaluating the first steps towards a useful general AI
