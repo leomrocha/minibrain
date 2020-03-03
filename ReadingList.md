@@ -133,6 +133,7 @@ And this one!!
 * Rajarshi Das rajarshi@cs.umass.edu University of Massachusetts, Amherst
 * https://openreview.net/pdf?id=HylaEWcTT7
 
+THIS PAPER!!!!!!
 
 ### Books and Lectures online for NLP
 
@@ -323,6 +324,15 @@ This paper too might be interesting for generating the training elements
 ( Old paper  from 2005?)
 http://www.nld.ds.mpg.de/~michael/CNS_course_2005/papers/Woergoetter/doya02.pdf
 
+
+### SLIDE : IN DEFENSE OF SMART ALGORITHMS OVER HARDWARE ACCELERATION FOR LARGE-SCALE DEEP LEARNING SYSTEMS
+* Beidi Chen 1 Tharun Medini 1 James Farwell 2 Sameh Gobriel 2 Charlie Tai 2 Anshumali Shrivastava 
+* https://www.cs.rice.edu/~as143/Papers/SLIDE_MLSys.pdf
+* https://github.com/keroro824/HashingDeepLearning
+* Needs https://github.com/rogersce/cnpy
+
+Training Fully Connected Neural Networks in CPU with LSH Locality Sensitive Hashing
+Comments in [this](https://www.reddit.com/r/MachineLearning/comments/fckfug/r_slide_algorithm_for_training_deep_neural_nets/) discussion seems to show that the paper is quite limited in scope and comparison with GPUs is not fair.
 
 ### AI-GAs: AI-generating algorithms, an alternate paradigm for producing general artificial intelligence
 * https://arxiv.org/pdf/1905.10985.pdf
@@ -830,6 +840,10 @@ Yoshua Bengio
 
 Interesting starter idea, but there is stil the question on what to do as a toy example and how to measure it?
 
+### Semantics derived automatically from language corpora contain human-like biases
+* Aylin Caliskan, Joanna J. Bryson, Arvind Narayanan
+* Science  14 Apr 2017
+* https://science.sciencemag.org/content/356/6334/183
 
 
 ### Adaptive Computation Time for Recurrent Neural Networks
@@ -882,6 +896,7 @@ Graves 2017
 * Alexey Potapov, Sergey Rodionov
 * (Submitted on 6 Jun 2013)
 * https://arxiv.org/abs/1306.1557
+* http://aideus.com/research/publications.html
 
 ### UNIVERSAL ALGORITHMIC INTELLIGENCE [AIXI]
 * A mathematical top→down approach
@@ -906,6 +921,10 @@ https://www.amazon.fr/Universal-Artificial-Intelligence-Algorithmic-Probability-
 #### Abbreviated Title: A Standard Model of the Mind
 * John E. Laird (University of Michigan), Christian Lebiere (Carnegie Mellon University), and Paul S. Rosenbloom (University of Southern California)
 * https://www.aaai.org/ojs/index.php/aimagazine/article/view/2744
+
+Really interesting, defines a hybrid model of the mind: Symbolic + Statistical
+
+
 
 ### The Sigma Cognitive Architecture and System: Towards Functionally Elegant Grand Unification
 Paul S. Rosenbloom ROSENBLOOM@USC.EDU
