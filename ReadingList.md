@@ -54,8 +54,14 @@ I really like this approach and what it says, what it proposes and the sources i
 * https://openreview.net/forum?id=rJgMlhRctm
 * https://github.com/vacancy/NSCL-PyTorch-Release
 
-Check this paper!!
 http://jiayuanm.com/
+
+Interesting but it does not give many details on the architecture of each part. I'll have to check the code. 
+I'm interested in the DSL used.
+
+Uses REINFORCE for learning, pre-trained ResNet-34 for image input, a traductin to opbject concept and a DSL 
+that executes the computed program.
+From the idea point of view I see it interesting with good results, but ... I still don't see how it works
 
 
 ### Visually Grounded Neural Syntax Acquisition
@@ -65,8 +71,9 @@ http://jiayuanm.com/
 * https://vimeo.com/384515583
 * https://github.com/ExplorerFreda/VGNSL
 
-AND THIS ONE!!!
 http://jiayuanm.com/    
+
+
 
 ### Enhancing the Transformer with Explicit Relational Encoding for Math Problem Solving
 * Imanol Schlag, Paul Smolensky, Roland Fernandez, Nebojsa Jojic, Jürgen Schmidhuber, Jianfeng Gao
@@ -94,15 +101,170 @@ http://jiayuanm.com/
 
 And this one!!
 
+### ReZero is All You Need: Fast Convergence at Large Depth
+* Thomas Bachlechner, Bodhisattwa Prasad Majumder, Huanru Henry Mao, Garrison W. Cottrell, Julian McAuley
+* (Submitted on 10 Mar 2020)
+* https://arxiv.org/abs/2003.04887
+
+Read this one!
+
+### Linguistically-Informed Self-Attention for Semantic Role Labeling
+* Emma Strubell, Patrick Verga, Daniel Andor, David Weiss, Andrew McCallum
+* (Submitted on 23 Apr 2018 (v1), last revised 12 Nov 2018 (this version, v3))
+* https://arxiv.org/abs/1804.08199
+
+Interesting paper that does multi-task and uses an attention head to deal with parent parsing instead of leaving it to its own.
+As this head has a defined task it can be replaced with external parsers if need be.
+Somehow related with my idea  of having different kinds of knowledge encoded inside the network.
+
+
+### Attending to Entities for Better Text Understanding
+* Pengxiang Cheng, Katrin Erk
+* (Submitted on 11 Nov 2019)
+* https://arxiv.org/abs/1911.04361
+
+Really interesting increment on "Linguistically-Informed Self-Attention for Semantic Role Labeling"
+It seems to have a good study on the corereference enhancement I'm looking for, this shows that the direction I'm trying to follow
+is correct and I do have to follow up on those efforts.
+
+    "we show that a model trained from scratch with coreference as auxiliary supervision for 
+    self-attention outperforms the largest GPT-2 model, setting the new state-of-the-art, 
+    while only containing a tiny fraction of parameters compared to GPT-2"
+
+    "This confirms our hypothesis that the injection of semantic knowledge via supervised
+     self-attention can be helpful in addition to recent pre-trained language models."
+
+    "With both ELMo embeddings and COREFALL supervision, we achieve an average accuracy of 63.71% 
+    (and the best run achieves 64.62%), outperforming the largest GPT-2 model.
+    This is quite surprising, considering that our model only contains 2.6 million tunable parameters, significantly
+    smaller than the number of parameters in GPT-2 (1.5 billion)."
+
+What I have been trying first is to add as much information at the beginning, this is verified by the current paper: 
+
+    "Where should the supervision be applied? Is it more beneficial to apply auxiliary supervision 
+    at an earlier stage of the model, i.e., at the contextual layer"
+
+The points that are not made are the following ones I do want to study are the importance of the embeddings 
+(which is a work in progress for the moment showing some interesting points already) and the external knowledge
+injection of *overfitted* knowledge for edge cases.
+
+This last part is the toughest one that I do not know yet how will work. For the moment I have a couple of ideas
+working with an external database that I call NeuralDB and a multi-index that acts as a dictionary for embeddings and 
+ a minimum-spanning parse tree that tries to find the longest matching entity for the embedding selection of the input.
+ The next point after being able to inject external knowledge is what I call * sleeping mode* in which episodic knowledge
+ gets summed-up|compressed to smaller representations melding and building on preexisting learned knowledge  
+ 
+The other big issue with the current ideas I have is that on the embedding AND training they are not easy to meld into current NN libraries. 
+
+ What keeps me thinking that overfitting is not only not bad, but necessary for some cases is that babies tend to first 
+ learn to memorize and things MUST BE as they learned them first. This is something I experience every day with my infant
+ There must be a part that memorises everything and another part that generalizes.
+ also there is a point in Obsessive behaviours, many smart people have them ... something must be happening there that makes it that way.
+ 
+### Cognitive Atomization
+* https://mad.science.blog/2020/02/28/cognitive-atomization/
+
+Interesting on how it talks about the cognitive atomization and how different either psychodelic drugs 
+might help integration improving (up to a certain point) the momentary intelligence and pattern generation
+while psychotic drugs might help fragmentation practically "erasing" the integration and previous prior knowledge   
+
+### Token-level Dynamic Self-Attention Network for Multi-Passage Reading Comprehension
+* Yimeng Zhuang, Huadong Wang
+* Samsung Research China - Beijing (SRC-B)
+* {ym.zhuang, huadong.wang}@samsung.com
+* https://www.aclweb.org/anthology/P19-1218.pdf
+
+### Deep Biaffine Attention for Neural Dependency Parsing
+* Timothy Dozat, Christopher D. Manning
+* (Submitted on 6 Nov 2016 (v1), last revised 10 Mar 2017 (this version, v3))
+* https://arxiv.org/abs/1611.01734
+
+
+Check more in depth: "transition-based dependency parser" which is an idea that I might have been looking for some time already
+
+Here some references that I should check to understand better the ideas that I might or might not be able to use:
+
+    "A number of other researchers have attempted to address some limitations of Chen & Manning’s Chen & Manning parser by augmenting it with additional complexity:
+    Weiss et al. (2015) and Andor et al. (2016) augment it with a beam search and a conditional random
+    field loss objective to allow the parser to “undo” previous actions once it finds evidence that they may
+    have been incorrect; and Dyer et al. (2015) and (Kuncoro et al., 2016) instead use LSTMs to represent the stack and buffer..."
+
+
+
+### Simpler but More Accurate Semantic Dependency Parsing
+* Timothy Dozat, Christopher D. Manning
+* (Submitted on 3 Jul 2018)
+* https://arxiv.org/abs/1807.01396
+
+
+
 ### Universal Agent for Disentangling Environments and Tasks ￼
 * Jiayuan Mao, Honghua Dong, Joseph J. Lim
 * 15 Feb 2018 (modified: 03 Mar 2018)ICLR 2018 Conference Blind Submission
 * https://openreview.net/forum?id=B1mvVm-C-
 
+### Efficient training of energy-based models via spin-glass control
+* Alejandro Pozas-Kerstjens, Gorka Muñoz-Gil, Miguel Ángel García-March, Antonio Acín, Maciej Lewenstein, Przemysław R. Grzybowski
+* (Submitted on 3 Oct 2019)
+* https://arxiv.org/abs/1910.01592
+
+Read this paper!
+
 ### Neural Theorem Provers Do Not Learn Rules Without Exploration
 *Michiel de Jong, Fei Sha
 *(Submitted on 17 Jun 2019)
 *https://arxiv.org/abs/1906.06805
+
+### Graph Neural Networks Meet Neural-Symbolic Computing: A Survey and Perspective
+* Luis Lamb, Artur Garcez, Marco Gori, Marcelo Prates, Pedro Avelar, Moshe Vardi
+* (Submitted on 29 Feb 2020)
+* https://arxiv.org/abs/2003.00330
+
+Interesting in the sense that it list many resources to go and read, but not too informative from the technical perspective
+
+### Neural-Symbolic Computing: An Effective Methodology for Principled Integration of Machine Learning and Reasoning
+* Artur d'Avila Garcez, Marco Gori, Luis C. Lamb, Luciano Serafini, Michael Spranger, Son N. Tran
+* (Submitted on 15 May 2019)
+* https://arxiv.org/abs/1905.06088
+
+Interesting:
+
+    In what follows, we review the important and recent developments of research on
+    neural-symbolic systems. We start by outlining the main important characteristics
+    of a neural-symbolic system: Representation, Extraction, Reasoning and Learning
+    [2, 17], and their applications. We then discuss and categorise the approaches to
+    representing symbolic knowledge in neural-symbolic systems into three main groups:
+    rule-based, formula-based and embedding-based. 
+    After that, we show the capabilities and applications of neural-symbolic 
+    systems for learning, reasoning, and explainability. 
+    Towards the end of the paper we outline recent trends and identify a
+    few challenges for neural-symbolic computing research.
+
+### Relational Neural Machines
+* Giuseppe Marra, Michelangelo Diligenti, Francesco Giannini, Marco Gori, Marco Maggini
+* (Submitted on 6 Feb 2020)
+* https://arxiv.org/abs/2002.02193
+
+
+### A self-organizing fuzzy neural network for sequence learning
+* Armin Salimi-Badr, Mohammad Mehdi Ebadzadeh
+* (Submitted on 1 Aug 2019)
+* https://arxiv.org/abs/1908.00617
+
+### Decoupling Structure and Lexicon for Zero-Shot Semantic Parsing
+* Jonathan Herzig, Jonathan Berant
+* (Submitted on 21 Apr 2018 (v1), last revised 22 Sep 2018 (this version, v2))
+* https://arxiv.org/abs/1804.07918
+
+### Building a Semantic Parser Overnight
+* Yushi Wang,  Jonathan Berant, Percy Liang
+* https://nlp.stanford.edu/pubs/wang-berant-liang-acl2015.pdf
+
+### Learning Structured Natural Language Representations for Semantic Parsing
+* Jianpeng Cheng, Siva Reddy, Vijay Saraswat, Mirella Lapata
+* (Submitted on 27 Apr 2017 (v1), last revised 14 Jun 2017 (this version, v3))
+* https://arxiv.org/abs/1704.08387
+
 
 ### Scalable Neural Theorem Proving on Knowledge Bases and Natural Language 
 * Pasquale Minervini, Matko Bosnjak, Tim Rocktäschel, Edward Grefenstette, Sebastian Riedel
@@ -363,6 +525,13 @@ Gradient checkpointing (memory at the expense of time) for DNNs from OpenAI, mak
 
 ## For NLP
 
+
+### La loi de Menzerath appliquée à un ensemble de textes
+* Marc Hug Professeur émérite, Université Marc Bloch, 23, rue Descartes, 67084 Strasbourg Cedex
+* http://lexicometrica.univ-paris3.fr/article/numero5/lexicometrica-hug.pdf
+
+Loi de Menzerath sur la construction des textes et rélation entre la longeur des phrases et des mots
+
 __
 ### Datasets:
 * [List of many datasets](http://nlpprogress.com/english/question_answering.html)
@@ -381,6 +550,16 @@ __
 
 WOOOOW this study is amazing and to take into account for any and avery work on NLP.
 I need a more in deep reading and study of this paper to set the parameters ... But from the overview I did it's a great job.
+
+### ELECTRA: Pre-training Text Encoders as Discriminators Rather Than Generators ￼
+* Kevin Clark, Minh-Thang Luong, Quoc V. Le, Christopher D. Manning
+* 25 Sep 2019 (modified: 11 Mar 2020)
+* https://openreview.net/forum?id=r1xMH1BtvB
+* https://ai.googleblog.com/2020/03/more-efficient-nlp-model-pre-training.html?m=1
+* https://github.com/google-research/electra
+
+THIS PAPER!!!! reduces training time and resources needed by a LOT while achieving new SotA
+
 
 ### Multilingual Denoising Pre-training for Neural Machine Translation
 * Yinhan Liu, Jiatao Gu, Naman Goyal, Xian Li, Sergey Edunov, Marjan Ghazvininejad, Mike Lewis, Luke Zettlemoyer
@@ -1112,7 +1291,8 @@ https://github.com/RUSH-LAB/LSH_Memory
 
 
 ### Matching Networks for One Shot Learning
-Oriol Vinyals, Charles Blundell, Timothy Lillicrap, Koray Kavukcuoglu, Daan Wierstra
+* Oriol Vinyals, Charles Blundell, Timothy Lillicrap, Koray Kavukcuoglu, Daan Wierstra
+* https://arxiv.org/abs/1606.04080
 
 Interesting about the concepts, although I need to dig much deeper to understand all the behind the scenes (sequence 2 sequence embeddings and treating the inputs as sets) from previous papers to get in in more depth
 
