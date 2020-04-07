@@ -174,6 +174,14 @@ while psychotic drugs might help fragmentation practically "erasing" the integra
 * {ym.zhuang, huadong.wang}@samsung.com
 * https://www.aclweb.org/anthology/P19-1218.pdf
 
+This paper deals with the cross-passage information at token-level, tries to deal with the issue of sentence compression
+that coarse-grained information can not deal with.
+  
+    "Our model employs a self-attention mechanism to combine token-level
+    supportive information from all passages in a multi-step process"
+
+
+
 ### Deep Biaffine Attention for Neural Dependency Parsing
 * Timothy Dozat, Christopher D. Manning
 * (Submitted on 6 Nov 2016 (v1), last revised 10 Mar 2017 (this version, v3))
@@ -1294,9 +1302,24 @@ https://github.com/RUSH-LAB/LSH_Memory
 * Oriol Vinyals, Charles Blundell, Timothy Lillicrap, Koray Kavukcuoglu, Daan Wierstra
 * https://arxiv.org/abs/1606.04080
 
+ABSOLUTELY THIS PAPER!!!!!!!
+
 Interesting about the concepts, although I need to dig much deeper to understand all the behind the scenes (sequence 2 sequence embeddings and treating the inputs as sets) from previous papers to get in in more depth
 
-TODO read references and come back to this one
+    "Our framework learns a network that maps a small labelled support set and an unlabelled
+     example to its label, obviating the need for fine-tuning to adapt to new class types"
+
+Really interesting paper that implements a basic precursor of what I call NeuralDB, 
+the number of examples of classes grow and take more memory (which is basically the NeuralDB)
+
+Also there is another point to make in what I want to implement a "sleep" mode where memories are merged somehow. 
+
+    "The most relevant work is Neighborhood Component Analysis (NCA) [18], and the follow up non-linear version [20]. 
+    The loss is very similar to ours, except we use the whole support set S instead of pair-wise comparisons which is 
+    more amenable to one-shot learning. "
+
+
+
 
 
 ### Towards deep learning with segregated dendrites
@@ -2063,10 +2086,12 @@ GOOOD in energy and training cost reduction
 Check other algorithm here too: https://github.com/RUSH-LAB/Flash
 
 
-Order Matters: Sequence to sequence for sets
-Oriol Vinyals, Samy Bengio, Manjunath Kudlur
-(Submitted on 19 Nov 2015 (v1), last revised 23 Feb 2016 (this version, v4))
+### Order Matters: Sequence to sequence for sets
+* Oriol Vinyals, Samy Bengio, Manjunath Kudlur
+* (Submitted on 19 Nov 2015 (v1), last revised 23 Feb 2016 (this version, v4))
+* https://arxiv.org/abs/1511.06391
 
+Read this paper
 
 Neighbourhood Components Analysis
 Jacob Goldberger, Sam Roweis, Geoff Hinton, Ruslan Salakhutdinov
