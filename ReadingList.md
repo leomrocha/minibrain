@@ -108,6 +108,13 @@ And this one!!
 
 Read this one!
 
+Really simple and great addition
+
+    "The idea is simple: ReZero initializes each layer to perform the identity operation.
+     For each layer, we introduce a residual connection for the input signal x
+     and one trainable parameter α that modulates the non-trivial transformation of the layer F(x), 
+     xi+1 = xi + αiF(xi), where α = 0 at the beginning of training"
+
 ### Linguistically-Informed Self-Attention for Semantic Role Labeling
 * Emma Strubell, Patrick Verga, Daniel Andor, David Weiss, Andrew McCallum
 * (Submitted on 23 Apr 2018 (v1), last revised 12 Nov 2018 (this version, v3))
@@ -253,6 +260,10 @@ Interesting:
 * (Submitted on 6 Feb 2020)
 * https://arxiv.org/abs/2002.02193
 
+This paper deals with a mixture of traditional deep learning plus first order logic and seems to work.
+But I don't get it yet on HOW it works.
+
+Need to go back at it again later 
 
 ### A self-organizing fuzzy neural network for sequence learning
 * Armin Salimi-Badr, Mohammad Mehdi Ebadzadeh
@@ -1318,8 +1329,12 @@ Also there is another point to make in what I want to implement a "sleep" mode w
     The loss is very similar to ours, except we use the whole support set S instead of pair-wise comparisons which is 
     more amenable to one-shot learning. "
 
+And here is where my NeuralDB main concept intervenes (check Large Memory Layers with Product Keys:
 
-
+    "An obvious drawback of our model is the fact that, as the support set S grows
+    in size, the computation for each gradient update becomes more expensive. Although there are sparse
+    and sampling-based methods to alleviate this, much of our future efforts will concentrate around this
+    limitation. " 
 
 
 ### Towards deep learning with segregated dendrites
