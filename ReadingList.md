@@ -284,6 +284,26 @@ Need to go back at it again later
 * (Submitted on 27 Apr 2017 (v1), last revised 14 Jun 2017 (this version, v3))
 * https://arxiv.org/abs/1704.08387
 
+### What representations and computations underpin the contribution of the hippocampus to generalization and inference?
+* Dharshan Kumaran*
+* Institute of Cognitive Neuroscience, University College London, London, UK
+* https://www.researchgate.net/publication/225276429_What_Representations_and_Computations_Underpin_the_Contribution_of_the_Hippocampus_to_Generalization_and_Inference
+
+### Empirical Bayes Transductive Meta-Learning with Synthetic Gradients
+* By Xu Hu, Pablo Garcia Moreno, Xi Shen, Yang Xiao, Guillaume Obozinski, Neil Lawrence, Andreas Damianou 
+* 2020
+* https://www.amazon.science/publications/empirical-bayes-transductive-meta-learning-with-synthetic-gradients
+
+Amazon take on Meta-Learning
+
+
+### Generalization through the recurrent interaction of episodic memories: a model of the hippocampal system.
+* Kumaran D1, McClelland JL.
+* Psychol Rev. 2012 Jul;119(3):573-616. doi: 10.1037/a0028681.
+* https://www.ncbi.nlm.nih.gov/pubmed/22775499
+
+Read this Neuroscience paper 
+
 
 ### Scalable Neural Theorem Proving on Knowledge Bases and Natural Language 
 * Pasquale Minervini, Matko Bosnjak, Tim Rocktäschel, Edward Grefenstette, Sebastian Riedel
@@ -365,6 +385,8 @@ THIS PAPER TOO!!
 * https://arxiv.org/abs/1907.05572
 * https://github.com/konstantinosKokos/Lassy-TLG-Supertagging
 
+THIS PAPER!!!!
+
 
 ### A Neural Conversational Model
 * Oriol Vinyals, Quoc Le
@@ -388,6 +410,7 @@ THIS PAPER!!
 * [Evolved Transformer Architecture](https://ai.googleblog.com/2019/06/applying-automl-to-transformer.html) 
 * [Source Code](https://github.com/tensorflow/tensor2tensor/blob/master/tensor2tensor/models/evolved_transformer.py)
 
+THIS PAPER
 Nice results, maybe should implement the evolved transformer in pytorch
 
 ### Wizard of Wikipedia: Knowledge-Powered Conversational agents
