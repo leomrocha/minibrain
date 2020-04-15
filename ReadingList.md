@@ -348,6 +348,17 @@ THIS PAPER!!!!!!
 * [arXiv](https://arxiv.org/abs/1905.00075)
 * [Associated Code in Github](https://github.com/mattbierbaum/arxiv-public-datasets) 
 
+### Deep Learning Based Text Classification: A Comprehensive Review
+* Shervin Minaee, Nal Kalchbrenner, Erik Cambria, Narjes Nikzad, Meysam Chenaghlu, Jianfeng Gao
+* (Submitted on 6 Apr 2020)
+* https://arxiv.org/abs/2004.03705
+* https://www.arxiv-vanity.com/papers/2004.03705/
+
+    "In this work, we provide a detailed review of more than 150 deep learning based models for text classification developed in recent years, and discuss their technical contributions, similarities, and strengths. We also provide a summary of more than 40 popular datasets widely used for text classification"
+
+Interesting review, a bit short on the descriptions but quite interesting. I took some references for reading later.
+
+
 ### MEMO: A Deep Network for Flexible Combination of Episodic Memories
 * Andrea Banino, Adrià Puigdomènech Badia, Raphael Köster, Martin J. Chadwick, Vinicius Zambaldi, Demis Hassabis, Caswell Barry, Matthew Botvinick, Dharshan Kumaran, Charles Blundell
 * (Submitted on 29 Jan 2020)
@@ -358,6 +369,18 @@ THIS ONE!!!!!!!!!!!!!!!
 Amazing paper
 
 Introduces not only great memory mechanisms but also a new dataset: called Paired Associative Inference (PAI)
+
+### Hierarchical Attention Networks for Document Classification
+* Zichao Yang, Diyi Yang, Chris Dyer, Xiaodong He, Alex Smola, Eduard Hovy
+* June 2016
+* https://www.aclweb.org/anthology/N16-1174/
+
+### Neural Semantic Encoders
+* Tsendsuren Munkhdalai, Hong Yu
+* (Submitted on 14 Jul 2016 (v1), last revised 5 Jan 2017 (this version, v3))
+* https://arxiv.org/abs/1607.04315
+
+
 
 ### Generalization Through the Recurrent Interaction of Episodic Memories: A Model of the Hippocampal System
 * https://psycnet.apa.org/fulltext/2012-17473-004.html
@@ -500,13 +523,29 @@ Memory usage is 3 times the one of a normal network but the power of the networs
 ### BACKPROPAMINE: TRAINING SELF-MODIFYING NEURAL NETWORKS WITH DIFFERENTIABLE NEUROMODULATED PLASTICITY
 * https://openreview.net/pdf?id=r1lrAiA5Ym
 * https://github.com/leomrocha/backpropamine
+* https://arxiv.org/abs/2002.10585
+
 
 THIS Paper -> I need to implement everything from the Differential plasticity plus this one ( relatively small changes )
+
+Neuromodulated plasticity
 
 ### Paired Open-Ended Trailblazer (POET): Endlessly Generating Increasingly Complex and Diverse Learning Environments and Their Solutions
 * https://arxiv.org/abs/1901.01753
 
 This paper too might be interesting for generating the training elements
+
+### Enhanced POET: Open-Ended Reinforcement Learning through Unbounded Invention of Learning Challenges and their Solutions
+* Rui Wang, Joel Lehman, Aditya Rawal, Jiale Zhi, Yulun Li, Jeff Clune, Kenneth O. Stanley
+* (Submitted on 19 Mar 2020 (v1), last revised 13 Apr 2020 (this version, v2))
+*  https://arxiv.org/abs/2003.08536
+
+THIS PAPER
+
+### Scaling MAP-Elites to Deep Neuroevolution
+* Cédric Colas, Joost Huizinga, Vashisht Madhavan, Jeff Clune
+* (Submitted on 3 Mar 2020)
+* https://arxiv.org/abs/2003.01825
 
 
 ### One-Shot Neural Architecture Search via Compressive Sensing
@@ -704,6 +743,59 @@ during training (although is not the same kind of mechanism, is not a working me
 
 The tough part will be to get the datasets and tasks to train it.
 
+
+### Unified Language Model Pre-training for Natural Language Understanding and Generation
+* Li Dong, Nan Yang, Wenhui Wang, Furu Wei, Xiaodong Liu, Yu Wang, Jianfeng Gao, Ming Zhou, Hsiao-Wuen Hon
+* (Submitted on 8 May 2019 (v1), last revised 15 Oct 2019 (this version, v3))
+* https://arxiv.org/abs/1905.03197
+
+    "This paper presents a new Unified pre-trained Language Model (UniLM) that can be fine-tuned for both natural language understanding and generation tasks. The model is pre-trained using three types of language modeling tasks: unidirectional, bidirectional, and sequence-to-sequence prediction. The unified modeling is achieved by employing a shared Transformer network and utilizing specific self-attention masks to control what context the prediction conditions on."
+    
+    "we use masking to control how much context the token should attend to when computing its contextualized representation"
+
+    "Specifically, we use a 24-layer Transformer with 1, 024 hidden size, and 16 attention heads, which contains about 340M parameters."
+
+    "It takes about 7 hours for 10, 000 steps using 8 Nvidia Telsa V100 32GB GPU cards with mixed precision training."
+
+
+Really interesting take on how to train for different tasks changing only the self-attention Mask.
+I should take this training technique and add it to my own first stage training.
+
+Although the sequence to sequence training is not what I have in mind for these tasks, as translation for exmaple. 
+For this I have another idea in which we have an encoder-decoder recurrent architecture
+
+I like the way that this paper makes a single network be able to be fine-tunned for different purposes with a unified pre-processing
+
+
+
+THIS PAPER
+
+### Graph Convolutional Networks for Text Classification
+* Liang Yao, Chengsheng Mao, Yuan Luo
+* (Submitted on 15 Sep 2018 (v1), last revised 13 Nov 2018 (this version, v3))
+* https://arxiv.org/abs/1809.05679
+
+###  Tensor Graph Convolutional Networks for Text Classification
+* Xien Liu, Xinxin You, Xiao Zhang, Ji Wu, Ping Lv
+* (Submitted on 12 Jan 2020)
+* https://arxiv.org/abs/2001.05313
+
+Try to understand this paper
+
+
+### HDLTex: Hierarchical Deep Learning for Text Classification
+* Kamran Kowsari, Donald E. Brown, Mojtaba Heidarysafa, Kiana Jafari Meimandi, Matthew S. Gerber, Laura E. Barnes
+* (Submitted on 24 Sep 2017 (v1), last revised 6 Oct 2017 (this version, v2))
+* https://arxiv.org/abs/1709.08267
+
+### Neural Variational Inference for Text Processing
+* Yishu Miao, Lei Yu, Phil Blunsom
+* (Submitted on 19 Nov 2015 (v1), last revised 4 Jun 2016 (this version, v4))
+* https://arxiv.org/abs/1511.06038
+
+
+
+
 ### Sebastian RUDER
 * [10 ML & NLP Research Highlights of 2019](https://ruder.io/research-highlights-2019/)
 * [Unsupervised Cross-lingual Representation Learning](https://ruder.io/unsupervised-cross-lingual-learning/#unsupervised-deep-models)
@@ -730,6 +822,14 @@ Guillaume Lample, Alexis Conneau
 * Łukasz Kaiser, Samy Bengio
 * https://arxiv.org/abs/1801.09797
 
+
+### CoQA: A Conversational Question Answering Challenge
+* Siva Reddy, Danqi Chen, Christopher D. Manning
+* (Submitted on 21 Aug 2018 (v1), last revised 29 Mar 2019 (this version, v2))
+* https://arxiv.org/abs/1808.07042
+
+CoQA dataset
+THIS dataset
 
 ### Swag: A Large-Scale Adversarial Dataset for Grounded Commonsense Inference 
 * https://arxiv.org/pdf/1808.05326.pdf
