@@ -380,6 +380,16 @@ Introduces not only great memory mechanisms but also a new dataset: called Paire
 * (Submitted on 14 Jul 2016 (v1), last revised 5 Jan 2017 (this version, v3))
 * https://arxiv.org/abs/1607.04315
 
+Understand this paper better as it might have a few of the points I need for the NeuralDB
+
+Interesting take on the memory operations leading to a modular approach with a "compose" operation
+that tries to avoid *information collision* in the memory. The memory in NSE is of variable size.
+
+The approach here has some similarity to my idea of multi-level multi-temporal scales 
+
+An approach like this one might be interesting in a second step where LSTM is used between sequential sentences
+
+The approach uses LSTMs, which means that training can be an issue (even though is well known how to train them). 
 
 
 ### Generalization Through the Recurrent Interaction of Episodic Memories: A Model of the Hippocampal System
@@ -561,7 +571,12 @@ THIS PAPER
 * https://arxiv.org/abs/1902.08438
 
 ### Meta-Learning Representations for Continual Learning
+* Khurram Javed, Martha White
+* (Submitted on 29 May 2019 (v1), last revised 30 Oct 2019 (this version, v2))
 * https://arxiv.org/abs/1905.12588
+
+Read this paper, is a base for Learning to Continually LEarn
+
 
 ### http://www.nld.ds.mpg.de/~michael/CNS_course_2005/papers/Woergoetter/doya02.pdf
 ( Old paper  from 2005?)
@@ -626,6 +641,16 @@ __
 * [Kiwix - offline copies of free information](https://www.kiwix.org/en/downloads/kiwix-content-packages/)
 * [ArXiv Complete Dataset](https://arxiv.org/help/bulk_data_s3)
 
+
+### XTREME: A Massively Multilingual Multi-task Benchmark for Evaluating Cross-lingual Generalization
+* Junjie Hu, Sebastian Ruder, Aditya Siddhant, Graham Neubig, Orhan Firat, Melvin Johnson
+* (Submitted on 24 Mar 2020 (v1), last revised 10 Apr 2020 (this version, v3))
+* https://arxiv.org/abs/2003.11080
+* https://ai.googleblog.com/2020/04/xtreme-massively-multilingual-multi.html
+* https://github.com/google-research/xtreme
+
+This paper and Dataset!!!
+
 ### Scaling Laws for Neural Language Models
 * https://arxiv.org/abs/2001.08361
 
@@ -640,6 +665,11 @@ I need a more in deep reading and study of this paper to set the parameters ... 
 * https://github.com/google-research/electra
 
 THIS PAPER!!!! reduces training time and resources needed by a LOT while achieving new SotA
+
+### Exploring Massively Multilingual, Massive Neural Machine Translation
+* Friday, October 11, 2019
+* Posted by Ankur Bapna, Software Engineer and Orhan Firat, Research Scientist, Google Research
+* https://ai.googleblog.com/2019/10/exploring-massively-multilingual.html
 
 
 ### Multilingual Denoising Pre-training for Neural Machine Translation
@@ -755,7 +785,9 @@ The tough part will be to get the datasets and tasks to train it.
 
     "Specifically, we use a 24-layer Transformer with 1, 024 hidden size, and 16 attention heads, which contains about 340M parameters."
 
-    "It takes about 7 hours for 10, 000 steps using 8 Nvidia Telsa V100 32GB GPU cards with mixed precision training."
+    "It takes about 7 hours for 10000 steps using 8 Nvidia Telsa V100 32GB GPU cards with mixed precision training."
+    
+Is trained for 770000 steps total -> 7*77hs -> 539 hours
 
 
 Really interesting take on how to train for different tasks changing only the self-attention Mask.
@@ -766,9 +798,26 @@ For this I have another idea in which we have an encoder-decoder recurrent archi
 
 I like the way that this paper makes a single network be able to be fine-tunned for different purposes with a unified pre-processing
 
-
-
 THIS PAPER
+
+### LayoutLM: Pre-training of Text and Layout for Document Image Understanding
+* Yiheng Xu, Minghao Li, Lei Cui, Shaohan Huang, Furu Wei, Ming Zhou
+* Submitted on 31 Dec 2019 (v1), last revised 3 Apr 2020 (this version, v4)
+* https://arxiv.org/abs/1912.13318
+
+Really good idea from Microsoft Research: Text + in-page text-layout (image) 
+
+The thing is: having the layout of the page might be a problem for many datasets.
+
+They do this from scanned documents with [Tesseract OCR](https://tesseract-ocr.github.io/) [source](https://github.com/tesseract-ocr/tesseract).
+
+8 x NVIDIA Tesla V100 32GB
+BASE Model 80 hours -> GPGPU 640hs
+LARGE Model 170 hours -> GPGPU 1360hs
+
+Can be a bit pricey
+
+THIS PAPER is interesting
 
 ### Graph Convolutional Networks for Text Classification
 * Liang Yao, Chengsheng Mao, Yuan Luo
@@ -793,8 +842,13 @@ Try to understand this paper
 * (Submitted on 19 Nov 2015 (v1), last revised 4 Jun 2016 (this version, v4))
 * https://arxiv.org/abs/1511.06038
 
+### Prototypical Networks for Few-shot Learning
+* Jake Snell, Kevin Swersky, Richard S. Zemel
+* (Submitted on 15 Mar 2017 (v1), last revised 19 Jun 2017 (this version, v2))
+* https://arxiv.org/abs/1703.05175
 
 
+THIS PAPER!!
 
 ### Sebastian RUDER
 * [10 ML & NLP Research Highlights of 2019](https://ruder.io/research-highlights-2019/)
@@ -888,6 +942,22 @@ https://arxiv.org/pdf/1902.00751.pdf
 Interesting and similar to some of my ideas (Adapters network for transfer and adding new tasks)
 
 The Adapter Modules are trained (and grow ?) for each new Task, these are then fine tuned while the rest of the network is frozen.
+
+### Progressive Neural Networks
+* Andrei A. Rusu, Neil C. Rabinowitz, Guillaume Desjardins, Hubert Soyer, James Kirkpatrick, Koray Kavukcuoglu, Razvan Pascanu, Raia Hadsell
+* (Submitted on 15 Jun 2016 (v1), last revised 7 Sep 2016 (this version, v3))
+* https://arxiv.org/abs/1606.04671
+
+    " Prototypical networks learn a metric space in which classification can be performed by computing distances to prototype representations of each class. "
+
+Read and understand This paper
+
+### Alleviating catastrophic forgetting using context-dependent gating and synaptic stabilization
+* Nicolas Y. Masse, Gregory D. Grant, David J. Freedman
+* (Submitted on 2 Feb 2018 (v1), last revised 3 Apr 2019 (this version, v2))
+* https://arxiv.org/abs/1802.01569
+
+
 
 ### BERT and PALs: Projected Attention Layers for Efficient Adaptation in Multi-Task Learning
 https://arxiv.org/abs/1902.02671
@@ -1198,6 +1268,9 @@ Graves 2017
 * Shawn Beaulieu, Lapo Frati, Thomas Miconi, Joel Lehman, Kenneth O. Stanley, Jeff Clune, Nick Cheney
 * (Submitted on 21 Feb 2020)
 * https://arxiv.org/abs/2002.09571
+
+THIS PAPER IS GREAT!
+
 
 ### Data as Prior/Innate knowledge for Deep Learning models
 * https://medium.com/@xamat/data-as-prior-innate-knowledge-for-deep-learning-models-23898363a71a
