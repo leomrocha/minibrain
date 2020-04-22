@@ -168,6 +168,17 @@ The other big issue with the current ideas I have is that on the embedding AND t
  There must be a part that memorises everything and another part that generalizes.
  also there is a point in Obsessive behaviours, many smart people have them ... something must be happening there that makes it that way.
  
+ 
+### Syntax Helps ELMo Understand Semantics: Is Syntax Still Relevant in a Deep Neural Architecture for SRL?
+* Emma Strubell, Andrew McCallum
+* Submitted on 12 Nov 2018
+* https://arxiv.org/abs/1811.04773
+
+
+This papre also shows that I'm right trying to augment with as much semantic and syntactic information as possible 
+
+Read it in full 
+
 ### Cognitive Atomization
 * https://mad.science.blog/2020/02/28/cognitive-atomization/
 
@@ -336,6 +347,15 @@ Read this Neuroscience paper
 
 THIS PAPER!!!!!!
 
+### AutoML-Zero: Evolving Machine Learning Algorithms From Scratch
+* Esteban Real, Chen Liang, David R. So, Quoc V. Le
+* Submitted on 6 Mar 2020
+* https://arxiv.org/abs/2003.03384
+* https://github.com/google-research/google-research/tree/master/automl_zero
+
+
+Interesting and source code available
+
 ### Books and Lectures online for NLP
 
 * [Stanford cs224](http://web.stanford.edu/class/cs224n/)
@@ -463,6 +483,33 @@ Nice results, maybe should implement the evolved transformer in pytorch
 * https://arxiv.org/abs/1907.05791
 * https://github.com/facebookresearch/LASER/tree/master/tasks/WikiMatrix
 
+### Massively Multilingual Sentence Embeddings for Zero-Shot Cross-Lingual Transfer and Beyond
+* Mikel Artetxe, Holger Schwenk
+* [Submitted on 26 Dec 2018 (v1), last revised 25 Sep 2019 (this version, v2)]
+* https://arxiv.org/abs/1812.10464
+
+### Learning Joint Multilingual Sentence Representations with Neural Machine Translation
+* Holger Schwenk, Matthijs Douze
+* [Submitted on 13 Apr 2017 (v1), last revised 8 Aug 2017 (this version, v2)]
+*  https://research.fb.com/downloads/laser-language-agnostic-sentence-representations/
+* https://engineering.fb.com/ai-research/laser-multilingual-sentence-embeddings/
+* https://github.com/facebookresearch/LASER
+
+This is one of the base papers for *LASER framework* from Facebook
+ 
+This multi-lingual facebook framework LASER targets 93 languages of different scripts, seems quite interesting and 
+seems to work well enough on zero-shot for many language pairs.
+
+It shows better performance when more languages are used.
+
+The architecture is encoder-decoder. For the encoder any language can be given, 
+for the decoder the output language must be specified. 
+
+Entailment and any other task can be given in any language as input, even mixed words on more than one language.
+
+The training is aligned to English, Spanish or both asking the network to translate to any of those languages.
+
+
 ### Bilingual Lexicon Induction with Semi-supervision in Non-Isometric Embedding Spaces
 * https://arxiv.org/abs/1908.06625
 
@@ -485,7 +532,7 @@ OpenAI
 Interesting and need to read to understand better the complexity of number of samples and model size on the model performance
 TODO study it better  
 
-*In general, the peak of test error appears systematically when models are just barely able to fit the train set.*
+In general, the peak of test error appears systematically when models are just barely able to fit the train set.*
 
 ### LEARNING A NATURAL LANGUAGE INTERFACE WITH NEURAL PROGRAMMER 
 https://openreview.net/pdf?id=ry2YOrcge
@@ -798,7 +845,18 @@ For this I have another idea in which we have an encoder-decoder recurrent archi
 
 I like the way that this paper makes a single network be able to be fine-tunned for different purposes with a unified pre-processing
 
-THIS PAPER
+THIS PAPER and its follow up
+
+###  UniLMv2: Pseudo-Masked Language Models for Unified Language Model Pre-Training
+* Hangbo Bao, Li Dong, Furu Wei, Wenhui Wang, Nan Yang, Xiaodong Liu, Yu Wang, Songhao Piao, Jianfeng Gao, Ming Zhou, Hsiao-Wuen Hon
+* Submitted on 28 Feb 2020
+* https://arxiv.org/abs/2002.12804
+* https://github.com/microsoft/unilm/tree/master/unilm
+* git@github.com:leomrocha/unilm.git
+
+
+This paper improves on UniLM
+
 
 ### LayoutLM: Pre-training of Text and Layout for Document Image Understanding
 * Yiheng Xu, Minghao Li, Lei Cui, Shaohan Huang, Furu Wei, Ming Zhou
@@ -957,6 +1015,13 @@ Read and understand This paper
 * (Submitted on 2 Feb 2018 (v1), last revised 3 Apr 2019 (this version, v2))
 * https://arxiv.org/abs/1802.01569
 
+
+###  Controllable Variational Autoencoder
+* Huajie Shao, Shuochao Yao, Dachun Sun, Aston Zhang, Shengzhong Liu, Dongxin Liu, Jun Wang, Tarek Abdelzaher
+* Submitted on 13 Apr 2020
+* https://arxiv.org/abs/2004.05988
+ 
+ Controllable Variational Autoencoder uses Control Theory to improve Variational Auto encoders and it seems to use one of the things I didn't know how to add to the codes.
 
 
 ### BERT and PALs: Projected Attention Layers for Efficient Adaptation in Multi-Task Learning
@@ -1305,6 +1370,12 @@ THIS PAPER IS GREAT!
 * (Submitted on 23 Apr 2019 (v1), last revised 3 Sep 2019 (this version, v2))
 * https://arxiv.org/abs/1904.10258
 
+
+###  Understanding Consciousness as Data Compression
+* Phil Maguire1, Philippe Moser1, and Rebecca Maguire
+* Department of Computer Science, National University of Ireland, Maynooth
+* School of Business, National College of Ireland
+* http://cogsci.snu.ac.kr/jcs/issue/vol17/no1/03_MaguireOK.pdf
 
 ### Universal Artificial Intelligence: Sequential Decisions Based on Algorithmic Probability (Texts in Theoretical Computer Science. An EATCS Series) 
 * Marcus Hutter  (Auteur)
