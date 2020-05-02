@@ -124,6 +124,45 @@ Interesting paper that does multi-task and uses an attention head to deal with p
 As this head has a defined task it can be replaced with external parsers if need be.
 Somehow related with my idea  of having different kinds of knowledge encoded inside the network.
 
+### How Much Knowledge Can You Pack Into the Parameters of a Language Model?
+* Adam Roberts, Colin Raffel, Noam Shazeer
+* Submitted on 10 Feb 2020 (v1), last revised 24 Feb 2020 (this version, v2)
+* https://arxiv.org/abs/2002.08910
+
+THIS PAPER
+
+### REALM: Retrieval-Augmented Language Model Pre-Training
+* Kelvin Guu, Kenton Lee, Zora Tung, Panupong Pasupat, Ming-Wei Chang
+* Submitted on 10 Feb 2020
+* https://arxiv.org/abs/2002.08909
+
+
+This seems quite similar to what I want to do, maybe I can work on it!!
+
+
+### Entities as Experts: Sparse Memory Access with Entity Supervision
+* Thibault Févry, Livio Baldini Soares, Nicholas FitzGerald, Eunsol Choi, Tom Kwiatkowski
+* Submitted on 15 Apr 2020
+* https://arxiv.org/abs/2004.07202
+
+THIS PAPER!!!
+
+Adds intermediate/interleaved Entity Memory Layers that remember entities
+
+Adds a last layer that contains Task-Specific Heads:
+* TokenPrediction: Each masked token’s final representation is fed to an output softmax over the token vocabulary, as in BERT.
+* EntityPrediction: predicts entity id for each entity mention span (i.e., entity linking). We build the pseudo entity embedding (hmi) from the last sequence output (X4), as described in Entity Memory Layer. Then, the model predicts the entity whose embedding in E is the closest to the pseudo entity embedding
+
+Training seems to get a bit complicated as Entities need special tagging, and also it tries to match entities with the internal memory so ...
+
+Although it might give me a hint on how to train the network as I'd like.
+
+The Related Work section contains a list and small description of many sources I've read and that are related to the work I want to do.
+Also shows some advances in the direction I'd like to work on.
+
+
+In total, EAE has 367m parameters which is similar to the BERT large model. 
+But EAE uses far fewer parameters (110.5m) for each example at inference time
 
 ### Attending to Entities for Better Text Understanding
 * Pengxiang Cheng, Katrin Erk
@@ -668,6 +707,18 @@ Gradient checkpointing (memory at the expense of time) for DNNs from OpenAI, mak
 
 ## For NLP
 
+### Recipes for building an open-domain chatbot
+* Stephen Roller, Emily Dinan, Naman Goyal, Da Ju, Mary Williamson, Yinhan Liu, Jing Xu, Myle Ott, Kurt Shuster, Eric M. Smith, Y-Lan Boureau, Jason Weston
+* https://arxiv.org/abs/2004.13637
+####  A state-of-the-art open source chatbot - April 29, 2020
+* https://ai.facebook.com/blog/state-of-the-art-open-source-chatbot
+* https://parl.ai/projects/blender/
+* https://ai.facebook.com/blog/advances-in-conversational-ai/
+* 
+
+WOW, just WOW
+THIS and all the linked papers in there!
+
 
 ### La loi de Menzerath appliquée à un ensemble de textes
 * Marc Hug Professeur émérite, Université Marc Bloch, 23, rue Descartes, 67084 Strasbourg Cedex
@@ -688,6 +739,13 @@ __
 * [Kiwix - offline copies of free information](https://www.kiwix.org/en/downloads/kiwix-content-packages/)
 * [ArXiv Complete Dataset](https://arxiv.org/help/bulk_data_s3)
 
+
+### DROP: A Reading Comprehension Benchmark Requiring Discrete Reasoning Over Paragraphs
+* Dheeru Dua, Yizhong Wang, Pradeep Dasigi, Gabriel Stanovsky, Sameer Singh, Matt Gardner
+* Submitted on 1 Mar 2019 (v1), last revised 16 Apr 2019 (this version, v2)
+* https://arxiv.org/abs/1903.00161
+
+Dataset that requires multi-sentence reasoning
 
 ### XTREME: A Massively Multilingual Multi-task Benchmark for Evaluating Cross-lingual Generalization
 * Junjie Hu, Sebastian Ruder, Aditya Siddhant, Graham Neubig, Orhan Firat, Melvin Johnson
