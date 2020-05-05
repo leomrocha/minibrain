@@ -707,9 +707,32 @@ Gradient checkpointing (memory at the expense of time) for DNNs from OpenAI, mak
 
 ## For NLP
 
+
+### Can You Put it All Together: Evaluating Conversational Agents’ Ability to Blend Skills
+* Eric Michael Smith*, Mary Williamson*, Kurt Shuster, Jason Weston, Y-Lan Boureau
+* Facebook AI Research
+* {ems,marywilliamson,kshuster,jase,ylan}@fb.com
+* https://arxiv.org/pdf/2004.08449.pdf
+
+Interesting project, the study shows that is feasible to work on a more accurate chatbot
+A new dataset is presented, although details on architecture are left unexplained so the source code should be analized 
+
+    "
+    In this work, we investigate several ways to combine models trained towards isolated capabilities, ranging from simple model aggregation
+    schemes that require minimal additional training, to various forms of multi-task training that
+    encompass several skills at all training stages.
+    We further propose a new dataset, BlendedSkillTalk, to analyze how these capabilities
+    would mesh together in a natural conversation, and compare the performance of different architectures and training schemes.
+    "
+
 ### Recipes for building an open-domain chatbot
 * Stephen Roller, Emily Dinan, Naman Goyal, Da Ju, Mary Williamson, Yinhan Liu, Jing Xu, Myle Ott, Kurt Shuster, Eric M. Smith, Y-Lan Boureau, Jason Weston
+* Submitted on 28 Apr 2020
 * https://arxiv.org/abs/2004.13637
+* https://parl.ai/projects/blender/
+
+
+
 ####  A state-of-the-art open source chatbot - April 29, 2020
 * https://ai.facebook.com/blog/state-of-the-art-open-source-chatbot
 * https://parl.ai/projects/blender/
