@@ -731,7 +731,22 @@ A new dataset is presented, although details on architecture are left unexplaine
 * https://arxiv.org/abs/2004.13637
 * https://parl.ai/projects/blender/
 
+Really interesting paper, this one is to follow for building a good chatbot system.
+Is quite complex with a lot of good information compressed in the 25 pages of the paper.
 
+*"Retrieve and Refine"* seems to be a good technique and quite in the same axis as I was thinking on the multi-language learning approach. 
+The "α-blending for Retrieve and Refine" technique needs to be looked at in the source code as the description is good but basic.
+
+Different training objectives are used and tweaked for different goals, which seems interesting.
+It compares "Unlikelihood training for generation" although there seems to be a performance improvement, there is no statistical significance.
+
+The generative model, with a beam search limit and after good pre-training and tuning, seems to outperform the other tested models.
+But without restrictions in the beam search the retrieve and refine model outperforms the others.
+ 
+Many details are given on the choices and what architectures where used, although the detail of each architecture is not given in depth, this needs to be read from the source code.
+
+Also there is a really good discussion of the open-problems in the "Open-Domain Chatbot" domain going in depth and giving examples
+on the different issues and possible reasons on why this happens 
 
 ####  A state-of-the-art open source chatbot - April 29, 2020
 * https://ai.facebook.com/blog/state-of-the-art-open-source-chatbot
@@ -741,6 +756,11 @@ A new dataset is presented, although details on architecture are left unexplaine
 
 WOW, just WOW
 THIS and all the linked papers in there!
+
+### Retrieve and Refine: Improved Sequence Generation Models For Dialogue
+* Jason Weston, Emily Dinan, Alexander H. Miller
+* Submitted on 14 Aug 2018 (v1), last revised 6 Sep 2018 (this version, v2)
+* https://arxiv.org/abs/1808.04776
 
 
 ### La loi de Menzerath appliquée à un ensemble de textes
