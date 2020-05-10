@@ -74,6 +74,16 @@ From the idea point of view I see it interesting with good results, but ... I st
 http://jiayuanm.com/    
 
 
+### Real-Time Open-Domain Question Answering with Dense-Sparse Phrase Index
+* Minjoon Seo, Jinhyuk Lee, Tom Kwiatkowski, Ankur P. Parikh, Ali Farhadi, Hannaneh Hajishirzi
+* Submitted on 13 Jun 2019 (v1), last revised 14 Jun 2019 (this version, v2)
+* https://arxiv.org/abs/1906.05807
+
+### Contextualized Sparse Representations for Real-Time Open-Domain Question Answering
+* Jinhyuk Lee, Minjoon Seo, Hannaneh Hajishirzi, Jaewoo Kang
+* Submitted on 7 Nov 2019 (v1), last revised 1 May 2020 (this version, v2)
+* https://arxiv.org/abs/1911.02896
+
 
 ### Enhancing the Transformer with Explicit Relational Encoding for Math Problem Solving
 * Imanol Schlag, Paul Smolensky, Roland Fernandez, Nebojsa Jojic, Jürgen Schmidhuber, Jianfeng Gao
@@ -346,6 +356,10 @@ Need to go back at it again later
 
 Amazon take on Meta-Learning
 
+### Finding online neural update rules by learning to remember
+* Karol Gregor
+* Submitted on 6 Mar 2020
+* https://arxiv.org/abs/2003.03124
 
 ### Generalization through the recurrent interaction of episodic memories: a model of the hippocampal system.
 * Kumaran D1, McClelland JL.
@@ -763,11 +777,19 @@ THIS and all the linked papers in there!
 * https://arxiv.org/abs/1808.04776
 
 
+### A Transformer-based Approach for Source Code Summarization
+* Wasi Uddin Ahmad, Saikat Chakraborty, Baishakhi Ray, Kai-Wei Chang
+* Submitted on 1 May 2020
+* https://arxiv.org/abs/2005.00653
+
+
 ### La loi de Menzerath appliquée à un ensemble de textes
 * Marc Hug Professeur émérite, Université Marc Bloch, 23, rue Descartes, 67084 Strasbourg Cedex
 * http://lexicometrica.univ-paris3.fr/article/numero5/lexicometrica-hug.pdf
 
 Loi de Menzerath sur la construction des textes et rélation entre la longeur des phrases et des mots
+
+
 
 __
 ### Datasets:
@@ -1233,6 +1255,10 @@ This paper is interesting in the memory management, defines the Scene Memory Tra
 
 * https://arxiv.org/abs/1909.01377v2
 __
+
+## Graph Neural Networks
+
+
 ### A Comprehensive Survey on Graph Neural Networks
 https://arxiv.org/abs/1901.00596
 
@@ -1253,8 +1279,61 @@ https://arxiv.org/abs/1810.00826
 https://arxiv.org/abs/1611.01604
 
 ### Levenshtein Transformer
-THIS ONE !!! as I was looking on how to do this
-https://arxiv.org/pdf/1905.11006.pdf
+* Jiatao Gu, Changhan Wang, Jake Zhao
+* Submitted on 27 May 2019 (v1), last revised 28 Oct 2019 (this version, v2)
+ 
+* https://arxiv.org/pdf/1905.11006.pdf
+
+"We also propose a set of new training techniques dedicated at them, effectively exploiting one as the other's learning signal thanks to their complementary nature."
+
+ THIS ONE !!! as I was looking on how to do this
+ 
+### Graph Attention Networks
+* Petar Veličković, Guillem Cucurull, Arantxa Casanova, Adriana Romero, Pietro Liò, Yoshua Bengio
+* Submitted on 30 Oct 2017 (v1), last revised 4 Feb 2018 (this version, v3)
+* https://arxiv.org/abs/1710.10903
+
+### Deep Graph Infomax
+* Petar Veličković, William Fedus, William L. Hamilton, Pietro Liò, Yoshua Bengio, R Devon Hjelm
+* Submitted on 27 Sep 2018 (v1), last revised 21 Dec 2018 (this version, v2)
+* https://arxiv.org/abs/1809.10341
+
+### Principal Neighbourhood Aggregation for Graph Nets
+* Gabriele Corso, Luca Cavalleri, Dominique Beaini, Pietro Liò, Petar Veličković
+* Submitted on 12 Apr 2020
+* https://arxiv.org/abs/2004.05718
+
+ 
+### NEURAL EXECUTION ENGINES 
+* Yujun Yan, Kevin Swersky, Danai Koutra, Parthasarathy Ranganathan, Milad Hashemi
+* 25 Sep 2019 (modified: 24 Dec 2019)
+* https://openreview.net/forum?id=rJg7BA4YDr
+* https://openreview.net/attachment?id=rJg7BA4YDr&name=original_pdf
+
+### Neural Execution of Graph Algorithms
+* Petar Veličković, Rex Ying, Matilde Padovano, Raia Hadsell, Charles Blundell
+* Submitted on 23 Oct 2019 (v1), last revised 15 Jan 2020 (this version, v2)
+* https://arxiv.org/abs/1910.10593
+
+Low level (operation based) algorithmic learning, is a first approach with a modified transformer.
+
+### Neural Execution of Graph Algorithms
+* Petar Veličković, Rex Ying, Matilde Padovano, Raia Hadsell, Charles Blundell
+* Submitted on 23 Oct 2019 (v1), last revised 15 Jan 2020 (this version, v2)
+* https://arxiv.org/abs/1910.10593
+
+mid-level algorithm learning that uses every algorithm step for learning comparing on every step of the algorithm
+It also learns when to stop
+
+
+### What Can Neural Networks Reason About?
+* Keyulu Xu, Jingling Li, Mozhi Zhang, Simon S. Du, Ken-ichi Kawarabayashi, Stefanie Jegelka
+* Submitted on 30 May 2019 (v1), last revised 15 Feb 2020 (this version, v4)
+* https://arxiv.org/abs/1905.13211
+
+High level emnd-to-end algorithmic learning
+
+
 
 ### Pay Less Attention with Lightweight and Dynamic Convolutions
 https://arxiv.org/pdf/1901.10430.pdf
