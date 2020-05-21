@@ -149,6 +149,11 @@ THIS PAPER
 
 This seems quite similar to what I want to do, maybe I can work on it!!
 
+### PhonSenticNet: A Cognitive Approach to Microtext Normalization for Concept-Level Sentiment Analysis
+* Ranjan Satapathy, Aalind Singh, Erik Cambria
+* Submitted on 24 Apr 2019
+* https://arxiv.org/abs/1905.01967
+
 
 ### Entities as Experts: Sparse Memory Access with Entity Supervision
 * Thibault Févry, Livio Baldini Soares, Nicholas FitzGerald, Eunsol Choi, Tom Kwiatkowski
@@ -271,7 +276,12 @@ Here some references that I should check to understand better the ideas that I m
 * (Submitted on 3 Jul 2018)
 * https://arxiv.org/abs/1807.01396
 
+### Poly-encoders: Transformer Architectures and Pre-training Strategies for Fast and Accurate Multi-sentence Scoring
+* Samuel Humeau, Kurt Shuster, Marie-Anne Lachaux, Jason Weston
+* Submitted on 22 Apr 2019 (v1), last revised 25 Mar 2020 (this version, v4)
+*  https://arxiv.org/abs/1905.01969
 
+Interesting paper
 
 ### Universal Agent for Disentangling Environments and Tasks ￼
 * Jiayuan Mao, Honghua Dong, Joseph J. Lim
