@@ -3,9 +3,31 @@
 This file contains a list of papers that I've read, I'm reading or I want to read in a close future, but it keeps growing.
 I just take a few notes and write down some questions and ideas on those quite fast. I don't usually check for mistakes, but I do correct them if I find them when looking for something here.
 
+### Once-for-All: Train One Network and Specialize it for Efficient Deployment
+* Han Cai, Chuang Gan, Tianzhe Wang, Zhekai Zhang, Song Han
+* Submitted on 26 Aug 2019 (v1), last revised 29 Apr 2020 (this version, v5)
+* https://arxiv.org/abs/1908.09791
+* http://news.mit.edu/2020/artificial-intelligence-ai-carbon-footprint-0423
+* https://github.com/mit-han-lab/once-for-all
+
+THIS PAPER's TECHNIQUE for weight prunning seems interesting!!
+
+The thing is that first we need to train an entire network anyways. So for my current work no need, but for deployment, maybe yes.
+
+Other articles and papers on the subject:
+### AMC: AutoML for Model Compression and Acceleration on Mobile Devices
+* Yihui He, Ji Lin, Zhijian Liu, Hanrui Wang, Li-Jia Li, Song Han
+* Submitted on 10 Feb 2018 (v1), last revised 16 Jan 2019 (this version, v4)
+* http://news.mit.edu/2020/foolproof-way-shrink-deep-learning-models-0430
+* https://arxiv.org/abs/1802.03494
+
+* https://slazebni.cs.illinois.edu/spring17/lec06_compression.pdf
+
+
 ### REVISITING SMALL BATCH TRAINING FOR DEEP NEURAL NETWORKS
-https://arxiv.org/pdf/1804.07612.pdf
-batch sizes entre 2 y 32, no mas ni menos. (recommended by Yann LeCun)
+* https://arxiv.org/pdf/1804.07612.pdf
+
+For images batch sizes entre 2 y 32, no mas ni menos. (recommended by Yann LeCun)
 The paper is analyzed in images, the issue with text is that most studies are done with big batches (up to size 4M), 
  No study shows the difference between small and big batches, but due to n# of parameters in current NLP tasks and 
  the variability in input and output tasks I would think that big batches might be needed. 
@@ -36,6 +58,58 @@ Interesting paper, although from what I'm looking for the lesson learned is that
 * https://www.cs.toronto.edu/~amnih/papers/ncelm.pdf
 * Andriy Mnih, Yee Whye Teh
 
+###  Enriching Word Vectors with Subword Information
+* Piotr Bojanowski, Edouard Grave, Armand Joulin, Tomas Mikolov
+* Submitted on 15 Jul 2016 (v1), last revised 19 Jun 2017 (this version, v2)
+* https://arxiv.org/abs/1607.04606
+
+
+THIS PAPER!!!
+
+This paper's algorithm is one of the bases of [FastText](https://fasttext.cc/)
+
+I think it is a GREAT paper to study more in depth and try to implement as many of these things as possible in the current research line I'm working on.
+
+    This is a really good technique for the word vector enrichment, 
+    using a bag of words consisting of the n-grams of a word plus the entire word
+    Taking the word *where* and n = 3 as an example, it will be represented by the character n-grams:
+    *<wh, whe, her, ere, re>* and the special sequence *<where>*.
+
+The paper suggests that the n-grams used work best for 3>=n<=6
+
+They use a LSTM with 650 units regularized with dropout p=0.5 and weight decay 10e-5, Adagrad LR 0.1 clipping gradients at 1.0 
+  
+This technique could be used also in the encoding I'm creating, making it richer, even if the initial encoding is larger.
+
+To train the encoding I can also mask not only a few characters and add errors but also mask parts of the input code (example, the pronunciation or any other part).
+
+Ideas to extract from here: 
+- word vector is the sum of the n-gram vectors .. I need to understand here how this original ngrams are created
+- n-gram size 3>=n<=6
+- Trains fast 100K-150K words per second 
+- data volume benefits peaks quickly and seems not to have any more important benefits later
+- LSTM 650 units 
+
+
+### Bag of Tricks for Efficient Text Classification
+* Armand Joulin, Edouard Grave, Piotr Bojanowski, Tomas Mikolov
+* Submitted on 6 Jul 2016 (v1), last revised 9 Aug 2016 (this version, v3) 
+* https://arxiv.org/abs/1607.01759
+* Interesting [Blog Post about FastText](https://towardsdatascience.com/fasttext-under-the-hood-11efc57b2b3)
+
+This paper's algorithm is one of the bases of [FastText](https://fasttext.cc/)
+
+I think it is a GREAT paper to study more in depth and try to implement as many of these things as possible in the current research line I'm working on.
+
+    "we show that linear models with a rank constraint
+    and a fast loss approximation can train on a billion
+    words within ten minutes, while achieving performance on par with the state-of-the-art"
+
+Basically seems to construct a linear classifier inside that manages to beat many other techniques.
+
+The technique es CBOW inside with the n-gram bag of words technique.
+
+Manages really big vocabularies
 
 ### The Next Decade in AI: Four Steps Towards Robust Artificial Intelligence
 * Gary Marcus
@@ -72,6 +146,18 @@ From the idea point of view I see it interesting with good results, but ... I st
 * https://github.com/ExplorerFreda/VGNSL
 
 http://jiayuanm.com/    
+
+
+### kNN classification using Neighbourhood Components Analysis
+* NCA
+* https://www.cs.toronto.edu/~hinton/absps/nca.pdf
+* https://www.youtube.com/watch?v=07erva41ZoI
+* https://kevinzakka.github.io/2020/02/10/nca/ 
+
+
+REALLY interesting take on a good approach to kNN learning the distance function with FFNN (Feed Forward Neural Networks)
+and SDG (Stochastic Gradient Descent)
+I think this can actually be a good add on to FAISS library.
 
 
 ### Real-Time Open-Domain Question Answering with Dense-Sparse Phrase Index
