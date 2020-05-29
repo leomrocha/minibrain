@@ -753,6 +753,10 @@ THIS PAPER
 * (Submitted on 3 Mar 2020)
 * https://arxiv.org/abs/2003.01825
 
+### Synthetic Petri Dish: A Novel Surrogate Model for Rapid Architecture Search
+* Aditya Rawal, Joel Lehman, Felipe Petroski Such, Jeff Clune, Kenneth O. Stanley
+* Submitted on 27 May 2020
+* https://arxiv.org/abs/2005.13092
 
 ### One-Shot Neural Architecture Search via Compressive Sensing
 * https://arxiv.org/abs/1906.02869
@@ -1234,6 +1238,7 @@ Read and understand This paper
 * (Submitted on 2 Feb 2018 (v1), last revised 3 Apr 2019 (this version, v2))
 * https://arxiv.org/abs/1802.01569
 
+THIS PAPER, implement such as improve resilience to catastrophic forgetting which goes in the Backpropamine direction (If I understand correctly)
 
 ###  Controllable Variational Autoencoder
 * Huajie Shao, Shuochao Yao, Dachun Sun, Aston Zhang, Shengzhong Liu, Dongxin Liu, Jun Wang, Tarek Abdelzaher
