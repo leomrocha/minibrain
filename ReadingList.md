@@ -3,6 +3,18 @@
 This file contains a list of papers that I've read, I'm reading or I want to read in a close future, but it keeps growing.
 I just take a few notes and write down some questions and ideas on those quite fast. I don't usually check for mistakes, but I do correct them if I find them when looking for something here.
 
+
+### Contextual Embeddings: When Are They Worth It?
+* Simran Arora, Avner May, Jian Zhang, Christopher Ré
+* Submitted on 18 May 2020
+* https://arxiv.org/abs/2005.09117
+
+Really good paper to read, but at the end the conclusion is: for all tasks contextual embeddings are better.
+Some tasks do not depend SO HEAVILY on context, but mostly it always improve performance.
+Also there is the dependence on language structure, complexity and non frequently seen words.
+
+
+
 ### Once-for-All: Train One Network and Specialize it for Efficient Deployment
 * Han Cai, Chuang Gan, Tianzhe Wang, Zhekai Zhang, Song Han
 * Submitted on 26 Aug 2019 (v1), last revised 29 Apr 2020 (this version, v5)
