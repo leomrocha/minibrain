@@ -13,7 +13,37 @@ Really good paper to read, but at the end the conclusion is: for all tasks conte
 Some tasks do not depend SO HEAVILY on context, but mostly it always improve performance.
 Also there is the dependence on language structure, complexity and non frequently seen words.
 
+### A Call for More Rigor in Unsupervised Cross-lingual Learning
+* Mikel Artetxe, Sebastian Ruder, Dani Yogatama, Gorka Labaka, Eneko Agirre
+* Submitted on 30 Apr 2020
+* https://arxiv.org/abs/2004.14958
 
+Unsupervised Cross-Lingual (UCL) training is not the panacea or solution to everything.
+Interesting paper showing the UCL training weaknesses and showing the names and numbers of many multi-lingual datasets. 
+
+
+    "We challenge this narrative and argue that the
+    scenario of no parallel data and sufficient monolingual data is unrealistic and not reflected in the real
+    world"
+
+    "We then discuss
+    methodological issues in UCL (e.g., validation, hyperparameter tuning) and propose best evaluation
+    practices"
+    
+    However, we argue that the common claim that
+    the requirement for parallel data “may not be met
+    for many language pairs in the real world” (Xu
+    et al., 2018) is largely inaccurate. For instance,
+    the JW300 parallel corpus covers 343 languages
+    with around 100,000 parallel sentences per language pair on average (Agic and Vuli ´ c´, 2019), and
+    the multilingual Bible corpus collected by Mayer
+    and Cysouw (2014) covers 837 language varieties
+    (each with a unique ISO 639-3 code). Moreover,
+    the PanLex project aims to collect multilingual lexica for all human languages in the world, and already covers 6,854 language varieties with at least
+    20 lexemes, 2,364 with at least 200 lexemes, and
+    369 with at least 2,000 lexemes (Kamholz et al.,
+    2014). While 20 or 200 lexemes might seem insufficient, weakly supervised cross-lingual word embedding methods already proved effective with as
+    little as 25 word pairs (Artetxe et al., 2017).
 
 ### Once-for-All: Train One Network and Specialize it for Efficient Deployment
 * Han Cai, Chuang Gan, Tianzhe Wang, Zhekai Zhang, Song Han
