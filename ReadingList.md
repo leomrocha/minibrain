@@ -65,6 +65,38 @@ Other articles and papers on the subject:
 
 * https://slazebni.cs.illinois.edu/spring17/lec06_compression.pdf
 
+### Implicit Neural Representations with Periodic Activation Functions
+* Submitted on 17 Jun 2020
+* Vincent Sitzmann, Julien N. P. Martel, Alexander W. Bergman, David B. Lindell, Gordon Wetzstein
+* https://arxiv.org/abs/2006.09661
+
+sin function instead of relus improve network representation power and detailed reconstruction in Images and Sound data.
+the sin function activation is used in MLP networks, no other architecture has been tested here.
+
+Extremely interesting paper, TODO implement this and the initialization scheme. 
+The initialization does not seems so easy to implement correctly, I think there'll be many gotchas there
+
+### StarSpace: Embed All The Things!
+* Ledell Wu, Adam Fisch, Sumit Chopra, Keith Adams, Antoine Bordes, Jason Weston
+* Submitted on 12 Sep 2017 (v1), last revised 21 Nov 2017 (this version, v5)
+* https://arxiv.org/abs/1709.03856
+
+RASA implements this ->READ
+
+### Few-Shot Generalization Across Dialogue Tasks
+* Vladimir Vlasov, Akela Drissner-Schmid, Alan Nichol
+* Submitted on 28 Nov 2018
+* https://arxiv.org/abs/1811.11707
+
+RASA implements this ->READ
+
+    "We also show that both our architecture and baseline solve the bAbI dialogue task,
+    achieving 100% test accuracy"
+
+Interesting take on how to deal with users from a chatbot perspective to allow transfer learning between different tasks. 
+
+Interesting complex architecture based on the NTM (NEural Turing Machine) from Graves et al.
+
 
 ### REVISITING SMALL BATCH TRAINING FOR DEEP NEURAL NETWORKS
 * https://arxiv.org/pdf/1804.07612.pdf
