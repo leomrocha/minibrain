@@ -115,6 +115,22 @@ https://openreview.net/forum?id=B1ckMDqlg
 
 Interesting paper, although from what I'm looking for the lesson learned is that conditional execution makes a good choice and specialist/expert parts for each different task and choosing them with an expert chooser that is also trained there.
 
+### Big Self-Supervised Models are Strong Semi-Supervised Learners
+* Ting Chen, Simon Kornblith, Kevin Swersky, Mohammad Norouzi, Geoffrey Hinton
+* Submitted on 17 Jun 2020
+* https://arxiv.org/abs/2006.10029
+* https://www.youtube.com/watch?v=2lkUNDZld-4
+
+Really interesting methodology to train DNNs with a 3 stage methodology:
+
+1. Unsupervised Constrastive Learning
+2. Fine Tune with Supervised Data
+3. Self Training/ Distillation of task predictions on THE SAME NETWORK SIZE as Teacher Network
+
+Really interesting method to implement.
+
+
+
 ### ZeRO: Memory Optimization Towards Training A Trillion Parameter Models
 * Samyam Rajbhandari, Jeff Rasley, Olatunji Ruwase, Yuxiong He
 * (Submitted on 4 Oct 2019 (v1), last revised 7 Oct 2019 (this version, v2))
