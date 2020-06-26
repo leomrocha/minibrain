@@ -130,6 +130,14 @@ Really interesting methodology to train DNNs with a 3 stage methodology:
 Really interesting method to implement.
 
 
+### Fourier Features Let Networks Learn High Frequency Functions in Low Dimensional Domains
+* Matthew Tancik, Pratul P. Srinivasan, Ben Mildenhall, Sara Fridovich-Keil, Nithin Raghavan, Utkarsh Singhal, Ravi Ramamoorthi, Jonathan T. Barron, Ren Ng
+* Submitted on 18 Jun 2020
+* https://arxiv.org/abs/2006.10739
+
+Is more for continuos signal representation than for discrete classes (i.e. not for text)
+
+
 
 ### ZeRO: Memory Optimization Towards Training A Trillion Parameter Models
 * Samyam Rajbhandari, Jeff Rasley, Olatunji Ruwase, Yuxiong He
@@ -306,9 +314,19 @@ Really simple and great addition
 * (Submitted on 23 Apr 2018 (v1), last revised 12 Nov 2018 (this version, v3))
 * https://arxiv.org/abs/1804.08199
 
+LISA network
 Interesting paper that does multi-task and uses an attention head to deal with parent parsing instead of leaving it to its own.
 As this head has a defined task it can be replaced with external parsers if need be.
 Somehow related with my idea  of having different kinds of knowledge encoded inside the network.
+
+### Replace or Retrieve Keywords In Documents at Scale
+* Submitted on 31 Oct 2017 (v1), last revised 9 Nov 2017 (this version, v2)
+* Vikash Singh
+* https://arxiv.org/abs/1711.00046
+* https://github.com/vi3k6i5/flashtext
+
+FlashText faster ( almost constant?) time replacement of text, much faster than RegEx and the lib is python and MIT license
+ 
 
 ### How Much Knowledge Can You Pack Into the Parameters of a Language Model?
 * Adam Roberts, Colin Raffel, Noam Shazeer
