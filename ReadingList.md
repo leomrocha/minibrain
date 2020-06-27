@@ -353,6 +353,14 @@ Really simple and great addition
      and one trainable parameter α that modulates the non-trivial transformation of the layer F(x), 
      xi+1 = xi + αiF(xi), where α = 0 at the beginning of training"
 
+### Attention mechanisms readings
+
+* https://lilianweng.github.io/lil-log/2018/06/24/attention-attention.html
+* https://arxiv.org/pdf/1902.02181.pdf
+* http://www.wildml.com/2016/01/attention-and-memory-in-deep-learning-and-nlp/
+
+REally nice reads but they don't solve my questions ...
+
 ### Linguistically-Informed Self-Attention for Semantic Role Labeling
 * Emma Strubell, Patrick Verga, Daniel Andor, David Weiss, Andrew McCallum
 * (Submitted on 23 Apr 2018 (v1), last revised 12 Nov 2018 (this version, v3))
@@ -391,6 +399,14 @@ This seems quite similar to what I want to do, maybe I can work on it!!
 * Ranjan Satapathy, Aalind Singh, Erik Cambria
 * Submitted on 24 Apr 2019
 * https://arxiv.org/abs/1905.01967
+
+
+
+### End-To-End Memory Networks
+* Submitted on 31 Mar 2015 (v1), last revised 24 Nov 2015 (this version, v5)
+* Sainbayar Sukhbaatar, Arthur Szlam, Jason Weston, Rob Fergus
+* https://arxiv.org/abs/1503.08895
+
 
 
 ### Entities as Experts: Sparse Memory Access with Entity Supervision
@@ -952,6 +968,48 @@ Comments in [this](https://www.reddit.com/r/MachineLearning/comments/fckfug/r_sl
 
 ### RECURRENT INDEPENDENT MECHANISMS
 * https://arxiv.org/pdf/1909.10893.pdf
+
+### A Taxonomy for Neural Memory Networks
+* Submitted on 1 May 2018
+* Ying Ma, Jose Principe
+* https://arxiv.org/abs/1805.00327
+
+### Attention in Natural Language Processing
+* Submitted on 4 Feb 2019 (v1), last revised 28 May 2020 (this version, v2)
+* Andrea Galassi, Marco Lippi, Paolo Torroni
+* https://arxiv.org/abs/1902.02181
+
+    " We propose a taxonomy of attention models according to four dimensions:
+     the representation of the input, the compatibility function, the distribution 
+     function, and the multiplicity of the input and/or output. "
+
+Read THIS paper for a review on Attention mechanisms 
+
+### Metalearned Neural Memory
+* Submitted on 23 Jul 2019 (v1), last revised 3 Dec 2019 (this version, v2)
+* Tsendsuren Munkhdalai, Alessandro Sordoni, Tong Wang, Adam Trischler
+* https://arxiv.org/abs/1907.09720
+* https://www.microsoft.com/en-us/research/blog/metalearned-neural-memory-teaching-neural-networks-how-to-remember/
+* https://bitbucket.org/tsendeemts/mnm/src/master/
+
+THIS PAPER
+
+They use a FFNN for the memory, a RNN for the memory controller and 2 different learning algorithms
+either they learn with SGD (which seems the worst) or a
+local update rule
+
+### Meta-Learning Deep Energy-Based Memory Models
+* Submitted on 7 Oct 2019
+* Sergey Bartunov, Jack W Rae, Simon Osindero, Timothy P Lillicrap
+* https://arxiv.org/abs/1910.02720
+
+### Neural networks and physical systems with emergent collective computational abilities
+* DOI:10.1201/9780429500459-2Corpus ID: 195929883
+* John J. Hopfield - Published 1988 - Computer Science
+* https://www.semanticscholar.org/paper/Neural-networks-and-physical-systems-with-emergent-Hopfield/cbd1ade5b869b13d1853aa0753b82fb35c26bcba
+* https://www.ncbi.nlm.nih.gov/pmc/articles/PMC346238/pdf/pnas00447-0135.pdf
+
+
 
 ### Metalearning and Neuromodulation 
 [Kenji Doya 2002](http://www.nld.ds.mpg.de/~michael/CNS_course_2005/papers/Woergoetter/doya02.pdf)
