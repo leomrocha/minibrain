@@ -115,21 +115,6 @@ https://openreview.net/forum?id=B1ckMDqlg
 
 Interesting paper, although from what I'm looking for the lesson learned is that conditional execution makes a good choice and specialist/expert parts for each different task and choosing them with an expert chooser that is also trained there.
 
-### Big Self-Supervised Models are Strong Semi-Supervised Learners
-* Ting Chen, Simon Kornblith, Kevin Swersky, Mohammad Norouzi, Geoffrey Hinton
-* Submitted on 17 Jun 2020
-* https://arxiv.org/abs/2006.10029
-* https://www.youtube.com/watch?v=2lkUNDZld-4
-
-Really interesting methodology to train DNNs with a 3 stage methodology:
-
-1. Unsupervised Constrastive Learning
-2. Fine Tune with Supervised Data
-3. Self Training/ Distillation of task predictions on THE SAME NETWORK SIZE as Teacher Network
-
-Really interesting method to implement.
-
-
 ### Fourier Features Let Networks Learn High Frequency Functions in Low Dimensional Domains
 * Matthew Tancik, Pratul P. Srinivasan, Ben Mildenhall, Sara Fridovich-Keil, Nithin Raghavan, Utkarsh Singhal, Ravi Ramamoorthi, Jonathan T. Barron, Ren Ng
 * Submitted on 18 Jun 2020
@@ -234,6 +219,65 @@ I'm interested in the DSL used.
 Uses REINFORCE for learning, pre-trained ResNet-34 for image input, a traductin to opbject concept and a DSL 
 that executes the computed program.
 From the idea point of view I see it interesting with good results, but ... I still don't see how it works
+
+
+### Bootstrap Your Own Latent: A New Approach to Self-Supervised Learning
+* Jean-Bastien Grill, Florian Strub, Florent Altché, Corentin Tallec, Pierre H. Richemond, Elena Buchatskaya, Carl Doersch, Bernardo Avila Pires, Zhaohan Daniel Guo, Mohammad Gheshlaghi Azar, Bilal Piot, Koray Kavukcuoglu, Rémi Munos, Michal Valko
+* Submitted on 13 Jun 2020
+* https://arxiv.org/abs/2006.07733
+* https://github.com/sthalles/PyTorch-BYOL
+
+
+### Self-training with Noisy Student improves ImageNet classification
+* Qizhe Xie, Minh-Thang Luong, Eduard Hovy, Quoc V. Le
+* Submitted on 11 Nov 2019 (v1), last revised 19 Jun 2020 (this version, v4)
+* https://arxiv.org/abs/1911.04252
+* https://medium.com/@nainaakash012/self-training-with-noisy-student-f33640edbab2
+
+### A Simple Framework for Contrastive Learning of Visual Representations
+* Ting Chen, Simon Kornblith, Mohammad Norouzi, Geoffrey Hinton
+* Submitted on 13 Feb 2020 (v1), last revised 30 Mar 2020 (this version, v2)
+* https://arxiv.org/abs/2002.05709
+* https://ai.googleblog.com/2020/04/advancing-self-supervised-and-semi.html
+
+SimCLR
+
+
+### Big Self-Supervised Models are Strong Semi-Supervised Learners
+* Ting Chen, Simon Kornblith, Kevin Swersky, Mohammad Norouzi, Geoffrey Hinton
+* Submitted on 17 Jun 2020
+* https://arxiv.org/abs/2006.10029
+* https://www.youtube.com/watch?v=2lkUNDZld-4
+* https://github.com/google-research/simclr
+* https://ai.googleblog.com/2020/04/advancing-self-supervised-and-semi.html
+
+SimCLR v2
+
+Really interesting methodology to train DNNs with a 3 stage methodology:
+
+1. Unsupervised Constrastive Learning
+2. Fine Tune with Supervised Data
+3. Self Training/ Distillation of task predictions on THE SAME NETWORK SIZE as Teacher Network
+
+Really interesting method to implement.
+
+
+### Momentum Contrast for Unsupervised Visual Representation Learning
+* Submitted on 13 Nov 2019 (v1), last revised 23 Mar 2020 (this version, v3)
+* Kaiming He, Haoqi Fan, Yuxin Wu, Saining Xie, Ross Girshick
+* https://arxiv.org/abs/1911.05722
+* https://github.com/facebookresearch/moco
+
+Momentum Contrastive Learning
+MoCo  
+
+### Improved Baselines with Momentum Contrastive Learning
+* Submitted on 9 Mar 2020
+* Xinlei Chen, Haoqi Fan, Ross Girshick, Kaiming He
+* https://arxiv.org/abs/2003.04297
+
+
+MoCo v2
 
 
 ### Visually Grounded Neural Syntax Acquisition
