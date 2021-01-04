@@ -1,3 +1,11 @@
+# Notes:
+
+This repository has been inactive for some time, I'm now focusing on NLP tasks which I believe are a really good problem for intelligence and one of the most interesting ones for me at the moment.
+
+There are many exciting advances in the subject and I am working on progress that stands on the experiments done in this repository. 
+
+As this is mainly a hobby and I work on it during my free time the updates are sparse, but I am focusing now on using the ideas developed here.
+
 # Minibrain
 
 As something Demis Hassabis said and profoundly inspired me: "Solve Intelligence, then use it to solve everything else"
