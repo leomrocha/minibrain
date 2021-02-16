@@ -14259,7 +14259,25 @@ a.anchor-link {
 
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h1 id="MNIST-Experiments---Playing-With-Different-Architectures">MNIST Experiments - Playing With Different Architectures<a class="anchor-link" href="#MNIST-Experiments---Playing-With-Different-Architectures">&#182;</a></h1><p>Sometimes we need to come back to the basis, this is the place I choose for that.</p>
+<p><a href="https://leomrocha.github.com">Leo's Home page</a> -- <a href="https://github.com/leomrocha/minibrain/tree/master/experiments/mnist">Github Page</a> -- License: <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a></p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h1 id="MNIST-Experiments---Playing-With-Different-Architectures">MNIST Experiments - Playing With Different Architectures<a class="anchor-link" href="#MNIST-Experiments---Playing-With-Different-Architectures">&#182;</a></h1>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><a href="https://leomrocha.github.com">Leonardo M. Rocha</a></p>
+<p><a href="https://leomrocha.github.io/contact/">Contact Me</a></p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Sometimes we need to come back to the basis, this is the place I choose for that.</p>
 <p>Here I'll experiment with different networks on the MNIST and MNIST variants datasets trying to find relations in which I can reduce the number of parameters in comparison with a Fully Connected (FC) network.</p>
 <p>Later on, I might try with other datasets that are small enough for my GTX1080.</p>
 <p>Yes, I know, the issue is already solved for Images with Convolutional Networks but what I want to see is not that. Instead I want to understand ways in which fully connected networks can be replaced by other types of connections to minimize the number of parameters in it. This is an exploratory work to get a deeper understanding on Neural Networks (NNs) that will at least give me some fun time.</p>
@@ -14527,7 +14545,7 @@ a.anchor-link {
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[11]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">fcnets_layers</span><span class="p">)):</span>
@@ -14604,30 +14622,42 @@ Final performance of model [784, 1000, 10]_0.8_relu epoch [100/100], loss:-20261
 --------------------------------------------------------
 epoch [1/100], loss:-33153.589844
 epoch [21/100], loss:-10460612.000000
+epoch [41/100], loss:-32208406.000000
+epoch [61/100], loss:-68113896.000000
+epoch [81/100], loss:-112439144.000000
+########################################################
+Final performance of model [784, 1000, 10]_0.7_relu epoch [100/100], loss:-172079392.00000000
+--------------------------------------------------------
+epoch [1/100], loss:-26603.984375
+epoch [21/100], loss:-8168572.000000
+epoch [41/100], loss:-26347406.000000
+epoch [61/100], loss:-53424112.000000
+epoch [81/100], loss:-95889032.000000
+########################################################
+Final performance of model [784, 1000, 10]_0.6_relu epoch [100/100], loss:-143723952.00000000
+--------------------------------------------------------
+epoch [1/100], loss:-69771.195312
+epoch [21/100], loss:-19515738.000000
+epoch [41/100], loss:-68503256.000000
+epoch [61/100], loss:-126409976.000000
+epoch [81/100], loss:-230093120.000000
+########################################################
+Final performance of model [784, 1500, 10]_0.9_relu epoch [100/100], loss:-342650624.00000000
+--------------------------------------------------------
+epoch [1/100], loss:-60908.652344
+epoch [21/100], loss:-16855800.000000
+epoch [41/100], loss:-57882336.000000
+epoch [61/100], loss:-113473672.000000
+epoch [81/100], loss:-201333488.000000
+########################################################
+Final performance of model [784, 1500, 10]_0.8_relu epoch [100/100], loss:-320420576.00000000
+--------------------------------------------------------
 </pre>
 </div>
 </div>
 
 </div>
 
-</div>
-
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">fcnets_layers</span><span class="p">)):</span>
-    <span class="n">model</span> <span class="o">=</span> <span class="n">models</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-    <span class="n">mname</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">name</span>
-    <span class="n">train</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">mname</span><span class="p">)</span>
-    
-</pre></div>
-
-     </div>
-</div>
-</div>
 </div>
 
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">

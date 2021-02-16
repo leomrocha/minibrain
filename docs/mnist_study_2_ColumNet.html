@@ -14259,7 +14259,25 @@ a.anchor-link {
 
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h1 id="MNIST-Experiments---Playing-With-Different-Architectures">MNIST Experiments - Playing With Different Architectures<a class="anchor-link" href="#MNIST-Experiments---Playing-With-Different-Architectures">&#182;</a></h1><p>Sometimes we need to come back to the basis, this is the place I choose for that.</p>
+<p><a href="https://leomrocha.github.com">Leo's Home page</a> -- <a href="https://github.com/leomrocha/minibrain/tree/master/experiments/mnist">Github Page</a> -- License: <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a></p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h1 id="MNIST-Experiments---Playing-With-Different-Architectures">MNIST Experiments - Playing With Different Architectures<a class="anchor-link" href="#MNIST-Experiments---Playing-With-Different-Architectures">&#182;</a></h1>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><a href="https://leomrocha.github.com">Leonardo M. Rocha</a></p>
+<p><a href="https://leomrocha.github.io/contact/">Contact Me</a></p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Sometimes we need to come back to the basis, this is the place I choose for that.</p>
 <p>Here I'll experiment with different networks on the MNIST and MNIST variants datasets trying to find relations in which I can reduce the number of parameters in comparison with a Fully Connected (FC) network.</p>
 <p>Later on, I might try with other datasets that are small enough for my GTX1080.</p>
 <p>Yes, I know, the issue is already solved for Images with Convolutional Networks but what I want to see is not that. Instead I want to understand ways in which fully connected networks can be replaced by other types of connections to minimize the number of parameters in it. This is an exploratory work to get a deeper understanding on Neural Networks (NNs) that will at least give me some fun time.</p>
@@ -14549,7 +14567,7 @@ a.anchor-link {
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[18]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%time</span>
@@ -14627,6 +14645,86 @@ Final performance of model [784, 100, 50, 50] epoch [100/100], loss:0.00385269
 --------------------------------------------------------
 epoch [1/100], loss:1.114298
 epoch [21/100], loss:0.752717
+epoch [41/100], loss:0.264392
+epoch [61/100], loss:0.055476
+epoch [81/100], loss:0.000323
+########################################################
+Final performance of model [784, 100, 100, 50] epoch [100/100], loss:0.01610803
+--------------------------------------------------------
+epoch [1/100], loss:1.075133
+epoch [21/100], loss:0.508439
+epoch [41/100], loss:0.001142
+epoch [61/100], loss:0.000106
+epoch [81/100], loss:0.000110
+########################################################
+Final performance of model [784, 200, 50, 50] epoch [100/100], loss:0.00054766
+--------------------------------------------------------
+epoch [1/100], loss:1.336636
+epoch [21/100], loss:0.015125
+epoch [41/100], loss:0.018807
+epoch [61/100], loss:0.000254
+epoch [81/100], loss:0.018729
+########################################################
+Final performance of model [784, 200, 100, 50] epoch [100/100], loss:0.00002173
+--------------------------------------------------------
+epoch [1/100], loss:0.787781
+epoch [21/100], loss:0.338957
+epoch [41/100], loss:0.064825
+epoch [61/100], loss:0.000097
+epoch [81/100], loss:0.004881
+########################################################
+Final performance of model [784, 200, 150, 50] epoch [100/100], loss:0.00381731
+--------------------------------------------------------
+epoch [1/100], loss:1.230452
+epoch [21/100], loss:0.891845
+epoch [41/100], loss:0.651148
+epoch [61/100], loss:0.145539
+epoch [81/100], loss:0.013066
+########################################################
+Final performance of model [784, 200, 200, 50] epoch [100/100], loss:0.00077140
+--------------------------------------------------------
+epoch [1/100], loss:1.977042
+epoch [21/100], loss:1.251442
+epoch [41/100], loss:0.000248
+epoch [61/100], loss:0.012526
+epoch [81/100], loss:0.001485
+########################################################
+Final performance of model [784, 50, 50, 50, 50] epoch [100/100], loss:0.04552653
+--------------------------------------------------------
+epoch [1/100], loss:1.453422
+epoch [21/100], loss:1.047088
+epoch [41/100], loss:1.175504
+epoch [61/100], loss:0.336584
+epoch [81/100], loss:0.000342
+########################################################
+Final performance of model [784, 100, 50, 50, 50] epoch [100/100], loss:0.00134811
+--------------------------------------------------------
+epoch [1/100], loss:0.296155
+epoch [21/100], loss:0.002681
+epoch [41/100], loss:0.000084
+epoch [61/100], loss:0.000112
+epoch [81/100], loss:0.000180
+########################################################
+Final performance of model [784, 100, 100, 50, 50] epoch [100/100], loss:0.00054182
+--------------------------------------------------------
+epoch [1/100], loss:1.094167
+epoch [21/100], loss:0.589513
+epoch [41/100], loss:0.360399
+epoch [61/100], loss:0.599690
+epoch [81/100], loss:0.000083
+########################################################
+Final performance of model [784, 100, 100, 100, 50] epoch [100/100], loss:0.00003289
+--------------------------------------------------------
+epoch [1/100], loss:0.415148
+epoch [21/100], loss:0.063293
+epoch [41/100], loss:0.038689
+epoch [61/100], loss:0.001151
+epoch [81/100], loss:0.003858
+########################################################
+Final performance of model [784, 200, 100, 100, 50] epoch [100/100], loss:0.00005394
+--------------------------------------------------------
+CPU times: user 1h 59min, sys: 4min 34s, total: 2h 3min 35s
+Wall time: 2h 16min 28s
 </pre>
 </div>
 </div>
