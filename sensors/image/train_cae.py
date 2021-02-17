@@ -5,8 +5,8 @@ import torchvision
 from torchvision import transforms, utils
 from torchvision import datasets
 from torchvision.utils import save_image
-from .cae import *
-from .helpers import *
+from cae import *
+from helpers import *
 
 
 def get_loaders(batch_size, transformation, dataset = datasets.CIFAR100, cuda=True):
@@ -72,7 +72,7 @@ def main():
             in_pic = to_img(img.cpu().data)
             save_image(pic, './cae_results/2x2-out_image_{}.png'.format(epoch))
             save_image(in_pic, './cae_results/2x2-in_image_{}.png'.format(epoch))
-        if loss.data[0] < 0.15: #arbitrary number because I saw that it works well enough
+        if loss.data[0] < 0.15:  # arbitrary number because I saw that it works well enough
             break
     model.save_model("2x2-layer", "CAE")
 
